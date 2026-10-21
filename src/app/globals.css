@@ -585,8 +585,9 @@ img.summary-image,
 .order-ghost-icon {
   display: grid;
   place-items: center;
+  font-size: 34px;
   background: var(--surface-2);
-  color: var(--text-muted);
+  opacity: 0.7;
 }
 
 .order-row.is-ghost .order-bar {
@@ -2194,12 +2195,6 @@ html[data-text-size="stor"] .dish-body p {
 
 .icon {
   flex: none;
-}
-
-.occasion-tab-name {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
 }
 
 .diet-info {

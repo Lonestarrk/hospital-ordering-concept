@@ -128,7 +128,7 @@ export default function OccasionPage() {
                 const { occasion, slot } = entry;
                 return (
                   <li key={`ghost-${occasion.id}-${slot.date}`} className="order-row is-ghost">
-                    <span className="order-image order-ghost-icon"><Icon name={occasion.id} size={32} /></span>
+                    <span className="order-image order-ghost-icon" aria-hidden>{occasion.emoji}</span>
                     <div className="order-body">
                       <p className="order-when">
                         <strong>{t.occasions[occasion.id]}</strong> · {at(slot.servedAt, reference)}

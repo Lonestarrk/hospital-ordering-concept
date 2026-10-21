@@ -4,7 +4,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useOrder, useT } from "./OrderProvider";
 import { useAnnounce } from "./Screen";
 import { useNow } from "./useNow";
-import { Icon } from "./Icon";
 import { occasions, type OccasionId } from "@/lib/data";
 import { hhmm, minutesLeft, nextSlot } from "@/lib/clock";
 
@@ -54,7 +53,7 @@ export function OccasionBar() {
             onClick={() => choose(occasion.id)}
           >
             <span className="occasion-tab-name">
-              <Icon name={occasion.id} /> {t.occasions[occasion.id]}
+              <span aria-hidden>{occasion.emoji}</span> {t.occasions[occasion.id]}
             </span>
             <span className="occasion-tab-status">{status}</span>
           </button>
