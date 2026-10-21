@@ -1331,27 +1331,27 @@ button:focus-visible {
 }
 
 @keyframes done-check-shrink {
-  0%, 85% { width: 84px; height: 84px; }
-  100% { width: 44px; height: 44px; }
+  0%, 85% { width: 64px; height: 64px; }
+  100% { width: 36px; height: 36px; }
 }
 
 @keyframes done-image-shrink {
-  0%, 85% { width: 150px; height: 100px; }
-  100% { width: 66px; height: 44px; }
+  0%, 85% { width: 112px; height: 75px; }
+  100% { width: 54px; height: 36px; }
 }
 
 @keyframes done-splash-shrink {
-  0%, 85% { padding-block: 20px; }
-  100% { padding-block: 10px; }
+  0%, 85% { padding-block: 14px; }
+  100% { padding-block: 8px; }
 }
 
 .done-splash {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 4px 20px;
-  margin-bottom: 24px;
-  padding: 20px 24px;
+  gap: 4px 16px;
+  margin-bottom: 20px;
+  padding: 14px 20px;
   border-radius: var(--radius);
   background: var(--primary);
   color: #fff;
@@ -1360,8 +1360,8 @@ button:focus-visible {
 }
 
 .done-splash-check {
-  width: 84px;
-  height: 84px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   background: #fff;
   color: var(--primary);
@@ -1376,20 +1376,20 @@ button:focus-visible {
 }
 
 .done-splash h1 {
-  font-size: 1.7em;
+  font-size: 1.4em;
   line-height: 1.15;
   overflow: hidden;
   animation: done-thanks-out 3s ease-in-out forwards;
 }
 
 .done-splash p {
-  font-size: 1.3em;
+  font-size: 1.1em;
   font-weight: 700;
 }
 
 .done-splash-image {
-  width: 150px;
-  height: 100px;
+  width: 112px;
+  height: 75px;
   border-radius: 12px;
   object-fit: cover;
   animation: done-image-shrink 3s ease-in-out forwards;
@@ -1419,10 +1419,10 @@ button:focus-visible {
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 6px;
-  min-height: 180px;
-  padding: 24px 28px;
-  border-radius: 24px;
+  gap: 4px;
+  min-height: 120px;
+  padding: 18px 22px;
+  border-radius: 20px;
   border: 3px solid var(--primary);
   background: var(--surface);
   color: var(--primary);
@@ -1436,14 +1436,19 @@ button:focus-visible {
   color: #fff;
 }
 
+.done-choice svg {
+  width: 32px;
+  height: 32px;
+}
+
 .done-choice-title {
-  font-size: 1.5em;
+  font-size: 1.25em;
   font-weight: 800;
   color: var(--text);
 }
 
 .done-choice-body {
-  font-size: 0.9em;
+  font-size: 0.85em;
   color: var(--text-muted);
 }
 
@@ -1494,7 +1499,7 @@ button:focus-visible {
   .done-splash { grid-template-columns: auto minmax(0, 1fr); }
   .done-splash-image { display: none; }
   .done-choices { grid-template-columns: 1fr; }
-  .done-choice { min-height: 120px; }
+  .done-choice { min-height: 96px; }
 }
 
 /* ---------- Omdöme ---------- */
