@@ -49,6 +49,7 @@ redan är gjort ("✓ Utan selleri"), inte som en ⚠-varning.
 - **Det som går att ångra sker direkt, med en ångra-knapp. Inga bekräftelsedialoger:**
   - **Avbryt:** Ingrid loggas ut direkt. Inloggningen visar "Du har avslutat. Inget är beställt. Det du hade valt är sparat." med knappen **Ångra – fortsätt där jag var**, som gäller i 2 minuter.
   - **Beställningen:** kan ändras fram till låstiden (två timmar före servering) via *Ändra beställningen*.
+  - **Avbeställ:** på första sidan avbeställs en måltid direkt, utan "Är du säker?". Raden "Lunch är avbeställd" har knappen **↩ Ångra**, som lägger tillbaka beställningen.
 - **Det som inte går att ångra** (en ändrad kostordination) föreslås bara, och en människa beslutar.
 - **Inga siffror som låtsas vara exakta:** "ca 30 minuter" för tilltugg, "ungefär två minuter". Nedräkningen räknar mot en fast låstid och är därför exakt.
 

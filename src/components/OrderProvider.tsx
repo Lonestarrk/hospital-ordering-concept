@@ -72,6 +72,10 @@ type OrderContextValue = State & {
   clearOrder: () => void;
   /** Patientens lagda beställningar. */
   placedOrders: Order[];
+  /** Avbeställ direkt (går att ångra med restoreOrder). */
+  cancelOrder: (order: Order) => void;
+  /** Lägg tillbaka en avbeställd beställning. */
+  restoreOrder: (order: Order) => void;
 };
 
 const emptyOrder: Order = { portion: "lagom", extras: [], placed: false };
@@ -115,14 +119,17 @@ function keep(s: State): Partial<State> {
 }
 
 export function OrderProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<State>(initialState);
+  // Demoklockan ställs innan sidorna räknar tid, så att nedräkningar stämmer direkt efter en omladdning.
+  const [state, setState] = useState<State>(() => {
+    initDemoClock();
+    return initialState;
+  });
   const [hydrated, setHydrated] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
   // Sparas i sessionStorage så att en omladdning av sidan inte tappar beställningen.
   useEffect(() => {
-    initDemoClock();
     try {
       const saved = sessionStorage.getItem(STORAGE_KEY);
       if (saved) setState({ ...initialState, ...JSON.parse(saved) });
@@ -255,6 +262,24 @@ export function OrderProvider({ children }: { children: ReactNode }) {
         return { ...s, order: { ...s.order, placed: false }, orders: { ...s.orders, [id]: others } };
       }),
     placedOrders: pnr ? state.orders[pnr] ?? [] : [],
+    cancelOrder: (order) =>
+      setState((s) => {
+        if (!s.patient) return s;
+        const id = s.patient.personnummer;
+        const same = (o: Order) => o.occasion === order.occasion && o.date === order.date;
+        return {
+          ...s,
+          order: same(s.order) ? emptyOrder : s.order,
+          orders: { ...s.orders, [id]: (s.orders[id] ?? []).filter((o) => !same(o)) },
+        };
+      }),
+    restoreOrder: (order) =>
+      setState((s) => {
+        if (!s.patient) return s;
+        const id = s.patient.personnummer;
+        const others = (s.orders[id] ?? []).filter((o) => !(o.occasion === order.occasion && o.date === order.date));
+        return { ...s, orders: { ...s.orders, [id]: [...others, order] } };
+      }),
     clearOrder: () => setState((s) => ({ ...s, order: emptyOrder })),
   };
 

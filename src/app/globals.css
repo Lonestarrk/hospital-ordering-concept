@@ -301,6 +301,57 @@ button:focus-visible {
   flex: none;
 }
 
+.order-lock {
+  justify-self: start;
+  margin-top: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+  font-size: 0.8em;
+  font-weight: 700;
+}
+
+.order-lock.urgent {
+  background: #fff1d6;
+  color: #7a4b00;
+}
+
+.order-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: none;
+}
+
+.order-change {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0;
+  line-height: 1.2;
+}
+
+.order-change-until {
+  font-size: 0.75em;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.order-cancel {
+  color: var(--accent);
+}
+
+.order-cancelled {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+
 .order-rated {
   flex: none;
   color: var(--text-muted);
@@ -316,6 +367,35 @@ button:focus-visible {
   color: #fff;
   font-size: 0.8em;
   font-weight: 700;
+}
+
+/* Skugga: en kommande måltid som inte är beställd än. */
+.order-row.is-ghost {
+  background: transparent;
+  border: 2px dashed var(--border);
+}
+
+.order-ghost-icon {
+  display: grid;
+  place-items: center;
+  font-size: 34px;
+  background: var(--surface-2);
+  opacity: 0.7;
+}
+
+.order-ghost-action {
+  border-color: var(--primary);
+  color: var(--primary-strong);
+}
+
+.order-ghost-text {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.order-row.is-ghost .countdown {
+  justify-self: start;
+  margin-top: 4px;
 }
 
 /* Måltider som har passerat gråas ut, men omdömesknappen syns tydligt. */
@@ -1494,7 +1574,8 @@ button:focus-visible {
   .progress { overflow-x: auto; }
   .diet-about { margin-inline-start: 0; }
   .order-row { flex-wrap: wrap; }
-  .order-action { width: 100%; }
+  .order-actions, .order-action { width: 100%; }
+  .order-actions .order-action { flex: 1; width: auto; }
   .tool { padding: 0 12px; }
   .segmented { grid-template-columns: 1fr; }
   .segmented-4 { grid-template-columns: 1fr 1fr; }
