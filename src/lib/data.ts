@@ -168,3 +168,50 @@ export const drinks: Drink[] = [
 export function drinkSuits(drink: Drink, diet: DietTag[]): boolean {
   return diet.every((tag) => drink.suits.includes(tag));
 }
+
+// ---------- Omdömen i efterhand ----------
+
+export type Rating = "upp" | "ner";
+export type Eaten = "allt" | "halften" | "lite" | "inget";
+
+export type ServedMeal = {
+  id: string;
+  dishId: string;
+  /** T.ex. "Gårdagens middag". */
+  label: string;
+  rating?: Rating;
+  reasons: string[];
+  eaten?: Eaten;
+  /** Ingrid valde att hoppa över omdömet. */
+  skipped?: boolean;
+};
+
+export const reasonsUp: { name: string; voiceWords: string[] }[] = [
+  { name: "God smak", voiceWords: ["smak*", "god", "gott"] },
+  { name: "Lagom portion", voiceWords: ["lagom"] },
+  { name: "Varm och fin", voiceWords: ["varm*"] },
+  { name: "Som hemma", voiceWords: ["hemma"] },
+];
+
+export const reasonsDown: { name: string; voiceWords: string[]; tellStaff?: boolean }[] = [
+  { name: "För kall", voiceWords: ["kall*"] },
+  { name: "För salt", voiceWords: ["salt*"] },
+  { name: "För torr", voiceWords: ["torr*"] },
+  { name: "För stor portion", voiceWords: ["för stor", "för mycket"] },
+  { name: "Svårt att tugga", voiceWords: ["tugga", "seg*", "hård*"], tellStaff: true },
+  { name: "Smakade inte", voiceWords: ["smakade inte", "äcklig*", "inte god*"] },
+];
+
+export const eatenOptions: { id: Eaten; name: string; voiceWords: string[] }[] = [
+  { id: "allt", name: "Allt", voiceWords: ["allt", "alltihop", "upp allt"] },
+  { id: "halften", name: "Hälften", voiceWords: ["hälften", "halva"] },
+  { id: "lite", name: "Lite", voiceWords: ["lite", "några tuggor"] },
+  { id: "inget", name: "Inget", voiceWords: ["inget", "ingenting"] },
+];
+
+/** Syntetisk historik: måltider Ingrid redan har fått serverade. */
+export const servedHistory: Record<string, ServedMeal[]> = {
+  "194501202388": [
+    { id: "middag-igar", dishId: "kalvspett", label: "Gårdagens middag", reasons: [] },
+  ],
+};

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import type { Patient, Portion } from "@/lib/data";
+import { servedHistory, type Patient, type Portion, type ServedMeal } from "@/lib/data";
 
 export type Order = {
   dishId?: string;
@@ -20,6 +20,8 @@ type State = {
   textSize: TextSize;
   /** Ljudläge: sidor läses upp automatiskt och val bekräftas med ljud. */
   soundOn: boolean;
+  /** Serverade måltider per personnummer – sparas även när man loggar ut. */
+  history: Record<string, ServedMeal[]>;
 };
 
 type OrderContextValue = State & {
@@ -29,10 +31,14 @@ type OrderContextValue = State & {
   updateOrder: (patch: Partial<Order>) => void;
   toggleTextSize: () => void;
   setSoundOn: (on: boolean) => void;
+  /** Patientens serverade måltider, nyast först. */
+  meals: ServedMeal[];
+  addServedMeal: (meal: ServedMeal) => void;
+  updateMeal: (id: string, patch: Partial<ServedMeal>) => void;
 };
 
 const emptyOrder: Order = { portion: "lagom", extras: [], placed: false };
-const initialState: State = { patient: null, order: emptyOrder, textSize: "normal", soundOn: false };
+const initialState: State = { patient: null, order: emptyOrder, textSize: "normal", soundOn: false, history: {} };
 const STORAGE_KEY = "ingrid-order";
 
 const OrderContext = createContext<OrderContextValue | null>(null);
@@ -65,12 +71,35 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   const value: OrderContextValue = {
     ...state,
     hydrated,
-    login: (patient) => setState((s) => ({ ...s, patient, order: emptyOrder })),
-    logout: () => setState((s) => ({ ...initialState, textSize: s.textSize, soundOn: s.soundOn })),
+    login: (patient) =>
+      setState((s) => ({
+        ...s,
+        patient,
+        order: emptyOrder,
+        history: s.history[patient.personnummer]
+          ? s.history
+          : { ...s.history, [patient.personnummer]: servedHistory[patient.personnummer] ?? [] },
+      })),
+    logout: () =>
+      setState((s) => ({ ...initialState, textSize: s.textSize, soundOn: s.soundOn, history: s.history })),
     updateOrder: (patch) => setState((s) => ({ ...s, order: { ...s.order, ...patch } })),
     toggleTextSize: () =>
       setState((s) => ({ ...s, textSize: s.textSize === "normal" ? "stor" : "normal" })),
     setSoundOn: (soundOn) => setState((s) => ({ ...s, soundOn })),
+    meals: state.patient ? state.history[state.patient.personnummer] ?? [] : [],
+    addServedMeal: (meal) =>
+      setState((s) => {
+        if (!s.patient) return s;
+        const pnr = s.patient.personnummer;
+        return { ...s, history: { ...s.history, [pnr]: [meal, ...(s.history[pnr] ?? [])] } };
+      }),
+    updateMeal: (id, patch) =>
+      setState((s) => {
+        if (!s.patient) return s;
+        const pnr = s.patient.personnummer;
+        const meals = (s.history[pnr] ?? []).map((m) => (m.id === id ? { ...m, ...patch } : m));
+        return { ...s, history: { ...s.history, [pnr]: meals } };
+      }),
   };
 
   return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>;

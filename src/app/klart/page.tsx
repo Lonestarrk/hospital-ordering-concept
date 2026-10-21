@@ -8,7 +8,7 @@ import type { VoiceCommand } from "@/lib/voice";
 
 export default function DonePage() {
   const router = useRouter();
-  const { patient, order, updateOrder, logout } = useRequirePatient();
+  const { patient, order, updateOrder, logout, addServedMeal } = useRequirePatient();
   if (!patient) return null;
 
   const dish = dishes.find((d) => d.id === order.dishId);
@@ -18,6 +18,13 @@ export default function DonePage() {
   const done = () => {
     logout();
     router.replace("/");
+  };
+  // Demo: hoppa fram till efter måltiden och ge omdöme på det Ingrid just beställde.
+  const simulateServed = () => {
+    if (!order.dishId) return;
+    const id = `lunch-${Date.now()}`;
+    addServedMeal({ id, dishId: order.dishId, label: "Dagens lunch", reasons: [] });
+    router.push(`/omdome?id=${id}&sen=klart`);
   };
   const change = () => {
     updateOrder({ placed: false });
@@ -67,6 +74,9 @@ export default function DonePage() {
 
         <p className="muted">Du kan ändra dig fram till kl {meal.orderBefore}.</p>
         <p className="done-wish">Smaklig måltid! 🌷</p>
+        <button className="demo-link" onClick={simulateServed}>
+          Demo: maten har serverats – ge tummen upp eller ner
+        </button>
       </div>
     </Screen>
   );

@@ -8,14 +8,18 @@ import type { VoiceCommand } from "@/lib/voice";
 
 export default function WelcomePage() {
   const router = useRouter();
-  const { patient, logout } = useRequirePatient();
+  const { patient, logout, meals } = useRequirePatient();
   if (!patient) return null;
+
+  // Finns en serverad måltid utan omdöme frågar vi om den först (går att hoppa över).
+  const pending = meals.find((m) => !m.rating && !m.skipped);
+  const proceed = () => router.push(pending ? `/omdome?id=${pending.id}` : "/meny");
 
   const diets = patient.diet.map((d) => dietLabels[d]);
   const notMe = () => { logout(); router.replace("/"); };
   const commands: VoiceCommand[] = [
     { phrases: ["nej", "inte jag", "fel"], action: notMe },
-    { phrases: ["ja", "det är jag", "stämmer", "fortsätt", "japp", "absolut"], action: () => router.push("/meny") },
+    { phrases: ["ja", "det är jag", "stämmer", "fortsätt", "japp", "absolut"], action: proceed },
   ];
   const allergies = patient.allergies.length > 0 ? patient.allergies.join(" och ") : "inga";
 
@@ -29,7 +33,7 @@ export default function WelcomePage() {
           <button className="btn btn-ghost" onClick={notMe}>
             Nej, det är inte jag
           </button>
-          <button className="btn btn-primary btn-large" onClick={() => router.push("/meny")}>
+          <button className="btn btn-primary btn-large" onClick={proceed}>
             Ja, det är jag →
           </button>
         </>

@@ -24,9 +24,25 @@ Logga in med Ingrids **syntetiska** personnummer **19450120-2388** (eller tryck 
 | 5 | `/dryck` | Dryck som passar kosten. |
 | 6 | `/sammanfattning` | "Stämmer det här?" – allt går att ändra. |
 | 7 | `/klart` | Bekräftelse med tid: "Maten kommer till ditt rum ca kl 12:00". |
+| – | `/omdome` | **Omdöme i efterhand:** 👍 eller 👎, valfria skäl och "Hur mycket åt du?". |
 
 Hjälpmedel på varje sida: **Läs upp / Ljud på**, **Större text** och **Hjälp**, som
 kallar på personalen.
+
+## Omdöme i efterhand – tummen upp eller ner
+
+- **Efter måltiden.** Nästa gång Ingrid loggar in frågar appen först "Hur smakade
+  gårdagens middag?". Hon kan svara med 👍 eller 👎, eller hoppa över.
+- **Valfria detaljer.** Hon kan välja skäl som "Som hemma", "För kall" eller "Svårt att
+  tugga", och svara på *Hur mycket åt du?* (allt, hälften, lite, inget). Det sista ger
+  vården tidiga signaler om undernäring.
+- **Appen minns.** Menyn visar "👍 Du gillade den" eller "👎 Inte din favorit" vid rätter
+  hon har betygsatt.
+- **Människan beslutar.** Väljer Ingrid "Svårt att tugga" meddelas personalen, men kosten
+  ändras aldrig automatiskt.
+- **Röst.** Hon kan säga "tummen upp", "för kall", "jag åt allt" och "skicka".
+- **Demo.** På bekräftelsesidan finns länken *"Demo: maten har serverats"*, som hoppar
+  fram i tiden så att man kan betygsätta det man just beställde.
 
 ## Ljud och röst
 
@@ -44,6 +60,7 @@ kallar på personalen.
 | Dryck | "kaffe", "vatten", "mjölk" |
 | Sammanfattning | "ja, beställ" · "ändra maten" · "ändra drycken" |
 | Klart | "klar" · "ändra" |
+| Omdöme | "tummen upp" / "tummen ner" · "för kall", "svårt att tugga" · "jag åt allt" · "skicka" · "hoppa över" |
 | Alla sidor | "hjälp" · "läs upp" / "upprepa" · "större text" · "tyst" |
 
 Rösten fungerar i Chrome, Edge och Safari via webbläsarens inbyggda Web Speech API. Det
@@ -102,4 +119,5 @@ Vill ni byta en bild? Lägg en ny fil i `public/mat/` och ändra `image` i `src/
 | ![Inloggning](docs/skarmbilder/1-login.png) | ![Välkommen](docs/skarmbilder/2-valkommen.png) |
 | ![Meny](docs/skarmbilder/3-meny.png) | ![Rätt](docs/skarmbilder/4-ratt.png) |
 | ![Sammanfattning](docs/skarmbilder/6-sammanfattning.png) | ![Klart](docs/skarmbilder/7-klart.png) |
-| ![Röstkommando](docs/skarmbilder/8-rost.png) | |
+| ![Röstkommando](docs/skarmbilder/8-rost.png) | ![Omdöme](docs/skarmbilder/9-omdome.png) |
+| ![Tack för omdömet](docs/skarmbilder/10-omdome-tack.png) | ![Menyn minns](docs/skarmbilder/11-meny-minns.png) |

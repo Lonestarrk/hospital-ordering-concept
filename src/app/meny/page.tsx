@@ -15,7 +15,7 @@ const ORDINALS = [
 
 export default function MenuPage() {
   const router = useRouter();
-  const { patient, order, updateOrder } = useRequirePatient();
+  const { patient, order, updateOrder, meals } = useRequirePatient();
   const announce = useAnnounce();
   if (!patient) return null;
 
@@ -23,6 +23,8 @@ export default function MenuPage() {
   const hiddenCount = dishes.length - suitable.length;
 
   const hidden = dishes.filter((d) => !suitable.includes(d));
+  // Senaste omdömet per rätt, så att menyn kommer ihåg vad Ingrid tycker om.
+  const lastRating = (dishId: string) => meals.find((m) => m.dishId === dishId && m.rating)?.rating;
 
   const choose = (id: string) => {
     updateOrder({ dishId: id });
@@ -66,7 +68,11 @@ export default function MenuPage() {
           >
             <img className="dish-image" src={dish.image} alt={dish.imageAlt} />
             <div className="dish-body">
-              {dish.label && <span className="dish-label">{dish.label}</span>}
+              <div className="dish-badges">
+                {dish.label && <span className="dish-label">{dish.label}</span>}
+                {lastRating(dish.id) === "upp" && <span className="dish-label dish-liked">👍 Du gillade den</span>}
+                {lastRating(dish.id) === "ner" && <span className="dish-label dish-disliked">👎 Inte din favorit</span>}
+              </div>
               <h2>{dish.name}</h2>
               <p>{dish.description}</p>
               <span className="dish-ok">✓ Passar dig</span>
