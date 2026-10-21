@@ -9,12 +9,12 @@ import type { VoiceCommand } from "@/lib/voice";
 
 export default function WelcomePage() {
   const router = useRouter();
-  const { patient, logout, meals, isOnboarded, draft, resumeDraft, discardDraft } = useRequirePatient();
+  const { patient, logout, meals, draft, resumeDraft, discardDraft } = useRequirePatient();
   const { t, tm } = useT();
   const w = t.welcome;
   if (!patient) return null;
 
-  const proceed = () => router.push(pathAfterWelcome(isOnboarded, meals));
+  const proceed = () => router.push(pathAfterWelcome(meals));
   const draftDish = dishes.find((d) => d.id === draft?.order.dishId);
   const resume = () => {
     const path = resumeDraft();

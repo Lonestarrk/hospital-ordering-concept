@@ -142,6 +142,7 @@ function Feedback() {
           <p className="eyebrow">{tm.word(meal.label)}</p>
           <h1>{f.howWas}</h1>
           <p className="lead">{dishName}</p>
+          <p className="muted">{f.hint}</p>
         </div>
       </div>
 

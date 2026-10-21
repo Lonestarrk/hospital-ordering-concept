@@ -29,8 +29,6 @@ type State = {
   history: Record<string, ServedMeal[]>;
   /** Smakprofil per personnummer – sparas även när man loggar ut. */
   tastes: Record<string, TasteProfile>;
-  /** Patienter som har sett introduktionen. */
-  onboarded: Record<string, boolean>;
   /** Påbörjade val per personnummer, så att man kan fortsätta där man var. */
   drafts: Record<string, Draft>;
 };
@@ -51,9 +49,6 @@ type OrderContextValue = State & {
   taste: TasteProfile;
   hasTaste: boolean;
   setTaste: (taste: TasteProfile) => void;
-  /** Har patienten sett introduktionen? */
-  isOnboarded: boolean;
-  markOnboarded: () => void;
   /** Påbörjat val från förra gången (finns tills hon fortsätter eller börjar om). */
   draft: Draft | undefined;
   resumeDraft: () => string | undefined;
@@ -71,7 +66,6 @@ const initialState: State = {
   lang: "sv",
   history: {},
   tastes: {},
-  onboarded: {},
   drafts: {},
 };
 const STORAGE_KEY = "ingrid-order";
@@ -88,7 +82,6 @@ function keep(s: State): Partial<State> {
     lang: s.lang,
     history: s.history,
     tastes: s.tastes,
-    onboarded: s.onboarded,
     drafts: s.drafts,
   };
 }
@@ -195,9 +188,6 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     hasTaste: !!pnr && !!state.tastes[pnr],
     setTaste: (taste) =>
       setState((s) => (s.patient ? { ...s, tastes: { ...s.tastes, [s.patient.personnummer]: taste } } : s)),
-    isOnboarded: !!pnr && !!state.onboarded[pnr],
-    markOnboarded: () =>
-      setState((s) => (s.patient ? { ...s, onboarded: { ...s.onboarded, [s.patient.personnummer]: true } } : s)),
     draft: pnr ? state.drafts[pnr] : undefined,
     resumeDraft: () => {
       const draft = pnr ? state.drafts[pnr] : undefined;

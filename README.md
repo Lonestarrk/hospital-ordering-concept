@@ -9,7 +9,7 @@ till bekräftad måltid.
 | Leverans | Var |
 |---|---|
 | 1. Produkten – en komplett resa, surfplattan först | Den här appen (`npm run dev`) |
-| 2. Introduktionen | `/intro` – visas automatiskt första gången, se [beslut och bedömning](docs/beslut-och-bedomning.md#introduktion-för-nya-användare-15-p) |
+| 2. Introduktionen | Ingen separat guide – varje sida förklarar sig själv, se [beslut och bedömning](docs/beslut-och-bedomning.md#introduktion-för-nya-användare-15-p) |
 | 3. Lanseringen | [60-sekundersvideo](docs/lansering/produktvideo.mp4) · [videomanus](docs/lansering/videomanus.md) · [kom igång-guide (PDF)](docs/lansering/kom-igang.pdf) |
 | Underlag för juryn | [Beslut och bedömning](docs/beslut-och-bedomning.md): skyddsräcken, de sex principerna, Cagans fyra risker, testprotokoll |
 
@@ -29,7 +29,6 @@ Logga in med Ingrids **syntetiska** personnummer **19480302-2328** (eller tryck 
 |---|---|---|
 | 1 | `/` | **Språkval** (svenska, English, العربية) och inloggning med personnummer på ett stort sifferblock. Numret kontrolleras (datum och kontrollsiffra) och felen förklaras i klartext. |
 | 2 | `/valkommen` | "Hej Ingrid! Stämmer det här?" – namn, rum, säng, kost och allergier. Har hon ett påbörjat val visas *Fortsätt där jag var*. |
-| – | `/intro` | **Introduktion** i tre steg första gången: titta och välj, du kan inte välja fel, hjälp finns alltid här. |
 | 3 | `/meny` | **Foton på maten.** Bara rätter som passar hennes kost och allergier visas, och en rätt är föreslagen med skälet utskrivet. Det står hur många som är dolda och varför. |
 | 4 | `/meny/[id]` | Allergener, portionsstorlek ("Hur hungrig är du?") och önskemål som "Skuren i små bitar". |
 | 5 | `/dryck` | Dryck som passar kosten. |
@@ -38,8 +37,9 @@ Logga in med Ingrids **syntetiska** personnummer **19480302-2328** (eller tryck 
 | – | `/omdome` | **Omdöme i efterhand:** 👍 eller 👎, valfria skäl och "Hur mycket åt du?". |
 | – | `/min-smak` | **Min smak:** 👍 eller 👎 på olika sorters mat och ❤️ på önskerätter. |
 
-Hjälpmedel på varje sida: **Språk**, **Läs upp / Ljud på**, **Större text** och
-**Hjälp**, som kallar på personalen.
+Hjälpmedel på varje sida: **Språk**, **Läs upp / Ljud på** och **Större text**. Appen har
+ingen egen hjälpknapp, eftersom rummet redan har larmknappar. Där det behövs hänvisar
+texten till *larmknappen vid sängen*.
 
 **Ångrat sig?** Knappen **✕ Avbryt** uppe till vänster finns på alla sidor efter
 inloggningen, utom på bekräftelsen där beställningen redan är skickad. Avbryt sker
@@ -47,9 +47,9 @@ direkt, utan "Är du säker?". Inloggningen visar: "Du har avslutat. Inget är b
 Det du hade valt är sparat." och knappen **Ångra – fortsätt där jag var**, som gäller i
 2 minuter. Med rösten räcker det att säga "avbryt".
 
-**Hjälp** skickas direkt till Anna, Ingrids sjuksköterska idag, med en ångra-knapp. Det
-står vad som händer om ingen kommer: efter 5 minuter går signalen till hela avdelningen.
-Om Ingrid åt lite eller hade svårt att tugga får Anna veta det på samma sätt.
+Om Ingrid åt lite eller hade svårt att tugga får **Anna**, hennes sjuksköterska idag, veta
+det. Det står vad Anna gör och vad som händer om ingen hinner titta på det: före kl 15
+går det vidare till dietisten.
 
 **Avbruten mitt i?** Plattan loggar ut efter 10 minuter utan aktivitet så att ingen annan
 ser patientens uppgifter, men valet sparas. Vid nästa inloggning kan hon fortsätta exakt
@@ -112,7 +112,7 @@ prototypen – där gäller principen att systemet föreslår och människan bes
 | Klart | "klar" · "ändra" |
 | Omdöme | "tummen upp" / "tummen ner" · "för kall", "svårt att tugga" · "jag åt allt" · "skicka" · "hoppa över" |
 | Min smak | "jag gillar fisk" · "jag tycker inte om kryddig mat" · "köttbullar" · "skicka" |
-| Alla sidor | "hjälp" · "läs upp" / "upprepa" · "större text" · "tyst" · "avbryt" |
+| Alla sidor | "läs upp" / "upprepa" · "större text" · "tyst" · "avbryt" |
 
 **Integritet (skyddsräcke 2).** Uppläsningen sker i enheten. Taligenkänningen används
 **bara** när webbläsaren kan köra den i plattan (`processLocally`, med en svensk modell som
@@ -131,7 +131,7 @@ mikrofon kan man prova kommandona i konsolen:
 | Allergener och ordinerad kost ändras aldrig automatiskt | Kost och allergier kommer från vården och visas bara. Appen filtrerar menyn men kan aldrig ändra en ordination. Ingrid uppmanas be personalen om något inte stämmer. Rätter som inte passar går inte att välja, inte ens via direktlänk. |
 | Patientdata går aldrig okontrollerat till en AI-modell | Prototypen anropar ingen AI-tjänst. Röst tolkas bara i plattan. All data finns lokalt i webbläsaren (sessionStorage). |
 | Bara syntetisk data | Ingrid är påhittad. Personnumret är ett officiellt testpersonnummer från Skatteverket. |
-| Patientskärmar ska fungera för alla | Svenska, engelska och arabiska, stora tryckytor (≥ 56 px), tydliga kontraster, större text, uppläsning på valt språk, hjälpknapp, enkelt språk, ett beslut per skärm. |
+| Patientskärmar ska fungera för alla | Svenska, engelska och arabiska, stora tryckytor (≥ 56 px), tydliga kontraster, större text, uppläsning på valt språk, hänvisning till larmknappen, enkelt språk, ett beslut per skärm. |
 | Surfplattan först | Layouten är byggd för liggande surfplatta och fungerar även på mobil. |
 
 > **Obs:** Att logga in med bara personnummer räcker inte i skarp drift. Prototypen
@@ -174,6 +174,5 @@ Vill ni byta en bild? Lägg en ny fil i `public/mat/` och ändra `image` i `src/
 | ![Röstkommando](docs/skarmbilder/8-rost.png) | ![Omdöme](docs/skarmbilder/9-omdome.png) |
 | ![Tack för omdömet](docs/skarmbilder/10-omdome-tack.png) | ![Menyn minns](docs/skarmbilder/11-meny-minns.png) |
 | ![Min smak](docs/skarmbilder/12-min-smak.png) | ![Menyn efter smak](docs/skarmbilder/13-meny-smak.png) |
-| ![Introduktion](docs/skarmbilder/15-intro.png) | ![Avbryt med ångra](docs/skarmbilder/18-avbryt.png) |
-| ![Hjälp till Anna](docs/skarmbilder/19-hjalp.png) | ![Fel med en handling](docs/skarmbilder/20-fel-med-handling.png) |
+| ![Avbryt med ångra](docs/skarmbilder/18-avbryt.png) | ![Fel med en handling](docs/skarmbilder/20-fel-med-handling.png) |
 | ![Fortsätt där du var](docs/skarmbilder/16-fortsatt.png) | ![Arabiska](docs/skarmbilder/17-arabiska.png) |

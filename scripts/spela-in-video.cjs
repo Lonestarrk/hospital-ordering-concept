@@ -41,40 +41,36 @@ const BASE = 'http://localhost:3129';
   for (const d of '194803022328') { await tap(p.locator('.key', { hasText: new RegExp('^' + d + '$') })); await wait(120); }
   await wait(500); await tap(p.locator('.key-go'));
   await p.waitForURL('**/valkommen'); await wait(300);
-  // 12–18 s: välkommen
+  // 12–19 s: välkommen
   await cap('Appen känner redan hennes kost och allergier. Bara personalen kan ändra dem.');
-  await wait(4500); await tap(p.locator('.footer .btn-primary'));
-  // 18–26 s: introduktion
-  await p.waitForURL('**/intro'); await cap('Första gången: en kort introduktion. Hjälp finns alltid i hörnet.');
-  await wait(2200); await tap(p.locator('.footer .btn-primary')); await wait(1800); await tap(p.locator('.footer .btn-primary')); await wait(2500);
-  await tap(p.locator('.footer .btn-primary'));
-  // 26–31 s: omdöme om gårdagens middag
+  await wait(5500); await tap(p.locator('.footer .btn-primary'));
+  // 19–25 s: omdöme om gårdagens middag
   await p.waitForURL('**/omdome**'); await cap('Hur smakade gårdagens middag? Ett tryck – köket får veta.');
   await wait(1200); await tap(p.locator('.thumb-up')); await wait(800); await tap(p.locator('.segment', { hasText: 'Allt' })); await wait(900);
   await tap(p.locator('.footer .btn-primary')); await wait(900); await tap(p.locator('.footer .btn-primary'));
-  // 31–39 s: menyn
+  // 25–34 s: menyn
   await p.waitForURL('**/meny'); await p.waitForLoadState('networkidle');
   await cap('Bilder på maten. Bara rätter som passar henne – och ett förslag med skälet.');
-  await wait(4200); await p.mouse.wheel(0, 300); await wait(1200); await p.mouse.wheel(0, -300); await wait(600);
+  await wait(5200); await p.mouse.wheel(0, 300); await wait(2200); await p.mouse.wheel(0, -300); await wait(1200);
   await tap(p.locator('.dish', { hasText: 'Ugnsbakad lax' }));
-  // 39–46 s: rätten
+  // 34–41 s: rätten
   await p.waitForURL('**/meny/lax'); await p.waitForLoadState('networkidle');
   await cap('Lite aptit idag? Liten portion – skuren i små bitar.');
-  await wait(1200); await tap(p.locator('.segment', { hasText: 'Liten' })); await wait(900);
+  await wait(2200); await tap(p.locator('.segment', { hasText: 'Liten' })); await wait(900);
   await tap(p.locator('.chip', { hasText: 'Skuren i små bitar' })); await wait(1500);
   await tap(p.locator('.footer .btn-primary'));
-  // 46–51 s: dryck och sammanfattning
+  // 41–46 s: dryck och sammanfattning
   await p.waitForURL('**/dryck'); await cap('Något att dricka – och allt syns innan hon beställer.');
   await wait(1200); await tap(p.locator('.drink', { hasText: 'Kaffe' }));
   await p.waitForURL('**/sammanfattning'); await wait(2200); await tap(p.locator('.footer .btn-primary'));
-  // 51–55 s: klart
+  // 46–50 s: klart
   await p.waitForURL('**/klart'); await cap('Klart! Maten kommer till rummet kl 12:00.');
-  await wait(3200);
-  // 55–58 s: för alla
+  await wait(4200);
+  // 50–52 s: för alla
   await cap('Svenska · English · العربية – uppläsning och större text för alla.');
   await tap(p.locator('.topbar-actions .tool').first()); await wait(600);
   await tap(p.locator('.dialog .lang-option').nth(2)); await wait(1600);
-  // 58–62 s: slutkort
+  // 52–56 s: slutkort
   await card('<div><h1>Måltider</h1><p>Mat hon vill äta – vald av henne själv.</p><p>Systemet föreslår, människan bestämmer.</p></div>');
   await wait(4000);
   await ctx.close(); await b.close();

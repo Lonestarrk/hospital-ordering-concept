@@ -17,7 +17,6 @@ const sv = {
   soundOn: "Ljud på",
   biggerText: "Större text",
   smallerText: "Mindre text",
-  help: "Hjälp",
   language: "Språk",
   chooseLanguage: "Välj språk",
   steps: ["Mat", "Dryck", "Kolla", "Klart"],
@@ -35,16 +34,6 @@ const sv = {
     saved: "Det du hade valt är sparat.",
     undo: "Ångra – fortsätt där jag var",
   },
-  helpDialog: {
-    title: (nurse: string) => `${nurse} har fått din signal`,
-    body: (nurse: string) => `${nurse}, din sjuksköterska idag, kommer till dig så snart hon kan.`,
-    escalation: "Kommer ingen inom 5 minuter går signalen till alla på avdelningen.",
-    genericTitle: "Personalen har fått din signal",
-    genericBody: "Någon kommer till dig så snart de kan.",
-    ok: "Okej",
-    undo: "Ångra – jag klarar mig själv",
-    speak: (nurse: string) => `${nurse} har fått din signal och kommer så snart hon kan.`,
-  },
   login: {
     speak:
       "Hej och välkommen! Här beställer du din mat. Skriv ditt personnummer med siffrorna på skärmen. Först år, månad och dag, sedan de fyra sista siffrorna. Tryck sedan på Fortsätt.",
@@ -52,7 +41,8 @@ const sv = {
     title: "Här beställer du din mat",
     lead: "Skriv ditt personnummer så vet vi vem du är – och vilken mat som passar dig.",
     reassure: ["Det tar ungefär två minuter", "Du kan inte göra fel – allt går att ändra"],
-    reassureHelp: ["Behöver du hjälp? Tryck på ", "Hjälp", " uppe i hörnet"],
+    reassureHelp: ["Behöver du hjälp? Använd ", "larmknappen", " vid sängen"],
+    reassureTools: "Vill du ha texten uppläst eller större? Knapparna finns uppe i hörnet.",
     pnrLabel: "Ditt personnummer",
     slots: "ÅÅÅÅMMDD-XXXX",
     pnrHint: "År, månad, dag – och fyra sista siffrorna",
@@ -64,9 +54,9 @@ const sv = {
       length: "Numret behöver 12 siffror: år, månad, dag och fyra sista siffror.",
       date: "Födelsedatumet ser inte rätt ut. Kontrollera de första åtta siffrorna.",
       checksum: "Numret stämmer inte riktigt. Kontrollera de fyra sista siffrorna.",
-      notFound: "Vi hittar inte numret på din avdelning. Kontrollera siffrorna eller tryck på Hjälp.",
+      notFound: "Vi hittar inte numret på din avdelning. Skriv det igen – eller använd larmknappen vid sängen.",
     },
-    errorActions: { date: "Börja om", checksum: "Rätta de fyra sista siffrorna", notFound: "Be personalen om hjälp" },
+    errorActions: { date: "Börja om", checksum: "Rätta de fyra sista siffrorna", notFound: "Skriv numret igen" },
   },
   welcome: {
     speak: (p: { name: string; full: string; place: string; diets: string; allergies: string }) =>
@@ -79,7 +69,7 @@ const sv = {
     careBody:
       "Vårdpersonalen har registrerat din kost och dina allergier. Du ser bara mat som passar dig – så du kan välja fritt utan att oroa dig.",
     allergyFree: (a: string) => `Utan ${a}`,
-    careNote: ["Stämmer något inte? Tryck på ", "Hjälp", ". Bara personalen kan ändra din kost och dina allergier."],
+    careNote: ["Stämmer något inte? Säg till personalen eller använd ", "larmknappen", ". Bara personalen kan ändra din kost och dina allergier."],
     today: (meal: string, time: string) => `Idag beställer du ${meal} som serveras kl ${time}.`,
     no: "Nej, det är inte jag",
     yes: "Ja, det är jag →",
@@ -89,23 +79,6 @@ const sv = {
     resume: "Fortsätt där jag var →",
     restart: "Börja om",
     resumeSpeak: (dish: string) => `Välkommen tillbaka! Du hade börjat välja ${dish}. Tryck på Fortsätt där jag var.`,
-  },
-  intro: {
-    speak: [
-      "Här väljer du din mat. Titta på bilderna och tryck på det du är sugen på. Tryck på Nästa.",
-      "Du kan inte välja fel. Du ser bara mat som passar din kost, och allt går att ändra.",
-      "Uppe i hörnet finns hjälp. Läs upp läser texten högt. Större text gör texten större. Hjälp kallar på personalen. Prova gärna!",
-    ],
-    steps: [
-      { title: "Titta och välj", body: "Bläddra bland bilderna i lugn och ro och tryck på det du är sugen på." },
-      { title: "Du kan inte välja fel", body: "Du ser bara mat som passar din kost och dina allergier. Allt går att ändra fram till kl 10." },
-      { title: "Hjälp finns alltid här", body: "Prova knapparna – de finns uppe i hörnet på varje sida." },
-    ],
-    tryIt: "Prova:",
-    skip: "Hoppa över",
-    next: "Nästa →",
-    start: "Visa maten →",
-    of: (n: number, total: number) => `${n} av ${total}`,
   },
   menu: {
     speak: (meal: string, items: string) =>
@@ -149,6 +122,7 @@ const sv = {
     speak: (p: { drink: string; order: string; time: string }) =>
       `Du valde ${p.drink} att dricka. Så här ser din beställning ut: ${p.order}. Den kommer kl ${p.time}. Stämmer det? Tryck på Beställ.`,
     title: "Stämmer det här?",
+    hint: "Tryck på Ändra om något inte stämmer – annars på Beställ.",
     lead: (meal: string, time: string, place: string) => `${meal} idag kl ${time} till ${place}.`,
     food: "Mat",
     drink: "Dryck",
@@ -179,6 +153,7 @@ const sv = {
     speak: (name: string, label: string, dish: string) =>
       `Hej ${name}! ${label} var ${dish}. Hur smakade det? Tryck på tummen upp eller tummen ner. Du kan också hoppa över.`,
     howWas: "Hur smakade det?",
+    hint: "Tryck på en tumme. Vill du inte svara nu kan du hoppa över.",
     good: "Gott",
     notGood: "Inte så gott",
     whatGood: "Vad var bra?",
@@ -235,7 +210,6 @@ const en: Dict = {
   soundOn: "Sound on",
   biggerText: "Larger text",
   smallerText: "Smaller text",
-  help: "Help",
   language: "Language",
   chooseLanguage: "Choose language",
   steps: ["Food", "Drink", "Check", "Done"],
@@ -253,16 +227,6 @@ const en: Dict = {
     saved: "What you had chosen is saved.",
     undo: "Undo – continue where I was",
   },
-  helpDialog: {
-    title: (nurse) => `${nurse} has received your call`,
-    body: (nurse) => `${nurse}, your nurse today, will come to you as soon as she can.`,
-    escalation: "If nobody comes within 5 minutes, the call goes to everyone on the ward.",
-    genericTitle: "The staff have received your call",
-    genericBody: "Someone will come to you as soon as they can.",
-    ok: "OK",
-    undo: "Undo – I'm fine on my own",
-    speak: (nurse) => `${nurse} has received your call and will come as soon as she can.`,
-  },
   login: {
     speak:
       "Hello and welcome! This is where you order your food. Enter your Swedish personal identity number using the numbers on the screen. First year, month and day, then the last four digits. Then press Continue.",
@@ -270,7 +234,8 @@ const en: Dict = {
     title: "Order your meals here",
     lead: "Enter your personal identity number so we know who you are – and which food suits you.",
     reassure: ["It takes about two minutes", "You can't get it wrong – everything can be changed"],
-    reassureHelp: ["Need help? Press ", "Help", " in the top corner"],
+    reassureHelp: ["Need help? Use the ", "call button", " by your bed"],
+    reassureTools: "Want the text read aloud or larger? The buttons are in the top corner.",
     pnrLabel: "Your personal identity number",
     slots: "YYYYMMDD-XXXX",
     pnrHint: "Year, month, day – and the last four digits",
@@ -282,9 +247,9 @@ const en: Dict = {
       length: "The number needs 12 digits: year, month, day and the last four digits.",
       date: "The date of birth doesn't look right. Check the first eight digits.",
       checksum: "The number isn't quite right. Check the last four digits.",
-      notFound: "We can't find this number on your ward. Check the digits or press Help.",
+      notFound: "We can't find this number on your ward. Enter it again – or use the call button by your bed.",
     },
-    errorActions: { date: "Start again", checksum: "Fix the last four digits", notFound: "Ask the staff for help" },
+    errorActions: { date: "Start again", checksum: "Fix the last four digits", notFound: "Enter the number again" },
   },
   welcome: {
     speak: (p) =>
@@ -297,7 +262,7 @@ const en: Dict = {
     careBody:
       "The care staff have registered your diet and allergies. You will only see food that suits you – so you can choose freely without worrying.",
     allergyFree: (a) => `No ${a}`,
-    careNote: ["Something not right? Press ", "Help", ". Only the staff can change your diet and allergies."],
+    careNote: ["Something not right? Tell the staff or use the ", "call button", ". Only the staff can change your diet and allergies."],
     today: (meal, time) => `Today you are ordering ${meal}, served at ${time}.`,
     no: "No, that's not me",
     yes: "Yes, that's me →",
@@ -307,23 +272,6 @@ const en: Dict = {
     resume: "Continue where I was →",
     restart: "Start again",
     resumeSpeak: (dish) => `Welcome back! You had started choosing ${dish}. Press Continue where I was.`,
-  },
-  intro: {
-    speak: [
-      "This is where you choose your food. Look at the pictures and press what you fancy. Press Next.",
-      "You can't choose wrong. You only see food that suits your diet, and everything can be changed.",
-      "Help is in the top corner. Read aloud reads the text out loud. Larger text makes the text bigger. Help calls the staff. Give them a try!",
-    ],
-    steps: [
-      { title: "Look and choose", body: "Take your time looking at the pictures and press what you fancy." },
-      { title: "You can't choose wrong", body: "You only see food that suits your diet and allergies. You can change everything until 10:00." },
-      { title: "Help is always here", body: "Try the buttons – they are in the top corner of every page." },
-    ],
-    tryIt: "Try:",
-    skip: "Skip",
-    next: "Next →",
-    start: "Show the food →",
-    of: (n, total) => `${n} of ${total}`,
   },
   menu: {
     speak: (meal, items) => `What would you like for ${meal}? ${items} Press the food you would like.`,
@@ -366,6 +314,7 @@ const en: Dict = {
     speak: (p) =>
       `You chose ${p.drink} to drink. Here is your order: ${p.order}. It arrives at ${p.time}. Is that right? Press Order.`,
     title: "Is this right?",
+    hint: "Press Change if something isn't right – otherwise press Order.",
     lead: (meal, time, place) => `${meal} today at ${time} to ${place}.`,
     food: "Food",
     drink: "Drink",
@@ -396,6 +345,7 @@ const en: Dict = {
     speak: (name, label, dish) =>
       `Hello ${name}! ${label} was ${dish}. How did it taste? Press thumbs up or thumbs down. You can also skip.`,
     howWas: "How did it taste?",
+    hint: "Press a thumb. If you don't want to answer now, you can skip.",
     good: "Good",
     notGood: "Not so good",
     whatGood: "What was good?",
@@ -450,7 +400,6 @@ const ar: Dict = {
   soundOn: "الصوت مُفعّل",
   biggerText: "نص أكبر",
   smallerText: "نص أصغر",
-  help: "مساعدة",
   language: "اللغة",
   chooseLanguage: "اختر اللغة",
   steps: ["الطعام", "المشروب", "مراجعة", "تم"],
@@ -468,16 +417,6 @@ const ar: Dict = {
     saved: "ما اخترتِه محفوظ.",
     undo: "تراجع – تابعي من حيث توقفتِ",
   },
-  helpDialog: {
-    title: (nurse) => `وصلت إشارتك إلى ${nurse}`,
-    body: (nurse) => `${nurse}، ممرضتك اليوم، ستأتي إليكِ في أقرب وقت ممكن.`,
-    escalation: "إذا لم يأتِ أحد خلال 5 دقائق، تُرسل الإشارة إلى جميع العاملين في القسم.",
-    genericTitle: "وصلت إشارتك إلى الطاقم",
-    genericBody: "سيأتي إليكِ أحدهم في أقرب وقت ممكن.",
-    ok: "حسناً",
-    undo: "تراجع – سأتدبر أمري",
-    speak: (nurse) => `وصلت إشارتك إلى ${nurse} وستأتي في أقرب وقت ممكن.`,
-  },
   login: {
     speak:
       "مرحباً بكِ! هنا تطلبين طعامك. أدخلي رقمك الشخصي باستخدام الأرقام على الشاشة: السنة والشهر واليوم، ثم الأرقام الأربعة الأخيرة. ثم اضغطي على متابعة.",
@@ -485,7 +424,8 @@ const ar: Dict = {
     title: "اطلبي وجباتك من هنا",
     lead: "أدخلي رقمك الشخصي لنعرف من أنتِ – وأي طعام يناسبك.",
     reassure: ["يستغرق الأمر دقيقتين تقريباً", "لا يمكنكِ أن تخطئي – يمكن تغيير كل شيء"],
-    reassureHelp: ["تحتاجين مساعدة؟ اضغطي على ", "مساعدة", " في أعلى الشاشة"],
+    reassureHelp: ["تحتاجين مساعدة؟ استخدمي ", "زر النداء", " بجانب السرير"],
+    reassureTools: "هل تريدين سماع النص أو تكبيره؟ الأزرار في أعلى الشاشة.",
     pnrLabel: "رقمك الشخصي",
     slots: "YYYYMMDD-XXXX",
     pnrHint: "السنة، الشهر، اليوم – والأرقام الأربعة الأخيرة",
@@ -497,9 +437,9 @@ const ar: Dict = {
       length: "يجب أن يتكون الرقم من 12 خانة: السنة والشهر واليوم والأرقام الأربعة الأخيرة.",
       date: "تاريخ الميلاد لا يبدو صحيحاً. تحققي من الخانات الثماني الأولى.",
       checksum: "الرقم غير صحيح تماماً. تحققي من الأرقام الأربعة الأخيرة.",
-      notFound: "لم نجد هذا الرقم في قسمك. تحققي من الأرقام أو اضغطي على مساعدة.",
+      notFound: "لم نجد هذا الرقم في قسمك. أدخليه مرة أخرى – أو استخدمي زر النداء بجانب السرير.",
     },
-    errorActions: { date: "ابدئي من جديد", checksum: "صحّحي الأرقام الأربعة الأخيرة", notFound: "اطلبي المساعدة من الطاقم" },
+    errorActions: { date: "ابدئي من جديد", checksum: "صحّحي الأرقام الأربعة الأخيرة", notFound: "أدخلي الرقم مرة أخرى" },
   },
   welcome: {
     speak: (p) =>
@@ -512,7 +452,7 @@ const ar: Dict = {
     careBody:
       "سجّل الطاقم الطبي نظامك الغذائي وحساسيتك. سترين فقط الطعام المناسب لكِ – فيمكنك الاختيار بحرية دون قلق.",
     allergyFree: (a) => `بدون ${a}`,
-    careNote: ["هناك شيء غير صحيح؟ اضغطي على ", "مساعدة", ". الطاقم فقط يمكنه تغيير نظامك الغذائي وحساسيتك."],
+    careNote: ["هناك شيء غير صحيح؟ أخبري الطاقم أو استخدمي ", "زر النداء", ". الطاقم فقط يمكنه تغيير نظامك الغذائي وحساسيتك."],
     today: (meal, time) => `اليوم تطلبين ${meal} الذي يُقدَّم الساعة ${time}.`,
     no: "لا، هذه ليست أنا",
     yes: "نعم، هذه أنا ←",
@@ -522,23 +462,6 @@ const ar: Dict = {
     resume: "تابعي من حيث توقفتِ ←",
     restart: "ابدئي من جديد",
     resumeSpeak: (dish) => `مرحباً بعودتك! كنتِ قد بدأتِ باختيار ${dish}. اضغطي على تابعي من حيث توقفتِ.`,
-  },
-  intro: {
-    speak: [
-      "هنا تختارين طعامك. انظري إلى الصور واضغطي على ما تشتهين. اضغطي التالي.",
-      "لا يمكنكِ أن تخطئي. سترين فقط الطعام المناسب لنظامك الغذائي، ويمكن تغيير كل شيء.",
-      "المساعدة في أعلى الشاشة. اقرأ بصوت عالٍ يقرأ النص. نص أكبر يكبّر الكتابة. مساعدة تستدعي الطاقم. جرّبيها!",
-    ],
-    steps: [
-      { title: "انظري واختاري", body: "تصفّحي الصور على مهل واضغطي على ما تشتهين." },
-      { title: "لا يمكنكِ أن تخطئي", body: "سترين فقط الطعام المناسب لنظامك الغذائي وحساسيتك. يمكنك تغيير كل شيء حتى الساعة 10:00." },
-      { title: "المساعدة موجودة دائماً", body: "جرّبي الأزرار – إنها في أعلى كل صفحة." },
-    ],
-    tryIt: "جرّبي:",
-    skip: "تخطّي",
-    next: "التالي ←",
-    start: "اعرض الطعام ←",
-    of: (n, total) => `${n} من ${total}`,
   },
   menu: {
     speak: (meal, items) => `ماذا تريدين أن تأكلي في ${meal}؟ ${items} اضغطي على الطعام الذي تريدينه.`,
@@ -581,6 +504,7 @@ const ar: Dict = {
     speak: (p) =>
       `اخترتِ ${p.drink} للشرب. هذا طلبك: ${p.order}. يصل الساعة ${p.time}. هل هذا صحيح؟ اضغطي على اطلب.`,
     title: "هل هذا صحيح؟",
+    hint: "اضغطي على تغيير إذا كان هناك شيء غير صحيح – وإلا فاضغطي على اطلب.",
     lead: (meal, time, place) => `${meal} اليوم الساعة ${time} إلى ${place}.`,
     food: "الطعام",
     drink: "المشروب",
@@ -611,6 +535,7 @@ const ar: Dict = {
     speak: (name, label, dish) =>
       `مرحباً ${name}! ${label} كان ${dish}. كيف كان طعمه؟ اضغطي على إعجاب أو عدم إعجاب. يمكنك أيضاً التخطي.`,
     howWas: "كيف كان الطعم؟",
+    hint: "اضغطي على أحد الإبهامين. إذا لم ترغبي في الإجابة الآن يمكنك التخطي.",
     good: "لذيذ",
     notGood: "ليس جيداً",
     whatGood: "ما الذي كان جيداً؟",

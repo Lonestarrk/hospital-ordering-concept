@@ -32,11 +32,10 @@ förra gången"), och portionen är förvald. Ingrid väljer.
 
 | Signal | Vem får den | Handlingen | Om ingen agerar |
 |---|---|---|---|
-| Ingrid trycker på **Hjälp** | Anna, hennes sjuksköterska idag | Gå till Ingrid | Efter 5 minuter går signalen till alla på avdelningen |
 | Ingrid **åt lite** eller **inget** | Anna | Titta till Ingrid och erbjuda något extra, t.ex. näringsdryck | Före kl 15 går det vidare till avdelningens dietist |
 | Maten var **svår att tugga** | Anna | Bedöma, tillsammans med dietisten, om kosten ska ändras | Före kl 15 går det vidare till dietisten |
 | **Fel i personnumret** | Ingrid | En knapp: *Rätta de fyra sista siffrorna* / *Börja om* | Inget – hon kan inte gå vidare med fel nummer |
-| **Numret hittas inte** | Ingrid → Anna | En knapp: *Be personalen om hjälp* (skickar signalen) | Som Hjälp ovan |
+| **Numret hittas inte** | Ingrid | En knapp: *Skriv numret igen*. Texten hänvisar också till larmknappen vid sängen. | Inget – hon kommer inte vidare med fel nummer |
 
 Inga röda märken eller varningar som Ingrid måste tolka själv. Allergin visas som det som
 redan är gjort ("✓ Utan selleri"), inte som en ⚠-varning.
@@ -48,7 +47,6 @@ redan är gjort ("✓ Utan selleri"), inte som en ⚠-varning.
 - Anna agerar bara på undantagen i tabellen ovan, och varje undantag talar om varför det kom till henne.
 - **Det som går att ångra sker direkt, med en ångra-knapp. Inga bekräftelsedialoger:**
   - **Avbryt:** Ingrid loggas ut direkt. Inloggningen visar "Du har avslutat. Inget är beställt. Det du hade valt är sparat." med knappen **Ångra – fortsätt där jag var**, som gäller i 2 minuter.
-  - **Hjälp:** signalen skickas direkt till Anna, med **Ångra – jag klarar mig själv**.
   - **Beställningen:** kan ändras fram till kl 10:00 via *Ändra beställningen*.
 - **Det som inte går att ångra** (en ändrad kostordination) föreslås bara, och en människa beslutar.
 - **Inga siffror som låtsas vara exakta:** "ca kl 12:00", "ungefär två minuter".
@@ -59,7 +57,6 @@ redan är gjort ("✓ Utan selleri"), inte som en ⚠-varning.
 - **Ja.** Plattan loggar ut efter 10 minuter utan aktivitet, för att skydda hennes uppgifter, men valet sparas. Vid nästa inloggning: "Välkommen tillbaka! Du hade börjat välja Ugnsbakad lax" → *Fortsätt där jag var* tar henne till exakt samma sida.
 - **Varje skärm och läge har en egen adress:**
   - `/meny/lax` för rätten
-  - `/intro?steg=2` för introduktionens steg
   - `/omdome?id=…&skickat=1` för tack-sidan efter omdömet
   - `/min-smak?skickat=1` för tack-sidan efter "Min smak"
 
@@ -73,7 +70,7 @@ redan är gjort ("✓ Utan selleri"), inte som en ⚠-varning.
 |---|---|
 | **Patienterna äter mer** | Andel måltider där patienten åt minst hälften, från *Hur mycket åt du?* efter varje måltid |
 | **Ingen skriver om en kost** | Antal kostordinationer som skrivs in manuellt i beställningen. Målet är noll, eftersom appen läser ordinationen direkt. |
-| **Patienterna klarar sig själva** | Andel beställningar utan hjälp-signal |
+| **Patienterna klarar sig själva** | Andel beställningar som görs utan att personalen behövde hjälpa till |
 
 ### "En chattruta ovanpå ett formulär är inte AI-native"
 
@@ -87,18 +84,29 @@ AI-modell.
 | Risk | Fråga | Vårt svar | Hur vi minskar risken |
 |---|---|---|---|
 | **Värde** | Kommer Ingrid vilja använda det? | Uppgiften säger att patienter tycker om att bläddra bland bilder – valet är en del av dagen, inte friktion. | Bilder på maten, förslag, "Min smak", ingen tidspress. Mäts med tummen upp och hur mycket som äts. |
-| **Användbarhet** | Klarar hon det första gången? | Inloggning med personnummer i stället för BankID, en sak per skärm, introduktion i tre steg. | Test med personer utanför teamet (protokoll nedan), helst 70+. |
+| **Användbarhet** | Klarar hon det första gången? | Inloggning med personnummer i stället för BankID, en sak per skärm, och varje sida säger vad man gör. | Test med personer utanför teamet (protokoll nedan), helst 70+. |
 | **Genomförbarhet** | Går det att bygga på riktigt? | Webbapp som fungerar på vanliga plattor. Kost och allergier antas finnas i sjukhusets system (enligt reglerna). | Ingen AI behövs. Taligenkänning bara i enheten. Integration med kost- och kökssystem är nästa steg. |
 | **Affärsmässig hållbarhet** | Fungerar det för sjukhuset? | Mindre tid för personalen, mindre matsvinn (portionsval, data om vad som äts), nöjdare patienter. | Skyddsräckena inbyggda, pappersmenyn finns kvar som reserv. |
 
 ## Introduktion för nya användare (15 p)
 *Kan en ny användare komma igång utan hjälp?*
 
+**Ingen separat guide.** Ingrid kommer direkt till maten, och varje sida förklarar sig själv.
+En introduktion man måste klicka sig igenom är ännu ett steg innan det hon vill göra.
+
 1. **Språkval** är det första som syns på inloggningen.
-2. **Lugnande text:** "Det tar ungefär två minuter. Du kan inte göra fel – allt går att ändra."
-3. **Introduktion i tre steg** första gången (`/intro`): *Titta och välj → Du kan inte välja fel → Hjälp finns alltid här*. Knapparna i hörnet pulserar i sista steget så att hon vågar prova dem. Går alltid att hoppa över och visas bara en gång.
+2. **Lugnande text på inloggningen:**
+   - "Det tar ungefär två minuter."
+   - "Du kan inte göra fel – allt går att ändra."
+   - "Vill du ha texten uppläst eller större? Knapparna finns uppe i hörnet."
+   - "Behöver du hjälp? Använd larmknappen vid sängen."
+3. **Varje sida säger vad man gör**, till exempel:
+   - "Tryck på maten du vill ha."
+   - "Tryck på en tumme. Vill du inte svara nu kan du hoppa över."
+   - "Tryck på Ändra om något inte stämmer – annars på Beställ."
 4. **Stegindikator** (Mat → Dryck → Kolla → Klart) på varje sida.
-5. **Sängkort** vid sängen (se kom igång-guiden, sida 2).
+5. **Fel förklaras med en knapp** som löser dem.
+6. **Sängkort** vid sängen (se kom igång-guiden, sida 2).
 
 ## Lansering (15 p)
 *Skulle videon och guiden hjälpa sjukhuset att införa det?*
@@ -109,7 +117,7 @@ AI-modell.
 ## "Fler funktioner betyder inte en bättre produkt"
 
 **Kärnresan** – det vi visar först och längst – är: *språk → personnummer → stämmer det här? →
-introduktion → meny med bilder → portion → dryck → stämmer det här? → klart*.
+meny med bilder → portion → dryck → stämmer det här? → klart*.
 
 Omdöme och "Min smak" är **stöd** som gör kärnresan bättre över tid: menyn minns vad
 Ingrid gillar. Visa dem kort, efter kärnresan. Personal, dietister och kök är sekundära
@@ -127,7 +135,7 @@ fungerar (systemet föreslår, människan bestämmer).
 | 2 | Logga in (personnummer **19480302-2328**) | | | |
 | 3 | Beställ en liten portion av något du gillar, skuret i bitar | | | |
 | 4 | Ändra drycken innan du beställer | | | |
-| 5 | Be om hjälp | | | |
+| 5 | Avbryt och fortsätt sedan där du var | | | |
 | 6 | Gör texten större och få sidan uppläst | | | |
 
 **Frågor efteråt:** Vad var lättast? Vad var svårast? Kände du dig osäker någon gång? Skulle du

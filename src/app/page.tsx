@@ -36,7 +36,7 @@ export default function LoginPage() {
   const errorAction: Partial<Record<PersonnummerError | "notFound", () => void>> = {
     date: () => { setDigits(""); setError(null); },
     checksum: () => { setDigits((d) => d.slice(0, 8)); setError(null); },
-    notFound: () => window.dispatchEvent(new Event("ingrid-help")),
+    notFound: () => { setDigits(""); setError(null); },
   };
 
   const press = (key: string) => {
@@ -95,6 +95,7 @@ export default function LoginPage() {
           <p className="lead">{l.lead}</p>
           <ul className="reassure">
             {l.reassure.map((r) => <li key={r}>{r}</li>)}
+            <li>{l.reassureTools}</li>
             <li>{l.reassureHelp[0]}<strong>{l.reassureHelp[1]}</strong>{l.reassureHelp[2]}</li>
           </ul>
         </section>

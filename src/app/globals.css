@@ -184,11 +184,6 @@ button:focus-visible {
   font-weight: 600;
 }
 
-.tool-help {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
 .content {
   flex: 1;
   padding: 8px 24px 32px;
@@ -283,7 +278,6 @@ button:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   .mic-on,
-  .topbar-actions.highlight .tool,
   .done-check {
     animation: none;
   }
@@ -1155,108 +1149,6 @@ button:focus-visible {
   color: var(--primary-strong);
 }
 
-/* ---------- Introduktion ---------- */
-
-.intro {
-  max-width: 720px;
-  margin: 0 auto;
-  text-align: center;
-  display: grid;
-  gap: 16px;
-}
-
-.intro-count {
-  color: var(--text-muted);
-  font-weight: 700;
-}
-
-.intro-dots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-}
-
-.intro-dots span {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--border);
-}
-
-.intro-dots span.on {
-  background: var(--primary);
-  width: 32px;
-  border-radius: 6px;
-}
-
-.intro-visual {
-  min-height: 210px;
-  display: grid;
-  place-items: center;
-}
-
-.intro-photos {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-}
-
-.intro-photos img {
-  width: 190px;
-  height: 190px;
-  object-fit: cover;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
-
-.intro-photos img:nth-child(2) {
-  transform: translateY(-14px);
-}
-
-.intro-safe {
-  display: grid;
-  justify-items: center;
-  gap: 12px;
-}
-
-.intro-big {
-  font-size: 96px;
-  line-height: 1;
-}
-
-.intro-tools {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-}
-
-.tool-demo {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 56px;
-  padding: 0 18px;
-  border-radius: 999px;
-  border: 2px solid var(--border);
-  background: var(--surface);
-  font-weight: 600;
-}
-
-.tool-demo-help {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.topbar-actions.highlight .tool {
-  animation: tool-pulse 1.4s ease-in-out infinite;
-}
-
-@keyframes tool-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(47, 107, 79, 0.5); }
-  50% { box-shadow: 0 0 0 8px rgba(47, 107, 79, 0); }
-}
-
 /* ---------- Förslag och fortsätt ---------- */
 
 .dish.suggested {
@@ -1287,7 +1179,7 @@ button:focus-visible {
   border-radius: var(--radius);
 }
 
-/* ---------- Hjälpdialog ---------- */
+/* ---------- Dialoger ---------- */
 
 .overlay {
   position: fixed;
@@ -1338,7 +1230,6 @@ button:focus-visible {
   :root { --base: 17px; }
   html[data-text-size="stor"] { --base: 21px; }
   .topbar, .content, .footer, .progress { padding-inline: 16px; }
-  .intro-photos img { width: 30vw; height: 30vw; }
   .tool { padding: 0 12px; }
   .segmented { grid-template-columns: 1fr; }
   .segmented-4 { grid-template-columns: 1fr 1fr; }

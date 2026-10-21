@@ -68,6 +68,7 @@ export default function SummaryPage() {
       <div className="page-head">
         <h1>{u.title}</h1>
         <p className="lead">{u.lead(tm.word(meal.name), meal.servedAt, where)}</p>
+        <p className="muted">{u.hint}</p>
       </div>
 
       <div className="card summary">

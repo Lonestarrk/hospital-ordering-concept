@@ -24,8 +24,6 @@ type ScreenProps = {
   commands?: VoiceCommand[];
   /** Exempel på vad man kan säga, t.ex. "lax" eller "soppa". */
   voiceHint?: string;
-  /** Får knapparna i hörnet att pulsera – används i introduktionen. */
-  highlightTools?: boolean;
   children: ReactNode;
   footer?: ReactNode;
 };
@@ -49,13 +47,12 @@ export function useAnnounce() {
   );
 }
 
-export function Screen({ speakText, step, commands, voiceHint, highlightTools, children, footer }: ScreenProps) {
+export function Screen({ speakText, step, commands, voiceHint, children, footer }: ScreenProps) {
   const { patient, textSize, toggleTextSize, soundOn, setSoundOn, lang, order, logout } = useOrder();
   const router = useRouter();
   const pathname = usePathname();
   const { t, tm, speechLang } = useT();
   const say = (text: string) => speak(text, speechLang);
-  const [helpOpen, setHelpOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   // Avbryt finns efter inloggningen, men inte när beställningen redan är skickad.
   const canCancel = !!patient && !order.placed && pathname !== "/klart";
@@ -88,13 +85,6 @@ export function Screen({ speakText, step, commands, voiceHint, highlightTools, c
     router.replace("/");
   };
 
-  // Andra delar av sidan (t.ex. inloggningens felmeddelande) kan kalla på hjälp.
-  useEffect(() => {
-    const open = () => setHelpOpen(true);
-    window.addEventListener("ingrid-help", open);
-    return () => window.removeEventListener("ingrid-help", open);
-  }, []);
-
   const toggleSound = () => {
     if (soundOn) {
       stopSpeaking();
@@ -109,13 +99,6 @@ export function Screen({ speakText, step, commands, voiceHint, highlightTools, c
     ...(canCancel
       ? [{ phrases: ["avbryt", "sluta", "inte nu", "ångrar mig"], action: () => stop() }]
       : []),
-    {
-      phrases: ["hjälp", "personal*", "sköterska*"],
-      action: () => {
-        setHelpOpen(true);
-        if (patient) say(t.helpDialog.speak(patient.nurse));
-      },
-    },
     { phrases: ["läs upp", "läs menyn", "upprepa", "igen", "vad sa du"], action: () => speak(speakText) },
     { phrases: ["större text", "större"], action: () => textSize === "normal" && toggleTextSize() },
     { phrases: ["mindre text", "mindre"], action: () => textSize === "stor" && toggleTextSize() },
@@ -156,7 +139,7 @@ export function Screen({ speakText, step, commands, voiceHint, highlightTools, c
       onResult: handleHeard,
       onError: (error) => {
         if (error === "no-speech") speak("Jag hörde ingenting. Tryck på mikrofonen och försök igen.");
-        else if (error === "not-allowed") speak("Mikrofonen är avstängd. Tryck på Hjälp så kommer personalen.");
+        else if (error === "not-allowed") speak("Mikrofonen är avstängd. Tryck på skärmen i stället.");
         else if (error === "installing") speak("Ett ögonblick, jag gör i ordning rösten.");
         else if (error === "not-local") {
           setMicAvailable(false);
@@ -189,7 +172,7 @@ export function Screen({ speakText, step, commands, voiceHint, highlightTools, c
             </button>
           )}
         </div>
-        <div className={`topbar-actions ${highlightTools ? "highlight" : ""}`}>
+        <div className="topbar-actions">
           <button className="tool" onClick={() => setLangOpen(true)} aria-label={t.chooseLanguage}>
             <span aria-hidden>🌐</span> {languages.find((l) => l.id === lang)?.name}
           </button>
@@ -203,9 +186,6 @@ export function Screen({ speakText, step, commands, voiceHint, highlightTools, c
           >
             <span aria-hidden className="tool-aa">Aa</span>
             {textSize === "stor" ? t.smallerText : t.biggerText}
-          </button>
-          <button className="tool tool-help" onClick={() => setHelpOpen(true)}>
-            <span aria-hidden>🙋</span> {t.help}
           </button>
         </div>
       </header>
@@ -254,7 +234,6 @@ export function Screen({ speakText, step, commands, voiceHint, highlightTools, c
         </footer>
       )}
 
-      {helpOpen && <HelpDialog onClose={() => setHelpOpen(false)} />}
       {langOpen && <LanguageDialog onClose={() => setLangOpen(false)} />}
     </div>
   );
@@ -296,28 +275,6 @@ function LanguageDialog({ onClose }: { onClose: () => void }) {
         <div className="dialog-icon" aria-hidden>🌐</div>
         <h2 id="lang-title">{t.chooseLanguage}</h2>
         <LanguageChoice onChosen={onClose} />
-      </div>
-    </div>
-  );
-}
-
-/**
- * Hjälp skickas direkt till en namngiven person (det går att ångra), med vad som händer
- * om ingen kommer – ingen "Vill du verkligen?"-fråga först.
- */
-function HelpDialog({ onClose }: { onClose: () => void }) {
-  const { t } = useT();
-  const { patient } = useOrder();
-  const h = t.helpDialog;
-  return (
-    <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="help-title" onClick={onClose}>
-      <div className="dialog" onClick={(e) => e.stopPropagation()}>
-        <div className="dialog-icon" aria-hidden>🙋</div>
-        <h2 id="help-title">{patient ? h.title(patient.nurse) : h.genericTitle}</h2>
-        <p>{patient ? h.body(patient.nurse) : h.genericBody}</p>
-        <p className="muted">{h.escalation}</p>
-        <button className="btn btn-primary btn-block" onClick={onClose}>{h.ok}</button>
-        <button className="btn btn-ghost btn-block" onClick={onClose}>{h.undo}</button>
       </div>
     </div>
   );
