@@ -152,7 +152,7 @@ export default function OccasionPage() {
               const isNext = `${order.occasion}-${order.date}` === nextKey;
               return (
                 <li key={`${order.occasion}-${order.date}`} className={`order-row ${past ? "is-past" : ""} ${isNext ? "is-next" : ""}`}>
-                  <img className="order-image" src={dish.image} alt="" />
+                  <span className="order-image"><img src={dish.image} alt="" /></span>
                   <div className="order-body">
                     <p className="order-when">
                       {isNext && <span className="badge badge-next">{m.next}</span>}
