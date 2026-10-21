@@ -2350,6 +2350,16 @@ html[data-text-size="stor"] .dish-body p {
   .feedback-head { grid-template-columns: 96px minmax(0, 1fr); gap: 16px; align-items: start; }
   .feedback-image { width: 96px; height: 96px; }
 
-  /* Inloggning: armbandet först, så att man direkt ser vad man ska göra. */
-  .login-band { order: -1; }
+  /* Inloggning: installationsfrågan och välkomsttexten först, sedan armbandet,
+     därefter språkval och övrig information. */
+  .login { gap: 0; padding-top: 8px; }
+  .login-intro { display: contents; }
+  .login .install-banner { order: 1; margin-bottom: 16px; }
+  .login .notice { order: 2; }
+  .login-intro .eyebrow { order: 3; }
+  .login-intro h1 { order: 4; }
+  .login-intro .lead { order: 5; margin-bottom: 16px; }
+  .login-band { order: 6; margin-bottom: 24px; }
+  .login .lang-choice { order: 7; }
+  .login .reassure { order: 8; margin-top: 0; }
 }

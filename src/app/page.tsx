@@ -179,7 +179,7 @@ export default function LoginPage() {
           <ul className="reassure">
             {l.reassure.map((r) => <li key={r}>{r}</li>)}
             <li>{l.reassureTools}</li>
-            <li>{l.reassureHelp[0]}<strong>{l.reassureHelp[1]}</strong>{l.reassureHelp[2]}</li>
+            <li><span>{l.reassureHelp[0]}<strong>{l.reassureHelp[1]}</strong>{l.reassureHelp[2]}</span></li>
           </ul>
         </section>
 
