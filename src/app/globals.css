@@ -420,7 +420,7 @@ button:focus-visible {
  */
 .order-row {
   display: grid;
-  grid-template-columns: 30% minmax(0, 1fr) auto;
+  grid-template-columns: 112px minmax(0, 1fr) auto;
   grid-template-areas:
     "img body actions"
     "img bar  bar";
@@ -2392,7 +2392,7 @@ html[data-text-size="stor"] .dish-body p {
   /* Obeställda måltider: liten knapp under texten i stället för en knapp över hela bredden. */
   /* Beställningskorten: bilden till vänster, knapparna under texten, listen längst ner. */
   .order-row {
-    grid-template-columns: 30% minmax(0, 1fr);
+    grid-template-columns: 84px minmax(0, 1fr);
     grid-template-areas:
       "img body"
       "img actions"
