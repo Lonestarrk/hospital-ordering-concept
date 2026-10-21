@@ -456,12 +456,6 @@ button:focus-visible {
   object-fit: cover;
 }
 
-/* Matbilder visas hela – ingenting beskärs. */
-img.summary-image {
-  object-fit: contain;
-  border-radius: 8px;
-}
-
 .order-body {
   grid-area: body;
   min-width: 0;
@@ -1403,46 +1397,20 @@ html[data-text-size="stor"] .dish-body p {
 
 .summary {
   display: grid;
-  gap: 8px;
-  padding: 16px 28px;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
-/* Luft mellan bilden och texten, så att de inte känns ihopklistrade. */
-.summary-row {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  padding: 16px 0;
+.summary .order-row {
+  min-height: 104px;
 }
 
-.summary-row + .summary-row {
-  border-top: 1px solid var(--border);
-}
-
-.summary-image {
-  width: 96px;
-  height: 96px;
-  border-radius: 18px;
+/* Drycken har ingen bild – ikonen på en ljusblå yta i bildens plats. */
+.summary-drink {
   display: grid;
   place-items: center;
+  background: #e3eef5;
   font-size: 44px;
-  flex-shrink: 0;
-  object-fit: cover;
-}
-
-.summary-text {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.summary-text strong {
-  font-size: 1.15em;
-}
-
-.summary-text span:last-child {
-  color: var(--text-muted);
-  font-size: 0.9em;
 }
 
 .summary-key {
@@ -2347,8 +2315,6 @@ html[data-text-size="stor"] .dish-body p {
   .dish-image { max-height: calc(var(--dish-size) - 16px); border-radius: 10px; }
   .dish-body { padding: 10px 14px 10px 4px; }
   .dish-body h2 { font-size: 1em; }
-  .summary { padding: 12px 18px; }
-  .summary-row { gap: 20px; }
 }
 
 /* Stegen som en rad med text – visas bara på mobil (nedan). */

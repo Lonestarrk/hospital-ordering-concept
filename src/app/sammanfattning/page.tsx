@@ -96,23 +96,28 @@ export default function SummaryPage() {
         </div>
       )}
 
-      <div className="card summary">
-        <div className="summary-row">
-          <img className="summary-image" src={dish.image} alt="" />
-          <div className="summary-text">
+      {/* Maten och drycken som samma kort som på Dina beställningar: bilden i full höjd till vänster. */}
+      <div className="summary">
+        <div className="order-row">
+          <span className="order-image"><img src={dish.image} alt="" /></span>
+          <div className="order-body">
             <span className="summary-key">{u.food}</span>
-            <strong>{dishName}</strong>
-            <span>{[u.portion(portionName), ...extras].join(" · ")}</span>
+            <p className="order-dish">{dishName}</p>
+            <p className="order-drink">{[u.portion(portionName), ...extras].join(" · ")}</p>
           </div>
-          <button className="btn btn-small" onClick={() => router.push(`/meny/${dish.id}`)}>{u.change}</button>
+          <div className="order-actions">
+            <button className="btn btn-ghost order-action" onClick={() => router.push(`/meny/${dish.id}`)}>{u.change}</button>
+          </div>
         </div>
-        <div className="summary-row">
-          <div className="summary-image" style={{ background: "#E3EEF5" }} aria-hidden>{drink.emoji}</div>
-          <div className="summary-text">
+        <div className="order-row">
+          <span className="order-image summary-drink" aria-hidden>{drink.emoji}</span>
+          <div className="order-body">
             <span className="summary-key">{u.drink}</span>
-            <strong>{drinkName}</strong>
+            <p className="order-dish">{drinkName}</p>
           </div>
-          <button className="btn btn-small" onClick={() => router.push("/dryck")}>{u.change}</button>
+          <div className="order-actions">
+            <button className="btn btn-ghost order-action" onClick={() => router.push("/dryck")}>{u.change}</button>
+          </div>
         </div>
       </div>
 
