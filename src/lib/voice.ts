@@ -128,7 +128,8 @@ export type VoiceCommand = {
    * för att även matcha böjningar, t.ex. "lax*" matchar "laxen".
    */
   phrases: string[];
-  action: () => void;
+  /** Får det som hördes, t.ex. för att skilja "jag gillar fisk" från "jag gillar inte fisk". */
+  action: (heard: string) => void;
 };
 
 export function normalize(text: string): string {

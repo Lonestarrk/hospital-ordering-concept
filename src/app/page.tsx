@@ -97,6 +97,7 @@ export default function LoginPage() {
           <button className="demo-link" onClick={() => { setError(null); setDigits(DEMO_PERSONNUMMER); }}>
             Demo: fyll i Ingrids personnummer
           </button>
+          <a className="demo-link" href="/koket">Personal: kökets vy →</a>
         </section>
       </div>
     </Screen>

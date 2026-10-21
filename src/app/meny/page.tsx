@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Screen, useAnnounce } from "@/components/Screen";
 import { useRequirePatient } from "@/components/OrderProvider";
-import { dishSuits, dishes, meal } from "@/lib/data";
+import { dishCategories, dishSuits, dishes, foodCategories, meal } from "@/lib/data";
 import { speak, type VoiceCommand } from "@/lib/voice";
 
 const ORDINALS = [
@@ -15,11 +15,21 @@ const ORDINALS = [
 
 export default function MenuPage() {
   const router = useRouter();
-  const { patient, order, updateOrder, meals } = useRequirePatient();
+  const { patient, order, updateOrder, meals, taste } = useRequirePatient();
   const announce = useAnnounce();
   if (!patient) return null;
 
-  const suitable = dishes.filter((d) => dishSuits(d, patient));
+  // Rätter som matchar Ingrids smak visas först, sådant hon inte gillar sist – inget döljs.
+  const tasteScore = (dishId: string) =>
+    (dishCategories[dishId] ?? []).reduce(
+      (sum, c) => sum + (taste.likes.includes(c) ? 1 : 0) - (taste.dislikes.includes(c) ? 1 : 0),
+      0,
+    );
+  const likedCategory = (dishId: string) =>
+    foodCategories.find((c) => (dishCategories[dishId] ?? []).includes(c.id) && taste.likes.includes(c.id));
+  const suitable = dishes
+    .filter((d) => dishSuits(d, patient))
+    .sort((a, b) => tasteScore(b.id) - tasteScore(a.id));
   const hiddenCount = dishes.length - suitable.length;
 
   const hidden = dishes.filter((d) => !suitable.includes(d));
@@ -72,6 +82,9 @@ export default function MenuPage() {
                 {dish.label && <span className="dish-label">{dish.label}</span>}
                 {lastRating(dish.id) === "upp" && <span className="dish-label dish-liked">👍 Du gillade den</span>}
                 {lastRating(dish.id) === "ner" && <span className="dish-label dish-disliked">👎 Inte din favorit</span>}
+                {likedCategory(dish.id) && (
+                  <span className="dish-label dish-taste">❤️ Du gillar {likedCategory(dish.id)!.name.toLowerCase()}</span>
+                )}
               </div>
               <h2>{dish.name}</h2>
               <p>{dish.description}</p>
@@ -86,6 +99,10 @@ export default function MenuPage() {
           {hiddenCount} rätter visas inte eftersom de inte passar din kost eller allergi.
         </p>
       )}
+
+      <button className="taste-link" onClick={() => router.push("/min-smak?sen=meny")}>
+        ❤️ Berätta vad du tycker om för mat
+      </button>
     </Screen>
   );
 }

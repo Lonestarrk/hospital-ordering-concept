@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { servedHistory, type Patient, type Portion, type ServedMeal } from "@/lib/data";
+import { emptyTaste, servedHistory, type Patient, type Portion, type ServedMeal, type TasteProfile } from "@/lib/data";
 
 export type Order = {
   dishId?: string;
@@ -22,6 +22,8 @@ type State = {
   soundOn: boolean;
   /** Serverade måltider per personnummer – sparas även när man loggar ut. */
   history: Record<string, ServedMeal[]>;
+  /** Smakprofil per personnummer – sparas även när man loggar ut. */
+  tastes: Record<string, TasteProfile>;
 };
 
 type OrderContextValue = State & {
@@ -35,10 +37,14 @@ type OrderContextValue = State & {
   meals: ServedMeal[];
   addServedMeal: (meal: ServedMeal) => void;
   updateMeal: (id: string, patch: Partial<ServedMeal>) => void;
+  /** Patientens smakprofil (tom om hon inte har fyllt i den). */
+  taste: TasteProfile;
+  hasTaste: boolean;
+  setTaste: (taste: TasteProfile) => void;
 };
 
 const emptyOrder: Order = { portion: "lagom", extras: [], placed: false };
-const initialState: State = { patient: null, order: emptyOrder, textSize: "normal", soundOn: false, history: {} };
+const initialState: State = { patient: null, order: emptyOrder, textSize: "normal", soundOn: false, history: {}, tastes: {} };
 const STORAGE_KEY = "ingrid-order";
 
 const OrderContext = createContext<OrderContextValue | null>(null);
@@ -81,7 +87,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
           : { ...s.history, [patient.personnummer]: servedHistory[patient.personnummer] ?? [] },
       })),
     logout: () =>
-      setState((s) => ({ ...initialState, textSize: s.textSize, soundOn: s.soundOn, history: s.history })),
+      setState((s) => ({ ...initialState, textSize: s.textSize, soundOn: s.soundOn, history: s.history, tastes: s.tastes })),
     updateOrder: (patch) => setState((s) => ({ ...s, order: { ...s.order, ...patch } })),
     toggleTextSize: () =>
       setState((s) => ({ ...s, textSize: s.textSize === "normal" ? "stor" : "normal" })),
@@ -93,6 +99,10 @@ export function OrderProvider({ children }: { children: ReactNode }) {
         const pnr = s.patient.personnummer;
         return { ...s, history: { ...s.history, [pnr]: [meal, ...(s.history[pnr] ?? [])] } };
       }),
+    taste: (state.patient && state.tastes[state.patient.personnummer]) || emptyTaste,
+    hasTaste: !!state.patient && !!state.tastes[state.patient.personnummer],
+    setTaste: (taste) =>
+      setState((s) => (s.patient ? { ...s, tastes: { ...s.tastes, [s.patient.personnummer]: taste } } : s)),
     updateMeal: (id, patch) =>
       setState((s) => {
         if (!s.patient) return s;

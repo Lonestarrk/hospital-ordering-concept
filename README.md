@@ -25,6 +25,8 @@ Logga in med Ingrids **syntetiska** personnummer **19450120-2388** (eller tryck 
 | 6 | `/sammanfattning` | "Stämmer det här?" – allt går att ändra. |
 | 7 | `/klart` | Bekräftelse med tid: "Maten kommer till ditt rum ca kl 12:00". |
 | – | `/omdome` | **Omdöme i efterhand:** 👍 eller 👎, valfria skäl och "Hur mycket åt du?". |
+| – | `/min-smak` | **Min smak:** 👍 eller 👎 på olika sorters mat och ❤️ på önskerätter. |
+| – | `/koket` | **Kökets vy** (personal): anonym sammanställning och förslag till nästa meny. |
 
 Hjälpmedel på varje sida: **Läs upp / Ljud på**, **Större text** och **Hjälp**, som
 kallar på personalen.
@@ -44,6 +46,39 @@ kallar på personalen.
 - **Demo.** På bekräftelsesidan finns länken *"Demo: maten har serverats"*, som hoppar
   fram i tiden så att man kan betygsätta det man just beställde.
 
+## Smak och önskerätter blir underlag för menyn
+
+**Ingrid (`/min-smak`).** Hon når sidan från bekräftelsen ("Vad tycker du om för mat?")
+eller från länken under menyn.
+- 👍 eller 👎 på sorters mat: husmanskost, fisk, kyckling, kött, vegetariskt, soppor,
+  kryddig mat, pasta och ris, efterrätter.
+- ❤️ på önskerätter som köttbullar, pannbiff, kåldolmar och ärtsoppa.
+- Med rösten kan hon säga till exempel "jag gillar fisk", "jag tycker inte om kryddig
+  mat" eller "köttbullar". Appen hör skillnad på "gillar" och "gillar inte".
+- **Hennes meny anpassas direkt.** Rätter som matchar det hon gillar hamnar först och
+  märks "❤️ Du gillar fisk". Sådant hon ogillar hamnar sist men döljs inte.
+
+**Köket (`/koket`, länk på inloggningssidan).**
+- Sidan lägger ihop syntetiska svar från 46 patienter med svaren som lämnats i prototypen.
+  Ingrids önskan om köttbullar ändrar till exempel siffran direkt.
+- Den visar nyckeltal (andel tummen upp, andel som åt minst hälften), betyg per rätt
+  med vanligaste svaret, de mest önskade rätterna och avdelningens smakprofil.
+- **Förslag till nästa veckas meny** tas fram med enkla regler som går att förklara:
+
+  | Förslag | Regel |
+  |---|---|
+  | Behåll | Minst 75 % tummen upp |
+  | Se över | Under 55 % tummen upp, med vanligaste klagomålet |
+  | Lägg till | De mest önskade rätterna som inte finns på menyn |
+  | Åtgärda | Minst 15 % svarade "För kall", så transporten ses över innan rätten byts ut |
+  | Anpassa | Sorter som fler än dubbelt så många ogillar som gillar |
+
+- **Reglerna följs.** Systemet föreslår och kökschefen och dietisten bestämmer.
+  Kostordinationer påverkas aldrig.
+- **Anonymt.** Köket ser bara summor, inga namn eller personnummer. En rätt visas först
+  när minst 5 patienter har svarat.
+- **Inga AI-anrop.** Förslagen räknas fram i appen, så ingen patientdata lämnar den.
+
 ## Ljud och röst
 
 - **Ljudläge.** Ett tryck på **Läs upp** slår på ljudet. Sedan läses varje sida upp
@@ -61,6 +96,7 @@ kallar på personalen.
 | Sammanfattning | "ja, beställ" · "ändra maten" · "ändra drycken" |
 | Klart | "klar" · "ändra" |
 | Omdöme | "tummen upp" / "tummen ner" · "för kall", "svårt att tugga" · "jag åt allt" · "skicka" · "hoppa över" |
+| Min smak | "jag gillar fisk" · "jag tycker inte om kryddig mat" · "köttbullar" · "skicka" |
 | Alla sidor | "hjälp" · "läs upp" / "upprepa" · "större text" · "tyst" |
 
 Rösten fungerar i Chrome, Edge och Safari via webbläsarens inbyggda Web Speech API. Det
@@ -121,3 +157,5 @@ Vill ni byta en bild? Lägg en ny fil i `public/mat/` och ändra `image` i `src/
 | ![Sammanfattning](docs/skarmbilder/6-sammanfattning.png) | ![Klart](docs/skarmbilder/7-klart.png) |
 | ![Röstkommando](docs/skarmbilder/8-rost.png) | ![Omdöme](docs/skarmbilder/9-omdome.png) |
 | ![Tack för omdömet](docs/skarmbilder/10-omdome-tack.png) | ![Menyn minns](docs/skarmbilder/11-meny-minns.png) |
+| ![Min smak](docs/skarmbilder/12-min-smak.png) | ![Menyn efter smak](docs/skarmbilder/13-meny-smak.png) |
+| ![Kökets vy](docs/skarmbilder/14-koket.png) | |

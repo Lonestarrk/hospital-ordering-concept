@@ -215,3 +215,51 @@ export const servedHistory: Record<string, ServedMeal[]> = {
     { id: "middag-igar", dishId: "kalvspett", label: "Gårdagens middag", reasons: [] },
   ],
 };
+
+// ---------- Smak och önskerätter ----------
+
+export type FoodCategory = { id: string; name: string; emoji: string; voiceWords: string[] };
+
+export const foodCategories: FoodCategory[] = [
+  { id: "husmanskost", name: "Husmanskost", emoji: "🥘", voiceWords: ["husman*", "svensk*", "vanlig mat"] },
+  { id: "fisk", name: "Fisk", emoji: "🐟", voiceWords: ["fisk*", "lax*"] },
+  { id: "kyckling", name: "Kyckling", emoji: "🍗", voiceWords: ["kyckling*", "fågel"] },
+  { id: "kott", name: "Kött", emoji: "🥩", voiceWords: ["kött*", "biff*"] },
+  { id: "vegetariskt", name: "Vegetariskt", emoji: "🥦", voiceWords: ["vegetari*", "grönsak*", "veg*"] },
+  { id: "soppor", name: "Soppor", emoji: "🥣", voiceWords: ["sopp*"] },
+  { id: "kryddigt", name: "Kryddig mat", emoji: "🌶️", voiceWords: ["krydd*", "stark*"] },
+  { id: "pasta", name: "Pasta och ris", emoji: "🍝", voiceWords: ["pasta", "ris", "makaron*"] },
+  { id: "sott", name: "Efterrätter", emoji: "🍰", voiceWords: ["efterrätt*", "dessert*", "sött", "kaka*"] },
+];
+
+/** Vilka kategorier varje rätt på menyn hör till. */
+export const dishCategories: Record<string, string[]> = {
+  kalvspett: ["husmanskost", "kott"],
+  lax: ["fisk"],
+  kycklinggryta: ["kyckling", "pasta"],
+  soppa: ["soppor", "vegetariskt"],
+  pannkakor: ["husmanskost", "sott"],
+  fiskgratang: ["fisk", "husmanskost"],
+};
+
+export type WishDish = { id: string; name: string; emoji: string; voiceWords: string[] };
+
+/** Klassiska rätter som patienten kan önska sig – underlag för framtida menyer. */
+export const wishDishes: WishDish[] = [
+  { id: "kottbullar", name: "Köttbullar med potatismos", emoji: "🍽️", voiceWords: ["köttbull*"] },
+  { id: "pannbiff", name: "Pannbiff med lök", emoji: "🧅", voiceWords: ["pannbiff*"] },
+  { id: "kaldolmar", name: "Kåldolmar", emoji: "🥬", voiceWords: ["kåldolm*"] },
+  { id: "artsoppa", name: "Ärtsoppa", emoji: "🫛", voiceWords: ["ärtsopp*", "ärter"] },
+  { id: "pytt", name: "Pytt i panna", emoji: "🍳", voiceWords: ["pytt*"] },
+  { id: "raggmunk", name: "Raggmunk med fläsk", emoji: "🥔", voiceWords: ["raggmunk*"] },
+  { id: "kalops", name: "Kalops", emoji: "🍲", voiceWords: ["kalops*"] },
+  { id: "makaroner", name: "Stuvade makaroner", emoji: "🧀", voiceWords: ["makaron*"] },
+  { id: "fiskbullar", name: "Fiskbullar i hummersås", emoji: "🐠", voiceWords: ["fiskbull*"] },
+  { id: "laxpudding", name: "Laxpudding", emoji: "🐟", voiceWords: ["laxpudding*"] },
+  { id: "ugnspannkaka", name: "Ugnspannkaka", emoji: "🥞", voiceWords: ["ugnspannkak*"] },
+  { id: "kroppkakor", name: "Kroppkakor", emoji: "🥟", voiceWords: ["kroppkak*"] },
+];
+
+export type TasteProfile = { likes: string[]; dislikes: string[]; favorites: string[] };
+
+export const emptyTaste: TasteProfile = { likes: [], dislikes: [], favorites: [] };

@@ -6,6 +6,7 @@ import {
   chime,
   listenOnce,
   matchCommand,
+  normalize,
   recognitionSupported,
   speak,
   stopSpeaking,
@@ -91,7 +92,7 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
     const text = alternatives[0] ?? "";
     setListen({ kind: "heard", text, understood: !!match });
     if (match) {
-      match.action();
+      match.action(normalize(text));
     } else {
       speak(`Jag hörde "${text}", men förstod inte. ${voiceHint ? `Du kan säga till exempel ${voiceHint}.` : ""}`);
     }

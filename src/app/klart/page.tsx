@@ -8,7 +8,7 @@ import type { VoiceCommand } from "@/lib/voice";
 
 export default function DonePage() {
   const router = useRouter();
-  const { patient, order, updateOrder, logout, addServedMeal } = useRequirePatient();
+  const { patient, order, updateOrder, logout, addServedMeal, hasTaste } = useRequirePatient();
   if (!patient) return null;
 
   const dish = dishes.find((d) => d.id === order.dishId);
@@ -32,6 +32,7 @@ export default function DonePage() {
   };
   const commands: VoiceCommand[] = [
     { phrases: ["ändra*", "ångra"], action: change },
+    { phrases: ["smak*", "tycker om", "gillar", "önska*"], action: () => router.push("/min-smak") },
     { phrases: ["klar", "tack", "färdig*", "logga ut", "hej då"], action: done },
   ];
 
@@ -74,6 +75,17 @@ export default function DonePage() {
 
         <p className="muted">Du kan ändra dig fram till kl {meal.orderBefore}.</p>
         <p className="done-wish">Smaklig måltid! 🌷</p>
+        {!hasTaste && (
+          <button className="card taste-invite" onClick={() => router.push("/min-smak")}>
+            <span className="taste-invite-icon" aria-hidden>❤️</span>
+            <span>
+              <strong>Vad tycker du om för mat?</strong>
+              <br />
+              Hjälp köket att laga mer av det du gillar. Tar en minut.
+            </span>
+            <span aria-hidden>→</span>
+          </button>
+        )}
         <button className="demo-link" onClick={simulateServed}>
           Demo: maten har serverats – ge tummen upp eller ner
         </button>
