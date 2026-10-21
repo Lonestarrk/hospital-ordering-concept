@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { OrderProvider } from "@/components/OrderProvider";
 import { PwaSetup } from "@/components/Install";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="sv" data-text-size="normal" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <PwaSetup />
+        <PullToRefresh />
         <OrderProvider>{children}</OrderProvider>
       </body>
     </html>

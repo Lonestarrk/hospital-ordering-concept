@@ -40,6 +40,9 @@ workern.
 - **iPad och iPhone** har ingen installationsruta. Där visar *Installera* stegen i Safari:
   Dela → Lägg till på hemskärmen.
 - Körs appen redan installerad syns varken frågan eller knappen.
+- **Dra ner för att ladda om:** Safari har det först från iOS 15, och en app installerad på
+  hemskärmen saknar det alltid. Där har appen en egen (`src/components/PullToRefresh.tsx`).
+  I övriga webbläsare används webbläsarens egen.
 - Installationen kräver HTTPS (eller `localhost`). Service workern registreras bara i
   produktionsläget (`npm run build && npm start`).
 
