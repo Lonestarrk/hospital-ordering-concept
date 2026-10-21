@@ -180,30 +180,15 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
             <div className="topbar-title">{t.appName}</div>
           </div>
         )}
+        {/* I hörnet: inställningarna samlade i en meny, och Avbryt längst ut. */}
         <div className="topbar-actions">
+          <ToolsMenu onLanguage={() => setLangOpen(true)} onSound={toggleSound} hideInstall={pathname === "/"} />
           {canCancel && (
             <button className="tool tool-cancel" onClick={stop}>
               <span aria-hidden>✕</span>
               <span className="tool-label">{t.cancel.replace(/^✕\s*/, "")}</span>
             </button>
           )}
-          <button className="tool tool-lang" onClick={() => setLangOpen(true)} aria-label={t.chooseLanguage}>
-            <span aria-hidden>🌐</span>
-            <span className="tool-label">{languages.find((l) => l.id === lang)?.name}</span>
-          </button>
-          <button className="tool" onClick={toggleSound} aria-pressed={soundOn}>
-            <span aria-hidden>{soundOn ? "🔊" : "🔈"}</span>
-            <span className="tool-label">{soundOn ? t.soundOn : t.readAloud}</span>
-          </button>
-          <button
-            className="tool tool-text"
-            onClick={toggleTextSize}
-            aria-pressed={textSize === "stor"}
-          >
-            <span aria-hidden className="tool-aa">Aa</span>
-            <span className="tool-label">{textSize === "stor" ? t.smallerText : t.biggerText}</span>
-          </button>
-          <InstallButton hideWhileAsking={pathname === "/"} />
         </div>
       </header>
 
@@ -298,6 +283,76 @@ export function LanguageChoice({ onChosen }: { onChosen?: () => void }) {
 /** Sätts när patienten avbryter, så att inloggningen kan bekräfta att hon är utloggad. */
 export const STOPPED_KEY = "ingrid-stopped";
 export const STOPPED_NOTICE_MS = 2 * 60 * 1000;
+
+/**
+ * Språk, uppläsning, textstorlek och installera – samlade bakom en knapp i hörnet, så att de
+ * inte tar plats hela tiden. Knappen visar ikonerna för det som finns i menyn.
+ */
+function ToolsMenu({ onLanguage, onSound, hideInstall }: { onLanguage: () => void; onSound: () => void; hideInstall: boolean }) {
+  const { textSize, toggleTextSize, soundOn, lang } = useOrder();
+  const { t } = useT();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Stängs vid tryck utanför menyn och med Esc.
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
+      const target = e.target as Element;
+      if (!ref.current?.contains(target) && !target.closest?.(".overlay")) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return (
+    <div className="tools-menu" ref={ref}>
+      <button
+        className={`tool tool-menu ${open ? "is-open" : ""}`}
+        onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        aria-controls="tools-menu-panel"
+        aria-label={t.settings}
+      >
+        <span aria-hidden>🌐</span>
+        <span aria-hidden>{soundOn ? "🔊" : "🔈"}</span>
+        <span aria-hidden className="tool-aa">Aa</span>
+        <span aria-hidden className="tool-menu-caret">▾</span>
+      </button>
+      {open && (
+        <div className="tools-menu-panel" id="tools-menu-panel">
+          <button
+            className="menu-item"
+            onClick={() => {
+              setOpen(false);
+              onLanguage();
+            }}
+          >
+            <span aria-hidden className="menu-icon">🌐</span>
+            <span>{t.chooseLanguage}</span>
+            <span className="menu-value">{languages.find((l) => l.id === lang)?.name}</span>
+          </button>
+          <button className="menu-item" onClick={onSound} aria-pressed={soundOn}>
+            <span aria-hidden className="menu-icon">{soundOn ? "🔊" : "🔈"}</span>
+            <span>{t.readAloud}</span>
+            <span className={`menu-switch ${soundOn ? "on" : ""}`} aria-hidden />
+          </button>
+          <button className="menu-item" onClick={toggleTextSize} aria-pressed={textSize === "stor"}>
+            <span aria-hidden className="menu-icon tool-aa">Aa</span>
+            <span>{t.biggerText}</span>
+            <span className={`menu-switch ${textSize === "stor" ? "on" : ""}`} aria-hidden />
+          </button>
+          {!hideInstall && <InstallButton menuItem />}
+        </div>
+      )}
+    </div>
+  );
+}
 
 /** Det som styr vilken mat hon ser – registrerat av personalen. */
 export function useDietTexts(patient: Patient) {

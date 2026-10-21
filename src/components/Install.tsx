@@ -70,7 +70,7 @@ export function InstallBanner() {
 }
 
 /** Knappen i sidhuvudet: installera när som helst, även efter "Inte nu". */
-export function InstallButton({ hideWhileAsking }: { hideWhileAsking?: boolean }) {
+export function InstallButton({ hideWhileAsking, menuItem }: { hideWhileAsking?: boolean; menuItem?: boolean }) {
   const { t } = useT();
   const k = t.install;
   const { available, dismissed, canPrompt } = useInstall();
@@ -79,11 +79,15 @@ export function InstallButton({ hideWhileAsking }: { hideWhileAsking?: boolean }
   if (!available || (hideWhileAsking && !dismissed)) return null;
   return (
     <>
-      <button className="tool tool-install" onClick={() => (canPrompt ? promptInstall() : setIos(true))} aria-label={k.buttonAria}>
+      <button
+        className={menuItem ? "menu-item" : "tool tool-install"}
+        onClick={() => (canPrompt ? promptInstall() : setIos(true))}
+        aria-label={k.buttonAria}
+      >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
         </svg>
-        <span className="tool-label">{k.button}</span>
+        <span className={menuItem ? "" : "tool-label"}>{k.button}</span>
       </button>
       {ios && <IosInstallDialog onClose={() => setIos(false)} />}
     </>
