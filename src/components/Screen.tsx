@@ -163,26 +163,23 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
 
   return (
     <div className="screen">
-      <header className="topbar">
-        <div className="topbar-place">
-          {/* Efter inloggningen står hennes namn där appens logga stod. */}
-          {!patient && <span className="logo" aria-hidden>🍽️</span>}
-          <div>
-            {patient ? (
-              <>
-                <div className="topbar-name-row">
-                  <div className="topbar-title">{patient.firstName} {patient.lastName}</div>
-                  <DietBar patient={patient} onAbout={() => setDietOpen(true)} />
-                </div>
-                <div className="topbar-sub">
-                  {tm.word(patient.room)} · {tm.word(patient.bed)} · {t.appName}
-                </div>
-              </>
-            ) : (
-              <div className="topbar-title">{t.appName}</div>
-            )}
+      <header className={`topbar ${patient ? "has-patient" : ""}`}>
+        {patient ? (
+          <>
+            <div className="topbar-name-row">
+              <div className="topbar-title">{patient.firstName} {patient.lastName}</div>
+              <DietBar patient={patient} onAbout={() => setDietOpen(true)} />
+            </div>
+            <div className="topbar-sub">
+              {tm.word(patient.room)} · {tm.word(patient.bed)}
+            </div>
+          </>
+        ) : (
+          <div className="topbar-place">
+            <span className="logo" aria-hidden>🍽️</span>
+            <div className="topbar-title">{t.appName}</div>
           </div>
-        </div>
+        )}
         <div className="topbar-actions">
           {canCancel && (
             <button className="tool tool-cancel" onClick={stop}>

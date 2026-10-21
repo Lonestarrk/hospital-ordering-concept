@@ -99,16 +99,31 @@ button:focus-visible {
   width: 100%;
 }
 
+/*
+ * Sidhuvudet är ett rutnät: namn och kost överst, rum och säng under, verktygen till höger.
+ * Räcker inte bredden står verktygen på samma rad som rum och säng.
+ */
 .topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px 16px;
   padding: 16px 24px;
-  flex-wrap: wrap;
+}
+
+.topbar.has-patient {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "name tools"
+    "sub  tools";
+  align-items: center;
+  gap: 4px 16px;
 }
 
 .topbar-place {
+  grid-area: name;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -130,17 +145,38 @@ button:focus-visible {
 }
 
 .topbar-sub {
+  grid-area: sub;
   color: var(--text-muted);
   font-size: 0.8em;
 }
 
 .topbar-actions {
+  grid-area: tools;
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  /* Ryms de inte bredvid namnet hamnar de till höger på raden under. */
-  margin-inline-start: auto;
   justify-content: flex-end;
+}
+
+@media (max-width: 1300px) {
+  .topbar.has-patient {
+    grid-template-areas:
+      "name name"
+      "sub  tools";
+  }
+}
+
+@media (max-width: 700px) {
+  .topbar.has-patient {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "name"
+      "sub"
+      "tools";
+  }
+  .topbar-actions {
+    justify-content: flex-start;
+  }
 }
 
 /* ---------- Måltidsraden under sidhuvudet ---------- */
@@ -201,6 +237,7 @@ button:focus-visible {
 /* ---------- Kosten i sidhuvudet ---------- */
 
 .topbar-name-row {
+  grid-area: name;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
