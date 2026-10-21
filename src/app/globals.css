@@ -1317,47 +1317,159 @@ button:focus-visible {
   to { transform: scale(1); opacity: 1; }
 }
 
-.done-card {
-  display: grid;
-  gap: 14px;
+/* ---------- Klart: splash, vägval och kvitto ---------- */
+
+/* Splashen syns i full storlek, tonar ut och tar först därefter bort sin plats. */
+@keyframes done-splash {
+  0% { opacity: 0; transform: translateY(-12px); }
+  8% { opacity: 1; transform: none; }
+  60% { opacity: 1; }
+  92% { opacity: 0; max-height: 240px; margin-bottom: 24px; padding-block: 20px; }
+  100% { opacity: 0; max-height: 0; margin-bottom: 0; padding-block: 0; }
 }
 
-.done-time {
+.done-splash {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  max-height: 240px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  padding: 20px 24px;
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: #fff;
+  box-shadow: var(--shadow);
+  animation: done-splash 3s ease-in-out forwards;
+}
+
+.done-splash-check {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  animation: pop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+
+.done-splash h1 {
+  font-size: 1.7em;
+  line-height: 1.15;
+}
+
+.done-splash p {
+  margin-top: 4px;
+  font-size: 1.3em;
+  font-weight: 700;
+}
+
+.done-splash-image {
+  width: 150px;
+  height: 100px;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+/* Utan animationer försvinner splashen direkt efter 3 sekunder. */
+@media (prefers-reduced-motion: reduce) {
+  .done-splash { animation-timing-function: steps(1, end); }
+}
+
+.done-what-now {
+  margin-bottom: 12px;
+  font-size: 1.3em;
+}
+
+.done-choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.done-choice {
   display: flex;
   flex-direction: column;
-}
-
-.done-time-label {
-  color: var(--text-muted);
-}
-
-.done-time-value {
-  font-size: 1.8em;
-  font-weight: 800;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+  min-height: 180px;
+  padding: 24px 28px;
+  border-radius: 24px;
+  border: 3px solid var(--primary);
+  background: var(--surface);
   color: var(--primary);
-}
-
-.done-order {
-  padding-top: 18px;
-  border-top: 1px solid var(--border);
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 18px;
+  box-shadow: var(--shadow);
+  font: inherit;
   text-align: start;
 }
 
-.done-image {
-  width: 120px;
-  height: 90px;
-  border-radius: 14px;
-  object-fit: cover;
-  flex-shrink: 0;
+.done-choice.is-primary {
+  background: var(--primary);
+  color: #fff;
 }
 
-.done-wish {
-  font-size: 1.3em;
+.done-choice-title {
+  font-size: 1.5em;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.done-choice-body {
+  font-size: 0.9em;
+  color: var(--text-muted);
+}
+
+.done-choice.is-primary .done-choice-title {
+  color: #fff;
+}
+
+.done-choice.is-primary .done-choice-body {
+  color: var(--primary-soft);
+}
+
+.done-receipt {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin-top: 20px;
+  padding: 14px 18px;
+  border-radius: 18px;
+  border: 2px solid var(--border);
+  background: var(--surface);
+}
+
+.done-receipt-image {
+  width: 72px;
+  height: 52px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.done-receipt-text {
+  flex: 1 1 320px;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.done-receipt-what {
   font-weight: 700;
+}
+
+.done-taste {
+  border-style: dashed;
+  border-color: var(--accent);
+}
+
+@media (max-width: 700px) {
+  .done-splash { grid-template-columns: auto minmax(0, 1fr); }
+  .done-splash-image { display: none; }
+  .done-choices { grid-template-columns: 1fr; }
+  .done-choice { min-height: 120px; }
 }
 
 /* ---------- Omdöme ---------- */
@@ -1508,19 +1620,6 @@ button:focus-visible {
   background: var(--surface);
   font-weight: 700;
 }
-
-.taste-invite {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  width: 100%;
-  border: 2px solid var(--accent);
-  text-align: start;
-  font-size: 0.95em;
-  line-height: 1.35;
-}
-
-.taste-invite-icon { font-size: 34px; }
 
 /* ---------- Språk ---------- */
 

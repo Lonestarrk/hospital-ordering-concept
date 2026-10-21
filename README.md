@@ -73,7 +73,7 @@ Code 128 och QR) på en telefon. Streckkoderna skapas med `npm run armband`.
 | 5 | `/meny/[id]` | Allergener, portionsstorlek ("Hur hungrig är du?") och önskemål som "Skuren i små bitar". |
 | 6 | `/dryck` | Dryck som passar kosten. |
 | 7 | `/sammanfattning` | "Stämmer det här?" – allt går att ändra. |
-| 8 | `/klart` | Bekräftelse med tid: "Maten kommer till ditt rum ca kl 12:00". |
+| 8 | `/klart` | **Splash överst:** "Tack Ingrid! Maten kommer till ditt rum idag kl 12:00" som tonar ut efter 3 sekunder. Sedan två tydliga vägval sida vid sida: **Beställ något mer** och **Klar för nu** (loggar ut). Under dem ett kvitto med nedräkning till låstiden, *Ändra* och *Vad tycker du om för mat?*. |
 | – | `/omdome` | **Omdöme i efterhand:** 👍 eller 👎, valfria skäl och "Hur mycket åt du?". |
 | – | `/min-smak` | **Min smak:** 👍 eller 👎 på olika sorters mat och ❤️ på önskerätter. |
 
