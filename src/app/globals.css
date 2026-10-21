@@ -1319,29 +1319,44 @@ button:focus-visible {
 
 /* ---------- Klart: splash, vägval och kvitto ---------- */
 
-/* Splashen syns i full storlek, tonar ut och tar först därefter bort sin plats. */
-@keyframes done-splash {
-  0% { opacity: 0; transform: translateY(-12px); }
-  8% { opacity: 1; transform: none; }
-  60% { opacity: 1; }
-  92% { opacity: 0; max-height: 240px; margin-bottom: 24px; padding-block: 20px; }
-  100% { opacity: 0; max-height: 0; margin-bottom: 0; padding-block: 0; }
+/*
+ * Tackrutan: först stor med "Tack Ingrid!". Efter ett par sekunder tonar tacktexten ut,
+ * och bocken och bilden krymper till samma höjd som raden om när maten kommer.
+ * Kvar blir en rad som står kvar överst på sidan.
+ */
+@keyframes done-thanks-out {
+  0%, 60% { opacity: 1; max-height: 2.5em; }
+  85% { opacity: 0; max-height: 2.5em; }
+  100% { opacity: 0; max-height: 0; }
+}
+
+@keyframes done-check-shrink {
+  0%, 85% { width: 84px; height: 84px; }
+  100% { width: 44px; height: 44px; }
+}
+
+@keyframes done-image-shrink {
+  0%, 85% { width: 150px; height: 100px; }
+  100% { width: 66px; height: 44px; }
+}
+
+@keyframes done-splash-shrink {
+  0%, 85% { padding-block: 20px; }
+  100% { padding-block: 10px; }
 }
 
 .done-splash {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 24px;
-  max-height: 240px;
-  overflow: hidden;
+  gap: 4px 20px;
   margin-bottom: 24px;
   padding: 20px 24px;
   border-radius: var(--radius);
   background: var(--primary);
   color: #fff;
   box-shadow: var(--shadow);
-  animation: done-splash 3s ease-in-out forwards;
+  animation: done-splash-shrink 3s ease-in-out forwards;
 }
 
 .done-splash-check {
@@ -1352,16 +1367,22 @@ button:focus-visible {
   color: var(--primary);
   display: grid;
   place-items: center;
-  animation: pop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1);
+  animation: pop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1), done-check-shrink 3s ease-in-out forwards;
+}
+
+.done-splash-check svg {
+  width: 52%;
+  height: 52%;
 }
 
 .done-splash h1 {
   font-size: 1.7em;
   line-height: 1.15;
+  overflow: hidden;
+  animation: done-thanks-out 3s ease-in-out forwards;
 }
 
 .done-splash p {
-  margin-top: 4px;
   font-size: 1.3em;
   font-weight: 700;
 }
@@ -1369,13 +1390,17 @@ button:focus-visible {
 .done-splash-image {
   width: 150px;
   height: 100px;
-  border-radius: 14px;
+  border-radius: 12px;
   object-fit: cover;
+  animation: done-image-shrink 3s ease-in-out forwards;
 }
 
-/* Utan animationer försvinner splashen direkt efter 3 sekunder. */
+/* Utan animationer byter rutan till den lilla raden direkt efter 3 sekunder. */
 @media (prefers-reduced-motion: reduce) {
-  .done-splash { animation-timing-function: steps(1, end); }
+  .done-splash,
+  .done-splash-check,
+  .done-splash h1,
+  .done-splash-image { animation-timing-function: steps(1, end); }
 }
 
 .done-what-now {
