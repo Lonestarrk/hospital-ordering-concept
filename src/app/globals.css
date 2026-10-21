@@ -380,8 +380,10 @@ button:focus-visible {
   text-align: start;
 }
 
-.topbar-diet:hover {
-  border-color: var(--primary);
+@media (hover: hover) {
+  .topbar-diet:hover {
+    border-color: var(--primary);
+  }
 }
 
 .diet-label {
@@ -1127,22 +1129,18 @@ img.summary-image,
   border-color: var(--primary);
 }
 
-.dish:active {
-  transform: scale(0.99);
-}
-
 /*
- * Bildrutans storlek: stor nog att se maten ordentligt (liggande bilder blir ca 240 px höga,
- * stående högst 320 px). Ett fast värde, så att det fungerar likadant i alla webbläsare.
+ * Bildrutans storlek: stor nog att se maten ordentligt (liggande bilder blir ca 310–350 px
+ * höga, stående högst 480 px). Ett fast värde, så att det fungerar likadant i alla webbläsare.
  */
 .dish-grid {
-  --dish-size: 340px;
+  --dish-size: 500px;
 }
 
 /* Bilden visas hel, i sina egna proportioner, inom en fast ruta till vänster om texten. */
 .dish-thumb {
-  width: var(--dish-size, 340px);
-  max-width: 40%; /* Texten får alltid minst drygt halva raden. */
+  width: var(--dish-size, 500px);
+  max-width: 50%; /* Texten får alltid minst halva raden. */
   flex: none;
   display: flex;
   align-items: center;
@@ -1155,7 +1153,7 @@ img.summary-image,
   width: auto;
   height: auto;
   max-width: 100%;
-  max-height: calc(var(--dish-size, 340px) - 20px);
+  max-height: calc(var(--dish-size, 500px) - 20px);
   border-radius: 12px;
 }
 
@@ -1861,10 +1859,6 @@ html[data-text-size="stor"] .dish-body p {
 
 /* ---------- Förslag och fortsätt ---------- */
 
-.dish.suggested {
-  border-color: #e0b44a;
-}
-
 .dish-suggestion {
   align-self: flex-start;
   background: #fff4e0;
@@ -2114,9 +2108,14 @@ html[data-text-size="stor"] .dish-body p {
   font-weight: 600;
 }
 
-.combo-option.active,
-.combo-option:hover {
+.combo-option.active {
   background: var(--primary-soft);
+}
+
+@media (hover: hover) {
+  .combo-option:hover {
+    background: var(--primary-soft);
+  }
 }
 
 .combo-option.custom {
@@ -2153,7 +2152,7 @@ html[data-text-size="stor"] .dish-body p {
   .summary-row { gap: 20px; }
 }
 
-/* ---------- Ikoner och tryck ---------- */
+/* ---------- Ikoner ---------- */
 
 .icon {
   flex: none;
@@ -2174,18 +2173,27 @@ html[data-text-size="stor"] .dish-body p {
   display: none;
 }
 
-/* Kort reaktion när man trycker, så att man ser att trycket registrerades. */
+/* ---------- Reaktion vid tryck ---------- */
+
+/*
+ * Allt man kan trycka på trycks in lite och blir något mörkare medan fingret ligger kvar,
+ * så att man ser att trycket registrerades. (På iPad krävs en touchstart-lyssnare för att
+ * :active ska fungera – den läggs i PwaSetup.)
+ */
 .btn,
 .tool,
 .chip,
 .segment,
 .drink,
+.dish,
 .thumb,
 .done-choice,
 .occasion-tab,
 .order-row button,
-.taste-vote {
-  transition: transform 0.08s ease-out;
+.taste-vote,
+.lang-option,
+.topbar-diet {
+  transition: transform 0.1s ease-out, filter 0.1s ease-out;
 }
 
 .btn:active:not(:disabled),
@@ -2197,16 +2205,27 @@ html[data-text-size="stor"] .dish-body p {
 .done-choice:active,
 .occasion-tab:active,
 .order-row button:active,
-.taste-vote:active {
-  transform: scale(0.97);
+.taste-vote:active,
+.lang-option:active,
+.topbar-diet:active {
+  transform: scale(0.95);
+  filter: brightness(0.93);
+}
+
+/* Stora kort trycks in mindre, annars ser det ut som att de hoppar. */
+.dish:active {
+  transform: scale(0.985);
+  filter: brightness(0.95);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .btn, .tool, .chip, .segment, .drink, .thumb, .done-choice, .occasion-tab, .order-row button, .taste-vote {
+  .btn, .tool, .chip, .segment, .drink, .dish, .thumb, .done-choice, .occasion-tab,
+  .order-row button, .taste-vote, .lang-option, .topbar-diet {
     transition: none;
   }
-  .btn:active:not(:disabled), .tool:active, .chip:active, .segment:active, .drink:active, .thumb:active,
-  .done-choice:active, .occasion-tab:active, .order-row button:active, .taste-vote:active {
+  .btn:active:not(:disabled), .tool:active, .chip:active, .segment:active, .drink:active,
+  .thumb:active, .done-choice:active, .occasion-tab:active, .order-row button:active,
+  .taste-vote:active, .lang-option:active, .topbar-diet:active, .dish:active {
     transform: none;
   }
 }
