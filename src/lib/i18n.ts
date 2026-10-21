@@ -21,6 +21,7 @@ const sv = {
   chooseLanguage: "Välj språk",
   steps: ["Måltid", "Mat", "Dryck", "Kolla", "Klart"],
   stepsLabel: "Steg",
+  stepOf: (n: number, total: number) => `Steg ${n} av ${total}`,
   back: "← Tillbaka",
   next: "→",
   continue: "Fortsätt →",
@@ -154,7 +155,6 @@ const sv = {
     title: (name: string, meal: string) => `Vad vill du äta till ${meal}, ${name}?`,
     titleSnack: (name: string) => `Vad vill du ha, ${name}?`,
     lead: "Vi har redan valt ut rätterna som passar din kost. Tryck på maten du vill ha.",
-    suits: "✓ Passar dig",
     liked: "👍 Du gillade den",
     disliked: "👎 Inte din favorit",
     tasteBadge: (cat: string) => `❤️ Du gillar ${cat}`,
@@ -236,6 +236,7 @@ const sv = {
     finishBody: "Plattan loggar ut. Maten kommer ändå.",
   },
   feedback: {
+    pickFirst: "Välj en tumme, så kan du skicka.",
     speak: (name: string, label: string, dish: string) =>
       `Hej ${name}! ${label} var ${dish}. Hur smakade det? Tryck på tummen upp eller tummen ner. Du kan också hoppa över.`,
     howWas: "Hur smakade det?",
@@ -308,6 +309,7 @@ const en: Dict = {
   chooseLanguage: "Choose language",
   steps: ["Meal", "Food", "Drink", "Check", "Done"],
   stepsLabel: "Steps",
+  stepOf: (n, total) => `Step ${n} of ${total}`,
   back: "← Back",
   next: "→",
   continue: "Continue →",
@@ -439,7 +441,6 @@ const en: Dict = {
     title: (name, meal) => `What would you like for ${meal}, ${name}?`,
     titleSnack: (name) => `What would you like, ${name}?`,
     lead: "We have already picked out the dishes that suit your diet. Press the food you would like.",
-    suits: "✓ Suits you",
     liked: "👍 You liked it",
     disliked: "👎 Not your favourite",
     tasteBadge: (cat) => `❤️ You like ${cat}`,
@@ -521,6 +522,7 @@ const en: Dict = {
     finishBody: "The tablet logs out. Your food will still arrive.",
   },
   feedback: {
+    pickFirst: "Choose a thumb, then you can send.",
     speak: (name, label, dish) =>
       `Hello ${name}! ${label} was ${dish}. How did it taste? Press thumbs up or thumbs down. You can also skip.`,
     howWas: "How did it taste?",
@@ -591,6 +593,7 @@ const ar: Dict = {
   chooseLanguage: "اختر اللغة",
   steps: ["الوجبة", "الطعام", "المشروب", "مراجعة", "تم"],
   stepsLabel: "الخطوات",
+  stepOf: (n, total) => `الخطوة ${n} من ${total}`,
   back: "→ رجوع",
   next: "←",
   continue: "متابعة ←",
@@ -722,7 +725,6 @@ const ar: Dict = {
     title: (name, meal) => `ماذا تريدين في ${meal} يا ${name}؟`,
     titleSnack: (name) => `ماذا تريدين يا ${name}؟`,
     lead: "اخترنا مسبقاً الأطباق المناسبة لنظامك الغذائي. اضغطي على الطعام الذي تريدينه.",
-    suits: "✓ مناسب لكِ",
     liked: "👍 أعجبكِ",
     disliked: "👎 ليس المفضّل لديكِ",
     tasteBadge: (cat) => `❤️ تحبين ${cat}`,
@@ -804,6 +806,7 @@ const ar: Dict = {
     finishBody: "يسجّل الجهاز الخروج. وسيصل طعامك على أي حال.",
   },
   feedback: {
+    pickFirst: "اختاري إبهاماً، ثم يمكنك الإرسال.",
     speak: (name, label, dish) =>
       `مرحباً ${name}! ${label} كان ${dish}. كيف كان طعمه؟ اضغطي على إعجاب أو عدم إعجاب. يمكنك أيضاً التخطي.`,
     howWas: "كيف كان الطعم؟",

@@ -137,7 +137,7 @@ function Menu() {
               className={`dish ${order.dishId === dish.id ? "selected" : ""} ${suggested ? "suggested" : ""}`}
               onClick={() => choose(dish.id)}
             >
-              <img className="dish-image" src={dish.image} alt={text.imageAlt} />
+              <img className="dish-image" src={dish.image} alt={text.imageAlt} loading="lazy" decoding="async" />
               <div className="dish-body">
                 {suggested && (
                   <span className="dish-suggestion">⭐ {m.suggestion} · {m.suggestionWhy(topReason!)}</span>
@@ -156,7 +156,6 @@ function Menu() {
                 </div>
                 <h2>{text.name}</h2>
                 <p>{text.description}</p>
-                <span className="dish-ok">{m.suits}</span>
               </div>
             </button>
           );
@@ -184,7 +183,7 @@ function Menu() {
                   return (
                     // Inte en knapp: dolda rätter går inte att välja.
                     <li key={dish.id} className="dish blocked" aria-disabled="true">
-                      <img className="dish-image" src={dish.image} alt={text.imageAlt} />
+                      <img className="dish-image" src={dish.image} alt={text.imageAlt} loading="lazy" decoding="async" />
                       <div className="dish-body">
                         <span className="dish-label dish-blocked">🚫 {m.notOrderable}</span>
                         <h3>{text.name}</h3>

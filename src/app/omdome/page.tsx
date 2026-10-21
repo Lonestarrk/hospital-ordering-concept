@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Screen, useAnnounce } from "@/components/Screen";
 import { useRequirePatient, useT } from "@/components/OrderProvider";
+import { Icon } from "@/components/Icon";
 import { dishes, eatenOptions, reasonsDown, reasonsUp, type Eaten, type Rating } from "@/lib/data";
 import type { VoiceCommand } from "@/lib/voice";
 
@@ -101,7 +102,7 @@ function Feedback() {
       >
         <div className="done">
           <div className={`done-check ${shown.rating === "ner" ? "done-check-neutral" : ""}`} aria-hidden>
-            {shown.rating === "upp" ? "👍" : "👎"}
+            <Icon name={shown.rating === "upp" ? "thumbUp" : "thumbDown"} size={56} />
           </div>
           <h1>{f.thanks(patient.firstName)}</h1>
           <p className="lead">{f.kitchenGets(dishName)}</p>
@@ -153,7 +154,7 @@ function Feedback() {
           className={`thumb thumb-up ${rating === "upp" ? "selected" : ""}`}
           onClick={() => rate("upp")}
         >
-          <span className="thumb-icon" aria-hidden>👍</span>
+          <span className="thumb-icon"><Icon name="thumbUp" size={72} strokeWidth={1.8} /></span>
           {f.good}
         </button>
         <button
@@ -162,10 +163,11 @@ function Feedback() {
           className={`thumb thumb-down ${rating === "ner" ? "selected" : ""}`}
           onClick={() => rate("ner")}
         >
-          <span className="thumb-icon" aria-hidden>👎</span>
+          <span className="thumb-icon"><Icon name="thumbDown" size={72} strokeWidth={1.8} /></span>
           {f.notGood}
         </button>
       </div>
+      {!rating && <p className="muted feedback-pick">{f.pickFirst}</p>}
 
       {rating && (
         <>

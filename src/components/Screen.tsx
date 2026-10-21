@@ -9,6 +9,7 @@ import { demoClockActive, hhmm } from "@/lib/clock";
 import { useNow } from "./useNow";
 import { OccasionBar } from "./OccasionBar";
 import { InstallButton } from "./Install";
+import { Icon } from "./Icon";
 import {
   chime,
   listenOnce,
@@ -184,14 +185,17 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
         <div className="topbar-actions">
           {canCancel && (
             <button className="tool tool-cancel" onClick={stop}>
-              {t.cancel}
+              <Icon name="close" />
+              <span className="tool-label">{t.cancel.replace(/^✕\s*/, "")}</span>
             </button>
           )}
           <button className="tool tool-lang" onClick={() => setLangOpen(true)} aria-label={t.chooseLanguage}>
-            <span aria-hidden>🌐</span> {languages.find((l) => l.id === lang)?.name}
+            <Icon name="globe" />
+            <span className="tool-label">{languages.find((l) => l.id === lang)?.name}</span>
           </button>
           <button className="tool" onClick={toggleSound} aria-pressed={soundOn}>
-            <span aria-hidden>{soundOn ? "🔊" : "🔈"}</span> {soundOn ? t.soundOn : t.readAloud}
+            <Icon name={soundOn ? "soundOn" : "sound"} />
+            <span className="tool-label">{soundOn ? t.soundOn : t.readAloud}</span>
           </button>
           <button
             className="tool tool-text"
@@ -199,7 +203,7 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
             aria-pressed={textSize === "stor"}
           >
             <span aria-hidden className="tool-aa">Aa</span>
-            {textSize === "stor" ? t.smallerText : t.biggerText}
+            <span className="tool-label">{textSize === "stor" ? t.smallerText : t.biggerText}</span>
           </button>
           <InstallButton hideWhileAsking={pathname === "/"} />
         </div>
@@ -218,6 +222,15 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
             );
           })}
         </ol>
+      )}
+      {/* Mobil: stegen som en rad med text och en tunn stapel i stället för fem knappar. */}
+      {step !== undefined && (
+        <div className="progress-compact">
+          <span>{t.stepOf(step, t.steps.length)} · <strong>{t.steps[step - 1]}</strong></span>
+          <span className="progress-compact-bar" aria-hidden>
+            <span style={{ width: `${(step / t.steps.length) * 100}%` }} />
+          </span>
+        </div>
       )}
 
       {patient && <OccasionBar />}
@@ -244,7 +257,7 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
                 onClick={startListening}
                 aria-label={listen.kind === "listening" ? "Sluta lyssna" : "Prata – säg vad du vill"}
               >
-                <span aria-hidden>🎤</span>
+                <Icon name="mic" size={32} />
                 <span className="mic-label">{listen.kind === "listening" ? "Lyssnar…" : "Prata"}</span>
               </button>
             </div>
@@ -315,7 +328,7 @@ function DietBar({ patient, onAbout }: { patient: Patient; onAbout: () => void }
       {items.map((item) => (
         <span key={item} className="diet-item">✓ {item}</span>
       ))}
-      <span className="diet-info" aria-hidden>ⓘ</span>
+      <span className="diet-info"><Icon name="info" size={18} /></span>
     </button>
   );
 }

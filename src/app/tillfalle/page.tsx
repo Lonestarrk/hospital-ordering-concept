@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Screen, useAnnounce } from "@/components/Screen";
 import { useRequirePatient, useT, type Order } from "@/components/OrderProvider";
+import { Icon } from "@/components/Icon";
 import { Countdown, useSlotText } from "@/components/Countdown";
 import { useNow } from "@/components/useNow";
 import { dishes, occasions, SNACK_MINUTES, type OccasionId } from "@/lib/data";
@@ -127,7 +128,7 @@ export default function OccasionPage() {
                 const { occasion, slot } = entry;
                 return (
                   <li key={`ghost-${occasion.id}-${slot.date}`} className="order-row is-ghost">
-                    <span className="order-image order-ghost-icon" aria-hidden>{occasion.emoji}</span>
+                    <span className="order-image order-ghost-icon"><Icon name={occasion.id} size={32} /></span>
                     <div className="order-body">
                       <p className="order-when">
                         <strong>{t.occasions[occasion.id]}</strong> · {at(slot.servedAt, reference)}
@@ -187,11 +188,11 @@ export default function OccasionPage() {
                   )}
                   {past && meal && !meal.rating && !meal.skipped && (
                     <button className="btn btn-primary order-action" onClick={() => router.push(`/omdome?id=${meal.id}`)}>
-                      👍 👎 {m.rate}
+                      <Icon name="thumbUp" /> <Icon name="thumbDown" /> {m.rate}
                     </button>
                   )}
                   {past && meal?.rating && (
-                    <span className="order-rated">{meal.rating === "upp" ? "👍" : "👎"} {m.rated}</span>
+                    <span className="order-rated"><Icon name={meal.rating === "upp" ? "thumbUp" : "thumbDown"} size={18} /> {m.rated}</span>
                   )}
                 </li>
               );
