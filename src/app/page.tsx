@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LanguageChoice, Screen } from "@/components/Screen";
+import { LanguageChoice, Screen, STOPPED_KEY } from "@/components/Screen";
 import { useOrder, useT } from "@/components/OrderProvider";
 import { checkPersonnummer, formatPersonnummer } from "@/lib/personnummer";
 import { DEMO_PERSONNUMMER, findPatient } from "@/lib/data";
@@ -14,9 +14,20 @@ export default function LoginPage() {
   const l = t.login;
   const [digits, setDigits] = useState("");
   const [error, setError] = useState<string | null>(null);
+  // Visas när patienten har avbrutit utan att beställa.
+  const [stopped, setStopped] = useState(false);
+  useEffect(() => {
+    try {
+      setStopped(sessionStorage.getItem(STOPPED_KEY) === "1");
+      sessionStorage.removeItem(STOPPED_KEY);
+    } catch {
+      // Ingen lagring – visa ingen notis.
+    }
+  }, []);
 
   const press = (key: string) => {
     setError(null);
+    setStopped(false);
     setDigits((d) => (d.length < 12 ? d + key : d));
   };
   const erase = () => {
@@ -59,6 +70,7 @@ export default function LoginPage() {
       <div className="login">
         <section className="login-intro">
           <LanguageChoice />
+          {stopped && <p className="notice" role="status">✓ {t.cancelDialog.done}</p>}
           <p className="eyebrow">{l.eyebrow}</p>
           <h1>{l.title}</h1>
           <p className="lead">{l.lead}</p>

@@ -39,6 +39,7 @@ Underlag för juryn och för teamets presentation. Varje del svarar på juryns e
 *Om användaren blir avbruten i 20 minuter – kommer hon tillbaka till samma ställe?*
 
 - Ja. Plattan loggar ut efter 10 minuters inaktivitet (så att ingen annan ser hennes uppgifter) men **sparar valet**. Vid nästa inloggning: "Välkommen tillbaka! Du hade börjat välja Ugnsbakad lax" → *Fortsätt där jag var* tar henne till exakt samma sida.
+- Ångrar hon sig trycker hon på **✕ Avbryt**. Dialogen säger att inget är beställt och att valet sparas – det är information, inte en extra "Är du säker?". Nästa gång kan hon fortsätta där hon var.
 - En omladdning av sidan tappar ingenting. Stegindikatorn visar alltid var hon är, och "Tillbaka" behåller hennes val.
 
 ### 6. Mät utfallet, inte leveransen

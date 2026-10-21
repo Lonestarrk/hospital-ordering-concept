@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useOrder, useT } from "./OrderProvider";
 import { languages } from "@/lib/i18n";
 import {
@@ -49,11 +50,15 @@ export function useAnnounce() {
 }
 
 export function Screen({ speakText, step, commands, voiceHint, highlightTools, children, footer }: ScreenProps) {
-  const { patient, textSize, toggleTextSize, soundOn, setSoundOn, lang } = useOrder();
+  const { patient, textSize, toggleTextSize, soundOn, setSoundOn, lang, order } = useOrder();
+  const pathname = usePathname();
   const { t, tm, speechLang } = useT();
   const say = (text: string) => speak(text, speechLang);
   const [helpOpen, setHelpOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const [cancelOpen, setCancelOpen] = useState(false);
+  // Avbryt finns efter inloggningen, men inte när beställningen redan är skickad.
+  const canCancel = !!patient && !order.placed && pathname !== "/klart";
   const [listen, setListen] = useState<ListenState>({ kind: "idle" });
   const [micAvailable, setMicAvailable] = useState(false);
   const abortRef = useRef<() => void>(() => {});
@@ -81,6 +86,9 @@ export function Screen({ speakText, step, commands, voiceHint, highlightTools, c
   };
 
   const globalCommands: VoiceCommand[] = [
+    ...(canCancel
+      ? [{ phrases: ["avbryt", "sluta", "inte nu", "ångrar mig"], action: () => setCancelOpen(true) }]
+      : []),
     {
       phrases: ["hjälp", "personal*", "sköterska*"],
       action: () => {
@@ -155,6 +163,11 @@ export function Screen({ speakText, step, commands, voiceHint, highlightTools, c
               </div>
             )}
           </div>
+          {canCancel && (
+            <button className="tool tool-cancel" onClick={() => setCancelOpen(true)}>
+              {t.cancel}
+            </button>
+          )}
         </div>
         <div className={`topbar-actions ${highlightTools ? "highlight" : ""}`}>
           <button className="tool" onClick={() => setLangOpen(true)} aria-label={t.chooseLanguage}>
@@ -223,6 +236,7 @@ export function Screen({ speakText, step, commands, voiceHint, highlightTools, c
 
       {helpOpen && <HelpDialog onClose={() => setHelpOpen(false)} />}
       {langOpen && <LanguageDialog onClose={() => setLangOpen(false)} />}
+      {cancelOpen && <CancelDialog onClose={() => setCancelOpen(false)} />}
     </div>
   );
 }
@@ -247,6 +261,37 @@ export function LanguageChoice({ onChosen }: { onChosen?: () => void }) {
           {l.name}
         </button>
       ))}
+    </div>
+  );
+}
+
+export const STOPPED_KEY = "ingrid-stopped";
+
+/** Avsluta utan att beställa. Påbörjade val sparas så att hon kan fortsätta senare. */
+function CancelDialog({ onClose }: { onClose: () => void }) {
+  const { t } = useT();
+  const { order, logout } = useOrder();
+  const router = useRouter();
+  const c = t.cancelDialog;
+  const stop = () => {
+    // Inloggningssidan läser flaggan och visar "Du har avslutat. Inget är beställt."
+    try {
+      sessionStorage.setItem(STOPPED_KEY, "1");
+    } catch {
+      // Utan lagring visas bara inloggningen – inget går förlorat.
+    }
+    logout();
+    router.replace("/");
+  };
+  return (
+    <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="cancel-title" onClick={onClose}>
+      <div className="dialog" onClick={(e) => e.stopPropagation()}>
+        <div className="dialog-icon" aria-hidden>🕊️</div>
+        <h2 id="cancel-title">{c.title}</h2>
+        <p>{order.dishId ? c.bodySaved : c.bodyEmpty}</p>
+        <button className="btn btn-primary btn-block" onClick={onClose}>{c.no}</button>
+        <button className="btn btn-ghost btn-block" onClick={stop}>{c.yes}</button>
+      </div>
     </div>
   );
 }

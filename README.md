@@ -41,6 +41,11 @@ Logga in med Ingrids **syntetiska** personnummer **19480302-2328** (eller tryck 
 Hjälpmedel på varje sida: **Språk**, **Läs upp / Ljud på**, **Större text** och
 **Hjälp**, som kallar på personalen.
 
+**Ångrat sig?** Knappen **✕ Avbryt** uppe till vänster finns på alla sidor efter
+inloggningen, utom på bekräftelsen där beställningen redan är skickad. Dialogen
+förklarar att inget är beställt och att valet sparas. Inloggningssidan bekräftar sedan:
+"Du har avslutat. Inget är beställt." Med rösten räcker det att säga "avbryt".
+
 **Avbruten mitt i?** Plattan loggar ut efter 10 minuter utan aktivitet så att ingen annan
 ser patientens uppgifter, men valet sparas. Vid nästa inloggning kan hon fortsätta exakt
 där hon var. Testa direkt: `window.dispatchEvent(new Event("ingrid-idle"))`.
@@ -102,7 +107,7 @@ prototypen – där gäller principen att systemet föreslår och människan bes
 | Klart | "klar" · "ändra" |
 | Omdöme | "tummen upp" / "tummen ner" · "för kall", "svårt att tugga" · "jag åt allt" · "skicka" · "hoppa över" |
 | Min smak | "jag gillar fisk" · "jag tycker inte om kryddig mat" · "köttbullar" · "skicka" |
-| Alla sidor | "hjälp" · "läs upp" / "upprepa" · "större text" · "tyst" |
+| Alla sidor | "hjälp" · "läs upp" / "upprepa" · "större text" · "tyst" · "avbryt" |
 
 **Integritet (skyddsräcke 2).** Uppläsningen sker i enheten. Taligenkänningen används
 **bara** när webbläsaren kan köra den i plattan (`processLocally`, med en svensk modell som
@@ -164,5 +169,5 @@ Vill ni byta en bild? Lägg en ny fil i `public/mat/` och ändra `image` i `src/
 | ![Röstkommando](docs/skarmbilder/8-rost.png) | ![Omdöme](docs/skarmbilder/9-omdome.png) |
 | ![Tack för omdömet](docs/skarmbilder/10-omdome-tack.png) | ![Menyn minns](docs/skarmbilder/11-meny-minns.png) |
 | ![Min smak](docs/skarmbilder/12-min-smak.png) | ![Menyn efter smak](docs/skarmbilder/13-meny-smak.png) |
-| ![Introduktion](docs/skarmbilder/15-intro.png) | |
+| ![Introduktion](docs/skarmbilder/15-intro.png) | ![Avbryt](docs/skarmbilder/18-avbryt.png) |
 | ![Fortsätt där du var](docs/skarmbilder/16-fortsatt.png) | ![Arabiska](docs/skarmbilder/17-arabiska.png) |

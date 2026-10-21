@@ -29,6 +29,15 @@ const sv = {
   at: (time: string) => `kl ${time}`,
   list: (items: string[]) => items.join(", "),
   and: (items: string[]) => (items.length > 1 ? `${items.slice(0, -1).join(", ")} och ${items.at(-1)}` : items[0] ?? ""),
+  cancel: "✕ Avbryt",
+  cancelDialog: {
+    title: "Vill du sluta för nu?",
+    bodySaved: "Du har inte beställt något. Det du har valt sparas, så du kan fortsätta senare.",
+    bodyEmpty: "Du har inte beställt något. Du kan komma tillbaka när du vill.",
+    yes: "Ja, sluta för nu",
+    no: "Nej, fortsätt välja",
+    done: "Du har avslutat. Inget är beställt.",
+  },
   helpDialog: {
     title: "Vill du ha hjälp?",
     body: "Det är helt okej att be om hjälp. Vi kan skicka en signal till personalen på avdelningen.",
@@ -235,6 +244,15 @@ const en: Dict = {
   at: (time) => `at ${time}`,
   list: (items) => items.join(", "),
   and: (items) => (items.length > 1 ? `${items.slice(0, -1).join(", ")} and ${items.at(-1)}` : items[0] ?? ""),
+  cancel: "✕ Cancel",
+  cancelDialog: {
+    title: "Do you want to stop for now?",
+    bodySaved: "You haven't ordered anything. What you've chosen is saved, so you can continue later.",
+    bodyEmpty: "You haven't ordered anything. You can come back whenever you like.",
+    yes: "Yes, stop for now",
+    no: "No, keep choosing",
+    done: "You have stopped. Nothing has been ordered.",
+  },
   helpDialog: {
     title: "Would you like some help?",
     body: "It's perfectly fine to ask for help. We can send a signal to the staff on the ward.",
@@ -438,6 +456,15 @@ const ar: Dict = {
   at: (time) => `الساعة ${time}`,
   list: (items) => items.join("، "),
   and: (items) => (items.length > 1 ? `${items.slice(0, -1).join("، ")} و${items.at(-1)}` : items[0] ?? ""),
+  cancel: "✕ إلغاء",
+  cancelDialog: {
+    title: "هل تريدين التوقف الآن؟",
+    bodySaved: "لم تطلبي شيئاً. ما اخترتِه محفوظ، ويمكنك المتابعة لاحقاً.",
+    bodyEmpty: "لم تطلبي شيئاً. يمكنك العودة متى شئتِ.",
+    yes: "نعم، توقفي الآن",
+    no: "لا، تابعي الاختيار",
+    done: "لقد توقفتِ. لم يُطلب أي شيء.",
+  },
   helpDialog: {
     title: "هل تحتاجين إلى مساعدة؟",
     body: "لا بأس أبداً في طلب المساعدة. يمكننا إرسال إشارة إلى طاقم القسم.",
