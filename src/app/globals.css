@@ -430,7 +430,14 @@ button:focus-visible {
   height: 80px;
   flex: none;
   border-radius: 14px;
-  object-fit: cover;
+}
+
+/* Matbilder visas hela – ingenting beskärs. */
+img.order-image,
+img.summary-image,
+.done-receipt-image {
+  object-fit: contain;
+  border-radius: 8px;
 }
 
 .order-body {
@@ -1134,14 +1141,23 @@ button:focus-visible {
   --dish-size: clamp(112px, calc((100dvh - 110px) / 4 - 20px), 180px);
 }
 
+/* Bilden visas hel, i sina egna proportioner, inom en fast ruta till vänster om texten. */
+.dish-thumb {
+  width: var(--dish-size);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
 .dish-image {
   display: block;
-  width: var(--dish-size);
-  height: var(--dish-size);
-  flex-shrink: 0;
-  align-self: center;
-  object-fit: cover;
-  background: var(--surface-2);
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(var(--dish-size) - 20px);
+  border-radius: 12px;
 }
 
 .dish-body {
@@ -1581,8 +1597,6 @@ html[data-text-size="stor"] .dish-body p {
 .done-receipt-image {
   width: 56px;
   height: 56px;
-  border-radius: 10px;
-  object-fit: cover;
 }
 
 .done-receipt-text {
@@ -2129,12 +2143,13 @@ html[data-text-size="stor"] .dish-body p {
   margin-top: 16px;
 }
 
-/* Mobil: lägre rader, smalare bild och ingen beskrivning – den finns på rättens sida. */
+/* Mobil: lägre rader och mindre bild. Beskrivningen syns (högst två rader). */
 @media (max-width: 560px) {
-  .dish-grid { --dish-size: 112px; }
-  .dish-body { padding: 10px 14px; }
+  .dish-grid { --dish-size: 104px; }
+  .dish-thumb { padding: 8px; }
+  .dish-image { max-height: calc(var(--dish-size) - 16px); border-radius: 10px; }
+  .dish-body { padding: 10px 14px 10px 4px; }
   .dish-body h2 { font-size: 1em; }
-  .dish-body p { display: none; }
   .summary { padding: 12px 18px; }
   .summary-row { gap: 20px; }
 }
