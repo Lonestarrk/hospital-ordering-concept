@@ -165,7 +165,8 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
     <div className="screen">
       <header className="topbar">
         <div className="topbar-place">
-          <span className="logo" aria-hidden>🍽️</span>
+          {/* Efter inloggningen står hennes namn där appens logga stod. */}
+          {!patient && <span className="logo" aria-hidden>🍽️</span>}
           <div>
             {patient ? (
               <>
@@ -173,26 +174,27 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
                 <div className="topbar-sub">
                   {tm.word(patient.room)} · {tm.word(patient.bed)} · {t.appName}
                 </div>
+                <DietBar patient={patient} onAbout={() => setDietOpen(true)} />
               </>
             ) : (
               <div className="topbar-title">{t.appName}</div>
             )}
           </div>
+        </div>
+        <div className="topbar-actions">
           {canCancel && (
             <button className="tool tool-cancel" onClick={stop}>
               {t.cancel}
             </button>
           )}
-        </div>
-        <div className="topbar-actions">
-          <button className="tool" onClick={() => setLangOpen(true)} aria-label={t.chooseLanguage}>
+          <button className="tool tool-lang" onClick={() => setLangOpen(true)} aria-label={t.chooseLanguage}>
             <span aria-hidden>🌐</span> {languages.find((l) => l.id === lang)?.name}
           </button>
           <button className="tool" onClick={toggleSound} aria-pressed={soundOn}>
             <span aria-hidden>{soundOn ? "🔊" : "🔈"}</span> {soundOn ? t.soundOn : t.readAloud}
           </button>
           <button
-            className="tool"
+            className="tool tool-text"
             onClick={toggleTextSize}
             aria-pressed={textSize === "stor"}
           >
@@ -203,8 +205,6 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
       </header>
 
       {patient && <OccasionBar />}
-
-      {patient && <DietBar patient={patient} onAbout={() => setDietOpen(true)} />}
 
       {step !== undefined && (
         <ol className="progress" aria-label={t.stepsLabel}>
@@ -298,24 +298,23 @@ export function useDietTexts(patient: Patient) {
   ];
 }
 
-/** Kosten syns på varje sida, så att hon vet varför hon ser just den här maten. */
+/**
+ * Kosten står i sidhuvudet under namnet på varje sida, så att hon vet varför hon ser just den här maten.
+ * Hela raden är en knapp som förklarar vem som har registrerat kosten.
+ */
 function DietBar({ patient, onAbout }: { patient: Patient; onAbout: () => void }) {
   const { t } = useT();
   const items = useDietTexts(patient);
   return (
-    <section className="diet-bar" aria-label={t.diet.label}>
+    <button className="topbar-diet" onClick={onAbout} aria-label={`${t.diet.label}: ${items.join(", ")}. ${t.diet.about}`}>
       <span className="diet-label">
         <span aria-hidden>💚</span> {t.diet.label}:
       </span>
-      <ul className="diet-items">
-        {items.map((item) => (
-          <li key={item} className="diet-item">✓ {item}</li>
-        ))}
-      </ul>
-      <button className="diet-about" onClick={onAbout}>
-        <span aria-hidden>ⓘ</span> {t.diet.about}
-      </button>
-    </section>
+      {items.map((item) => (
+        <span key={item} className="diet-item">✓ {item}</span>
+      ))}
+      <span className="diet-info" aria-hidden>ⓘ</span>
+    </button>
   );
 }
 

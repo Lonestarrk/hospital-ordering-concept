@@ -112,6 +112,7 @@ button:focus-visible {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
 }
 
 .logo {
@@ -196,51 +197,41 @@ button:focus-visible {
 
 /* ---------- Kosten i sidhuvudet ---------- */
 
-.diet-bar {
-  display: flex;
+.topbar-diet {
+  display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 6px 10px;
-  margin: 0 24px 10px;
-  padding: 6px 8px 6px 14px;
-  font-size: 0.8em;
-  border-radius: var(--radius);
+  gap: 4px 8px;
+  min-height: 44px;
+  margin-top: 4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 2px solid transparent;
   background: var(--primary-soft);
   color: var(--primary-strong);
+  font: inherit;
+  font-size: 0.75em;
+  text-align: start;
+}
+
+.topbar-diet:hover {
+  border-color: var(--primary);
 }
 
 .diet-label {
   font-weight: 700;
 }
 
-.diet-items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
 .diet-item {
-  padding: 2px 10px;
+  padding: 1px 9px;
   border-radius: 999px;
   background: var(--surface);
   font-weight: 600;
-  font-size: 0.9em;
 }
 
-.diet-about {
-  margin-inline-start: auto;
-  min-height: 44px;
-  padding: 0 14px;
-  border-radius: 999px;
-  border: 2px solid var(--primary);
-  background: var(--surface);
-  color: var(--primary-strong);
-  font: inherit;
-  font-size: 0.85em;
-  font-weight: 700;
+.diet-info {
+  font-weight: 800;
+  font-size: 1.1em;
 }
 
 /* ---------- Dina beställningar ---------- */
@@ -433,10 +424,6 @@ button:focus-visible {
 
 .tool-aa {
   font-weight: 800;
-}
-
-.tool-cancel {
-  margin-inline-start: 8px;
 }
 
 .notice .btn,
@@ -1568,11 +1555,9 @@ button:focus-visible {
   :root { --base: 17px; }
   html[data-text-size="stor"] { --base: 21px; }
   .topbar, .content, .footer, .progress { padding-inline: 16px; }
-  .diet-bar { margin-inline: 16px; }
   .occasion-bar { margin-inline: 16px; display: flex; overflow-x: auto; }
   .occasion-tab { flex: 0 0 auto; min-width: 116px; }
   .progress { overflow-x: auto; }
-  .diet-about { margin-inline-start: 0; }
   .order-row { flex-wrap: wrap; }
   .order-actions, .order-action { width: 100%; }
   .order-actions .order-action { flex: 1; width: auto; }

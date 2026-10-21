@@ -58,12 +58,13 @@ Code 128 och QR) på en telefon. Streckkoderna skapas med `npm run armband`.
 | – | `/omdome` | **Omdöme i efterhand:** 👍 eller 👎, valfria skäl och "Hur mycket åt du?". |
 | – | `/min-smak` | **Min smak:** 👍 eller 👎 på olika sorters mat och ❤️ på önskerätter. |
 
-**Sidhuvudet** visar på varje sida patientens namn, rum och säng. Under det finns
+**Sidhuvudet** visar på varje sida patientens namn, rum och säng och, direkt under, raden
+**Din kost** (hela raden är en knapp som förklarar kosten). Under sidhuvudet finns
 **måltidsraden**: frukost (08:00), lunch (12:00), fika (14:30), middag (17:30) och
 **tilltugg** när som helst. Varje knapp visar när måltiden serveras, en **nedräkning** när
 det är mindre än tre timmar kvar till låstiden (två timmar före servering), "imorgon" när
 dagens tid har passerat och "✓ Beställt" när den redan är beställd. Måltiden hon håller på
-att beställa är markerad. Sedan kommer den smala raden **Din kost**:
+att beställa är markerad. Kostraden visar:
 diabeteskost, laktosfri och utan selleri. Bakom *Om din kost* står att personalen har
 registrerat kosten, att hon bara ser mat som passar och att bara personalen kan ändra den.
 

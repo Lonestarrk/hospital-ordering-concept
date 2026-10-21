@@ -70,7 +70,7 @@ const BASE = 'http://localhost:3129';
   await wait(3200);
   // 53–56 s: för alla
   await cap('Svenska · English · العربية – uppläsning och större text för alla.');
-  await tap(p.locator('.topbar-actions .tool').first()); await wait(600);
+  await tap(p.locator('.tool-lang')); await wait(600);
   await tap(p.locator('.dialog .lang-option').nth(2)); await wait(1600);
   // 56–60 s: slutkort
   await card('<div><h1>Måltider</h1><p>Mat hon vill äta – vald av henne själv.</p><p>Systemet föreslår, människan bestämmer.</p></div>');
