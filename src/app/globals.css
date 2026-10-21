@@ -370,9 +370,8 @@ button:focus-visible {
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 4px 8px;
   min-height: 44px;
-  padding: 4px 12px;
+  padding: 2px 8px;
   border-radius: 999px;
   border: 2px solid transparent;
   background: var(--primary-soft);
@@ -390,6 +389,11 @@ button:focus-visible {
 
 .diet-label {
   font-weight: 700;
+}
+
+/* Avstånd med marginaler i stället för gap – äldre Safari på iPad saknar gap i flex-rader. */
+.topbar-diet > * {
+  margin: 3px 5px;
 }
 
 .diet-item {
@@ -2285,11 +2289,11 @@ html[data-text-size="stor"] .dish-body p {
     justify-self: start;
     margin-top: 6px;
     min-height: 40px;
-    padding: 4px 10px;
-    gap: 4px 6px;
+    padding: 2px 6px;
     font-size: 0.68em;
   }
   .diet-item { padding: 0 7px; }
+  .topbar-diet > * { margin: 3px 4px; }
   .topbar-actions {
     grid-area: tools;
     flex-wrap: nowrap;
