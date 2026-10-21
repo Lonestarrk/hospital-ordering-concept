@@ -4,12 +4,22 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LanguageChoice, Screen, STOPPED_KEY, UNDO_STOP_MS, useAnnounce } from "@/components/Screen";
 import { useOrder, useT } from "@/components/OrderProvider";
-import { personnummerFromTag, scanWristband, webNfcSupported, type WristbandError } from "@/lib/wristband";
+import {
+  cameraSupported,
+  personnummerFromTag,
+  readBarcodeImage,
+  scanBarcode,
+  scanWristband,
+  webNfcSupported,
+  type WristbandError,
+} from "@/lib/wristband";
 import { DEMO_PERSONNUMMER, findPatient } from "@/lib/data";
 
 type Phase =
   | { kind: "waiting" }
   | { kind: "reading" }
+  /** Kameran letar efter streckkoden. I demon visas Ingrids armband i stället för kamerabilden. */
+  | { kind: "camera"; demo?: boolean }
   | { kind: "hello"; name: string }
   | { kind: "error"; error: WristbandError | "notFound" };
 
@@ -22,6 +32,10 @@ export default function LoginPage() {
   const [phase, setPhase] = useState<Phase>({ kind: "waiting" });
   const [nfc, setNfc] = useState(false);
   const [readerOn, setReaderOn] = useState(false);
+  const [camera, setCamera] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const demoImageRef = useRef<HTMLImageElement>(null);
+  const stopCamera = useRef<() => void>(() => {});
   // Personnumret för den som nyss tryckte på Avbryt – då erbjuds "Ångra" en kort stund.
   const [stopped, setStopped] = useState<string | null>(null);
   useEffect(() => {
@@ -66,6 +80,7 @@ export default function LoginPage() {
   };
   useEffect(() => {
     setNfc(webNfcSupported());
+    setCamera(cameraSupported());
     if (!webNfcSupported()) return;
     navigator.permissions
       ?.query({ name: "nfc" as PermissionName })
@@ -73,11 +88,14 @@ export default function LoginPage() {
         if (p.state === "granted") startReader();
       })
       .catch(() => {});
-    return () => stopReader.current();
+    return () => {
+      stopReader.current();
+      stopCamera.current();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // En inkopplad NFC-läsare "skriver" armbandets innehåll snabbt och avslutar med Enter.
+  // En inkopplad NFC-läsare eller streckkodsskanner "skriver" armbandets innehåll snabbt och avslutar med Enter.
   // Långsam inmatning för hand räknas inte – det går inte att logga in genom att skriva ett nummer.
   useEffect(() => {
     let buffer = "";
@@ -86,7 +104,8 @@ export default function LoginPage() {
       const time = performance.now();
       if (time - last > 80) buffer = "";
       last = time;
-      if (e.key === "Enter") {
+      // Streckkodsskannrar avslutar med Enter eller Tab.
+      if (e.key === "Enter" || e.key === "Tab") {
         if (buffer.length >= 10) handleTagRef.current(buffer);
         buffer = "";
       } else if (e.key.length === 1) {
@@ -104,10 +123,42 @@ export default function LoginPage() {
   }, []);
 
   const demo = () => {
+    stopCamera.current();
     setPhase({ kind: "reading" });
     setTimeout(() => handleTagRef.current(`PNR:${DEMO_PERSONNUMMER}`), 900);
   };
-  const retry = () => (nfc ? startReader() : setPhase({ kind: "waiting" }));
+  // Streckkoden läses med plattans kamera. Bilden tolkas i plattan.
+  const openCamera = async () => {
+    stopCamera.current();
+    setPhase({ kind: "camera" });
+    // Vänta tills videoelementet syns.
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    if (!videoRef.current) return;
+    stopCamera.current = await scanBarcode(videoRef.current, {
+      onRead: (text) => {
+        setPhase({ kind: "reading" });
+        handleTagRef.current(text);
+      },
+      onError,
+    });
+  };
+  const closeCamera = () => {
+    stopCamera.current();
+    setPhase({ kind: "waiting" });
+  };
+  // Demo: Ingrids armband visas där kamerabilden skulle vara, och streckkoden läses på riktigt.
+  const demoBarcode = async () => {
+    stopCamera.current();
+    setPhase({ kind: "camera", demo: true });
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+    const text = demoImageRef.current ? await readBarcodeImage(demoImageRef.current) : undefined;
+    if (!text) return onError("unreadable");
+    setPhase({ kind: "reading" });
+    handleTagRef.current(text);
+  };
+
+  const retry = (error: WristbandError | "notFound") =>
+    error === "camera" ? openCamera() : nfc ? startReader() : setPhase({ kind: "waiting" });
 
   return (
     <Screen speakText={l.speak}>
@@ -131,17 +182,33 @@ export default function LoginPage() {
         </section>
 
         <section className={`login-band is-${phase.kind}`} aria-label={l.bandLabel}>
-          <div className="band-spot" aria-hidden>
-            <span className="band-ring" />
-            <span className="band-ring band-ring-2" />
-            <span className="band-icon">{phase.kind === "hello" ? "✓" : "📶"}</span>
-            <span className="band-spot-label">{l.bandSpot}</span>
-          </div>
+          {phase.kind === "camera" ? (
+            <div className="band-camera">
+              {phase.demo ? (
+                <img ref={demoImageRef} className="band-camera-demo" src="/armband/ingrid-streckkod.png" alt="" />
+              ) : (
+                <video ref={videoRef} className="band-camera-video" muted playsInline />
+              )}
+              <span className="band-camera-line" aria-hidden />
+            </div>
+          ) : (
+            <div className="band-spot" aria-hidden>
+              <span className="band-ring" />
+              <span className="band-ring band-ring-2" />
+              <span className="band-icon">{phase.kind === "hello" ? "✓" : "📶"}</span>
+              <span className="band-spot-label">{l.bandSpot}</span>
+            </div>
+          )}
           <div className="band-text" role="status" aria-live="polite">
             {phase.kind === "hello" ? (
               <h2>{l.hello(phase.name)}</h2>
             ) : phase.kind === "reading" ? (
               <h2>{l.reading}</h2>
+            ) : phase.kind === "camera" ? (
+              <>
+                <h2>{l.cameraTitle}</h2>
+                <p>{l.cameraHint}</p>
+              </>
             ) : (
               <>
                 <h2>{l.bandTitle}</h2>
@@ -152,7 +219,7 @@ export default function LoginPage() {
           {phase.kind === "error" && (
             <div className="error" role="alert">
               <p>{l.errors[phase.error]}</p>
-              <button className="btn btn-small error-action" onClick={retry}>
+              <button className="btn btn-small error-action" onClick={() => retry(phase.error)}>
                 {l.errorActions[phase.error]}
               </button>
             </div>
@@ -163,11 +230,25 @@ export default function LoginPage() {
               <p className="muted">{l.startHint}</p>
             </div>
           )}
+          {camera && phase.kind !== "hello" && phase.kind !== "reading" && (
+            phase.kind === "camera" ? (
+              <button className="btn btn-ghost" onClick={closeCamera}>{l.cameraClose}</button>
+            ) : (
+              <button className="btn btn-ghost band-camera-open" onClick={openCamera}>
+                <span aria-hidden>📷</span> {l.camera}
+              </button>
+            )
+          )}
           {!nfc && <p className="muted band-external">{l.external}</p>}
 
-          <button className="demo-link" onClick={demo} disabled={phase.kind === "reading" || phase.kind === "hello"}>
-            {l.demo}
-          </button>
+          <div className="demo-links">
+            <button className="demo-link" onClick={demo} disabled={phase.kind === "reading" || phase.kind === "hello"}>
+              {l.demo}
+            </button>
+            <button className="demo-link" onClick={demoBarcode} disabled={phase.kind === "reading" || phase.kind === "hello"}>
+              {l.demoBarcode}
+            </button>
+          </div>
         </section>
       </div>
     </Screen>

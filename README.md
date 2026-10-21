@@ -24,26 +24,31 @@ Logga in genom att hålla Ingrids armband mot plattan. I demon trycker du på
 **"Demo: håll Ingrids armband mot plattan"** längst ner på inloggningssidan. Armbandet
 innehåller hennes **syntetiska** personnummer **19480302-2328**.
 
-### Inloggning med NFC-armband
+### Inloggning med armbandet – NFC eller streckkod
 
 Det går inte att skriva in ett personnummer. Plattan läser patientens armband, och det
-går på tre sätt:
+går på flera sätt:
 
 | Sätt | Var det fungerar |
 |---|---|
 | **Web NFC** (`NDEFReader`), plattans inbyggda läsare | Chrome på Android, via HTTPS. Första gången trycker man på *Starta armbandsläsaren* och tillåter NFC. Sedan startar läsaren av sig själv. |
-| **Inkopplad NFC-läsare** (USB eller Bluetooth) som skriver som ett tangentbord | Alla plattor och webbläsare, även iPad. Läsaren skriver numret snabbt och avslutar med Enter. Långsam inmatning för hand godtas inte. |
-| **Demo** | Knappen på inloggningssidan, eller `window.dispatchEvent(new CustomEvent("ingrid-nfc", { detail: "PNR:194803022328" }))` |
+| **Streckkod med plattans kamera** – *Visa streckkoden för kameran* | Alla moderna webbläsare med kamera, även iPad, via HTTPS. Läser Code 128, QR, Data Matrix, PDF417 och Code 39. Webbläsarens egen `BarcodeDetector` används om den finns, annars ZXing som WebAssembly. Filen kommer från appen själv (`public/zxing/`), så **bilden lämnar aldrig plattan**. |
+| **Inkopplad NFC-läsare eller streckkodsskanner** (USB eller Bluetooth) som skriver som ett tangentbord | Alla plattor och webbläsare, även iPad. Läsaren skriver numret snabbt och avslutar med Enter eller Tab. Långsam inmatning för hand godtas inte. |
+| **Demo** | *Demo: håll Ingrids armband mot plattan* (NFC) och *Demo: visa Ingrids streckkod* (bilden av armbandet läses på riktigt av avkodaren), eller `window.dispatchEvent(new CustomEvent("ingrid-nfc", { detail: "PNR:194803022328" }))` |
 
-Armbandets tagg innehåller en NDEF-textpost (`PNR:ÅÅÅÅMMDDXXXX`). Webbläsare på iPad och
-iPhone har ingen Web NFC, så där behövs en inkopplad läsare eller en inbyggd app. Koden
-finns i `src/lib/wristband.ts`.
+Armbandet innehåller `PNR:ÅÅÅÅMMDDXXXX`: i NFC-taggen som en NDEF-textpost, i streckkoden
+som text. Webbläsare på iPad och iPhone har ingen Web NFC, men där fungerar kameran och en
+inkopplad läsare. Koden finns i `src/lib/wristband.ts`.
+
+**Prova kameran på riktigt:** skriv ut eller visa
+[docs/armband/ingrid-armband.png](docs/armband/ingrid-armband.png) (syntetisk testpatient med
+Code 128 och QR) på en telefon. Streckkoderna skapas med `npm run armband`.
 
 ## Användarresan
 
 | Steg | Sida | Vad händer |
 |---|---|---|
-| 1 | `/` | **Språkval** (svenska, English, العربية) och inloggning med **armbandet** mot plattan. Varje fel har en handling: *Försök igen* eller hänvisning till larmknappen. Har hon ett påbörjat val fortsätter hon direkt där hon var. |
+| 1 | `/` | **Språkval** (svenska, English, العربية) och inloggning med **armbandet**: NFC mot plattan eller streckkoden framför kameran. Varje fel har en handling: *Försök igen* eller hänvisning till larmknappen. Har hon ett påbörjat val fortsätter hon direkt där hon var. |
 | 2–3 | `/tillfalle` | **"Hej Ingrid!" och hennes beställningar** i tidsordning: nästa måltid överst, och måltider som har passerat gråade. En serverad måltid utan omdöme har knappen *Hur smakade det?*, och en beställning som inte är låst kan ändras. Under listan **väljer hon måltid:** frukost (08:00), lunch (12:00), fika (14:30), middag (17:30) eller **tilltugg** när som helst. Varje kort har en **nedräkning** till låstiden, två timmar före servering. Har tiden passerat står det "Stängt för idag – beställ till imorgon", och beställningen gäller nästa dag. |
 | 4 | `/meny` | **Rätter för vald måltid**, med nedräkning. Lunch och middag har 20 rätter. Bara de som passar hennes kostavvikelser visas: allergier, specialkost och konsistens. En rätt är föreslagen med skälet utskrivet. Under menyn står hur många som är dolda. *Visa dem* visar dem gråade med skälet ("Innehåller selleri", "Passar inte: laktosfri", "Konsistens: timbal"), men de går inte att beställa (`/meny?dolda=1`). |
 | 5 | `/meny/[id]` | Allergener, portionsstorlek ("Hur hungrig är du?") och önskemål som "Skuren i små bitar". |
@@ -191,7 +196,7 @@ mikrofon kan man prova kommandona i konsolen:
 | Surfplattan först | Layouten är byggd för liggande surfplatta och fungerar även på mobil. |
 
 > **Obs om säkerheten:** Armbandet är säkrare än ett nummer som vem som helst kan skriva,
-> men personnumret i klartext på taggen kan läsas av en annan NFC-läsare. I skarp drift
+> men personnumret i klartext på taggen och i streckkoden kan läsas av vem som helst med en läsare eller kamera. I skarp drift
 > bör armbandet bara bära ett slumpat band-ID (gärna en signerad eller krypterad tagg, t.ex.
 > NTAG 424 DNA). Servern slår upp patienten och kontrollerar att bandet hör till sängen
 > som plattan är kopplad till.
@@ -265,3 +270,4 @@ Vill ni byta en bild? Lägg en ny fil i `public/mat/` och ändra `image` i `src/
 | ![Dolda rätter med skäl](docs/skarmbilder/21-dolda-ratter.png) | ![Välj måltid med nedräkning](docs/skarmbilder/22-maltider.png) |
 | ![Tiden har gått ut](docs/skarmbilder/23-tiden-ute.png) | ![Om din kost](docs/skarmbilder/24-om-din-kost.png) |
 | ![Ny beställning överst](docs/skarmbilder/25-ny-bestallning-overst.png) | ![Arabiska](docs/skarmbilder/17-arabiska.png) |
+| ![Streckkoden läses med kameran](docs/skarmbilder/26-streckkod-kamera.png) | ![Ingrids armband](docs/armband/ingrid-armband.png) |
