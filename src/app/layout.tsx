@@ -15,8 +15,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="sv" data-text-size="normal">
-      <body>
+    // suppressHydrationWarning: webbläsartillägg (t.ex. ColorZilla) lägger egna attribut på
+    // <body>, och appen sätter själv lang/dir/textstorlek på <html> efter laddning.
+    <html lang="sv" data-text-size="normal" suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <OrderProvider>{children}</OrderProvider>
       </body>
     </html>
