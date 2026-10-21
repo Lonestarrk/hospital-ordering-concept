@@ -457,8 +457,7 @@ button:focus-visible {
 }
 
 /* Matbilder visas hela – ingenting beskärs. */
-img.summary-image,
-.done-receipt-image {
+img.summary-image {
   object-fit: contain;
   border-radius: 8px;
 }
@@ -1627,37 +1626,63 @@ html[data-text-size="stor"] .dish-body p {
   color: var(--primary-soft);
 }
 
-.done-receipt {
+/* Beställningskortet på klart-sidan – samma kort som på Dina beställningar. */
+.done-order {
+  margin-top: 24px;
+}
+
+.order-drink {
+  color: var(--text-muted);
+  font-size: 0.9em;
+}
+
+/* Vad tycker du om för mat? – en egen rad med pil, som en länk vidare. */
+.done-taste {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 12px 20px;
-  margin-top: 20px;
+  width: 100%;
+  margin-top: 12px;
   padding: 14px 18px;
-  border-radius: 18px;
+  border-radius: var(--radius);
   border: 2px solid var(--border);
   background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: start;
 }
 
-.done-receipt-image {
-  width: 56px;
-  height: 56px;
+.done-taste-icon {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  margin-inline-end: 16px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #fdf1ec;
+  font-size: 22px;
 }
 
-.done-receipt-text {
-  flex: 1 1 320px;
+.done-taste-text {
+  flex: 1;
   min-width: 0;
   display: grid;
-  gap: 4px;
 }
 
-.done-receipt-what {
-  font-weight: 700;
+.done-taste-text span {
+  color: var(--text-muted);
+  font-size: 0.85em;
 }
 
-.done-taste {
-  border-style: dashed;
-  border-color: var(--accent);
+.done-taste-arrow {
+  margin-inline-start: 12px;
+  color: var(--text-muted);
+  font-size: 1.6em;
+  line-height: 1;
+}
+
+[dir="rtl"] .done-taste-arrow {
+  transform: scaleX(-1);
 }
 
 @media (max-width: 700px) {

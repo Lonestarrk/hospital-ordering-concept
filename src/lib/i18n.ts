@@ -58,9 +58,7 @@ const sv = {
     ordered: (dish: string) => `✓ Beställt: ${dish}`,
   },
   stopped: {
-    done: "Du har avslutat. Inget är beställt.",
-    saved: "Det du hade valt är sparat.",
-    undo: "Ångra – fortsätt där jag var",
+    done: "Avbrutet – du är utloggad. Inget är beställt.",
   },
   install: {
     title: "Installera Måltider på plattan?",
@@ -229,6 +227,7 @@ const sv = {
     thanks: (name: string) => `Tack ${name}!`,
     more: "Beställ något mer",
     tasteTitle: "Vad tycker du om för mat?",
+    tasteBody: "Berätta en gång, så visar vi det du gillar först.",
     demoServed: "Demo: maten har serverats – ge tummen upp eller ner",
     arrivesWhen: (when: string) => `Maten kommer till ditt rum ${when}`,
     whatNow: "Vad vill du göra nu?",
@@ -346,9 +345,7 @@ const en: Dict = {
     ordered: (dish) => `✓ Ordered: ${dish}`,
   },
   stopped: {
-    done: "You have stopped. Nothing has been ordered.",
-    saved: "What you had chosen is saved.",
-    undo: "Undo – continue where I was",
+    done: "Cancelled – you are logged out. Nothing has been ordered.",
   },
   install: {
     title: "Install Meals on this tablet?",
@@ -515,6 +512,7 @@ const en: Dict = {
     thanks: (name) => `Thank you ${name}!`,
     more: "Order something else",
     tasteTitle: "What food do you like?",
+    tasteBody: "Tell us once and we will show what you like first.",
     demoServed: "Demo: the food has been served – give a thumbs up or down",
     arrivesWhen: (when) => `Your food will arrive in your room ${when}`,
     whatNow: "What would you like to do now?",
@@ -630,9 +628,7 @@ const ar: Dict = {
     ordered: (dish) => `✓ تم الطلب: ${dish}`,
   },
   stopped: {
-    done: "لقد توقفتِ. لم يُطلب أي شيء.",
-    saved: "ما اخترتِه محفوظ.",
-    undo: "تراجع – تابعي من حيث توقفتِ",
+    done: "تم الإلغاء – تم تسجيل خروجك. لم يُطلب أي شيء.",
   },
   install: {
     title: "تثبيت الوجبات على هذا الجهاز؟",
@@ -799,6 +795,7 @@ const ar: Dict = {
     thanks: (name) => `شكراً ${name}!`,
     more: "اطلبي شيئاً آخر",
     tasteTitle: "ما الطعام الذي تحبينه؟",
+    tasteBody: "أخبرينا مرة واحدة، وسنعرض ما تحبينه أولاً.",
     demoServed: "عرض تجريبي: قُدِّم الطعام – أعطي إعجاباً أو عدم إعجاب",
     arrivesWhen: (when) => `يصل طعامك إلى غرفتك ${when}`,
     whatNow: "ماذا تريدين أن تفعلي الآن؟",

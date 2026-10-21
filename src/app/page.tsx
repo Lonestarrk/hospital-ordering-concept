@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LanguageChoice, Screen, STOPPED_KEY, UNDO_STOP_MS, useAnnounce } from "@/components/Screen";
+import { LanguageChoice, Screen, STOPPED_KEY, STOPPED_NOTICE_MS, useAnnounce } from "@/components/Screen";
 import { InstallBanner } from "@/components/Install";
 import { useOrder, useT } from "@/components/OrderProvider";
 import {
@@ -26,7 +26,7 @@ type Phase =
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, undoStop, drafts } = useOrder();
+  const { login } = useOrder();
   const { t } = useT();
   const l = t.login;
   const announce = useAnnounce();
@@ -37,28 +37,21 @@ export default function LoginPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const demoImageRef = useRef<HTMLImageElement>(null);
   const stopCamera = useRef<() => void>(() => {});
-  // Personnumret för den som nyss tryckte på Avbryt – då erbjuds "Ångra" en kort stund.
-  const [stopped, setStopped] = useState<string | null>(null);
+  // Bekräftelse direkt efter Avbryt. Ingen "Ångra" – plattan kan redan vara hos nästa patient.
+  const [stopped, setStopped] = useState(false);
   useEffect(() => {
     try {
-      const raw = sessionStorage.getItem(STOPPED_KEY);
+      const at = Number(sessionStorage.getItem(STOPPED_KEY));
       sessionStorage.removeItem(STOPPED_KEY);
-      const flag = raw ? (JSON.parse(raw) as { personnummer: string; at: number }) : null;
-      if (flag && Date.now() - flag.at < UNDO_STOP_MS) setStopped(flag.personnummer);
+      if (at && Date.now() - at < STOPPED_NOTICE_MS) setStopped(true);
     } catch {
       // Ingen lagring – visa ingen notis.
     }
   }, []);
 
-  const undo = () => {
-    if (!stopped) return;
-    const path = undoStop(stopped);
-    if (path) router.push(path);
-  };
-
   // Inloggningen sker bara med armbandet – från plattans NFC-läsare, en inkopplad läsare eller demoknappen.
   const handleTag = (text: string) => {
-    setStopped(null);
+    setStopped(false);
     const pnr = personnummerFromTag(text);
     if (!pnr) return setPhase({ kind: "error", error: "unreadable" });
     const patient = findPatient(pnr);
@@ -169,8 +162,7 @@ export default function LoginPage() {
           <LanguageChoice />
           {stopped && (
             <div className="notice" role="status">
-              <p>✓ {t.stopped.done}{drafts[stopped] ? ` ${t.stopped.saved}` : ""}</p>
-              <button className="btn btn-small" onClick={undo}>{t.stopped.undo}</button>
+              <p>✓ {t.stopped.done}</p>
             </div>
           )}
           <p className="eyebrow">{l.eyebrow}</p>

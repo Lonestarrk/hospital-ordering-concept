@@ -53,7 +53,7 @@ export function useAnnounce() {
 }
 
 export function Screen({ speakText, step, commands, voiceHint, children, footer }: ScreenProps) {
-  const { patient, textSize, toggleTextSize, soundOn, setSoundOn, lang, order, logout } = useOrder();
+  const { patient, textSize, toggleTextSize, soundOn, setSoundOn, lang, order, signOut } = useOrder();
   const router = useRouter();
   const pathname = usePathname();
   const { t, tm, speechLang } = useT();
@@ -81,16 +81,15 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Avbryt sker direkt (det går att ångra): valet sparas och inloggningen erbjuder "Ångra".
+  // Avbryt loggar ut helt – plattan kan gå vidare till nästa patient. Inloggningen visar en kort bekräftelse.
   const stop = () => {
-    if (patient) {
-      try {
-        sessionStorage.setItem(STOPPED_KEY, JSON.stringify({ personnummer: patient.personnummer, at: Date.now() }));
-      } catch {
-        // Utan lagring visas bara inloggningen – valet är ändå sparat till nästa inloggning.
-      }
+    try {
+      sessionStorage.setItem(STOPPED_KEY, String(Date.now()));
+    } catch {
+      // Utan lagring visas bara inloggningen.
     }
-    logout();
+    stopSpeaking();
+    signOut();
     router.replace("/");
   };
 
@@ -296,9 +295,9 @@ export function LanguageChoice({ onChosen }: { onChosen?: () => void }) {
   );
 }
 
-/** Sätts när patienten avbryter, så att inloggningen kan erbjuda "Ångra" en kort stund. */
+/** Sätts när patienten avbryter, så att inloggningen kan bekräfta att hon är utloggad. */
 export const STOPPED_KEY = "ingrid-stopped";
-export const UNDO_STOP_MS = 2 * 60 * 1000;
+export const STOPPED_NOTICE_MS = 2 * 60 * 1000;
 
 /** Det som styr vilken mat hon ser – registrerat av personalen. */
 export function useDietTexts(patient: Patient) {
