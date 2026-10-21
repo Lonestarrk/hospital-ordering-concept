@@ -61,6 +61,18 @@ const sv = {
     saved: "Det du hade valt är sparat.",
     undo: "Ångra – fortsätt där jag var",
   },
+  install: {
+    title: "Installera Måltider på plattan?",
+    body: "Då startar appen direkt från hemskärmen, i helskärm och utan adressfält.",
+    yes: "Installera",
+    no: "Inte nu",
+    button: "Installera",
+    buttonAria: "Installera appen på plattan",
+    iosTitle: "Så installerar du Måltider",
+    iosSteps: ["Tryck på Dela-knappen (fyrkanten med en pil uppåt).", "Välj ”Lägg till på hemskärmen”.", "Tryck på ”Lägg till”."],
+    close: "Stäng",
+    installed: "Måltider är installerad.",
+  },
   login: {
     speak:
       "Hej och välkommen! Här beställer du din mat. Håll ditt armband från sjukhuset mot plattan, där det står Armband. Du kan också visa streckkoden på armbandet för kameran. Plattan läser det och vet då vem du är.",
@@ -334,6 +346,18 @@ const en: Dict = {
     saved: "What you had chosen is saved.",
     undo: "Undo – continue where I was",
   },
+  install: {
+    title: "Install Meals on this tablet?",
+    body: "The app then opens straight from the home screen, full screen and without an address bar.",
+    yes: "Install",
+    no: "Not now",
+    button: "Install",
+    buttonAria: "Install the app on this tablet",
+    iosTitle: "How to install Meals",
+    iosSteps: ["Tap the Share button (the square with an arrow pointing up).", "Choose “Add to Home Screen”.", "Tap “Add”."],
+    close: "Close",
+    installed: "Meals is installed.",
+  },
   login: {
     speak:
       "Hello and welcome! This is where you order your food. Hold your hospital wristband against the tablet, where it says Wristband. You can also show the barcode on the wristband to the camera. The tablet reads it and knows who you are.",
@@ -602,6 +626,18 @@ const ar: Dict = {
     done: "لقد توقفتِ. لم يُطلب أي شيء.",
     saved: "ما اخترتِه محفوظ.",
     undo: "تراجع – تابعي من حيث توقفتِ",
+  },
+  install: {
+    title: "تثبيت الوجبات على هذا الجهاز؟",
+    body: "عندها يفتح التطبيق مباشرة من الشاشة الرئيسية، بملء الشاشة ودون شريط العنوان.",
+    yes: "تثبيت",
+    no: "ليس الآن",
+    button: "تثبيت",
+    buttonAria: "ثبّتي التطبيق على هذا الجهاز",
+    iosTitle: "طريقة تثبيت الوجبات",
+    iosSteps: ["اضغطي على زر المشاركة (المربع مع سهم إلى الأعلى).", "اختاري «إضافة إلى الشاشة الرئيسية».", "اضغطي على «إضافة»."],
+    close: "إغلاق",
+    installed: "تم تثبيت الوجبات.",
   },
   login: {
     speak:

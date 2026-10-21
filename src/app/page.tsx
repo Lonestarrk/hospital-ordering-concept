@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LanguageChoice, Screen, STOPPED_KEY, UNDO_STOP_MS, useAnnounce } from "@/components/Screen";
+import { InstallBanner } from "@/components/Install";
 import { useOrder, useT } from "@/components/OrderProvider";
 import {
   cameraSupported,
@@ -164,6 +165,7 @@ export default function LoginPage() {
     <Screen speakText={l.speak}>
       <div className="login">
         <section className="login-intro">
+          <InstallBanner />
           <LanguageChoice />
           {stopped && (
             <div className="notice" role="status">

@@ -8,6 +8,7 @@ import { consistencyLabels, dietLabels, type Patient } from "@/lib/data";
 import { demoClockActive, hhmm } from "@/lib/clock";
 import { useNow } from "./useNow";
 import { OccasionBar } from "./OccasionBar";
+import { InstallButton } from "./Install";
 import {
   chime,
   listenOnce,
@@ -176,7 +177,7 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
           </>
         ) : (
           <div className="topbar-place">
-            <span className="logo" aria-hidden>🍽️</span>
+            <img className="logo" src="/ikoner/ikon-192.png" alt="" />
             <div className="topbar-title">{t.appName}</div>
           </div>
         )}
@@ -200,6 +201,7 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
             <span aria-hidden className="tool-aa">Aa</span>
             {textSize === "stor" ? t.smallerText : t.biggerText}
           </button>
+          <InstallButton hideWhileAsking={pathname === "/"} />
         </div>
       </header>
 

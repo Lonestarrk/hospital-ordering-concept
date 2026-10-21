@@ -179,6 +179,70 @@ button:focus-visible {
   }
 }
 
+/* ---------- Installera appen ---------- */
+
+.install-banner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  margin-bottom: 24px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 2px solid var(--primary);
+}
+
+.install-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  flex: none;
+}
+
+.install-icon-large {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+  border-radius: 20px;
+}
+
+.install-text {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.install-text h2 {
+  font-size: 1em;
+}
+
+.install-text p {
+  color: var(--text-muted);
+  font-size: 0.85em;
+}
+
+.install-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.install-actions .btn-primary {
+  background: var(--primary);
+}
+
+.install-steps {
+  margin: 0;
+  padding-inline-start: 1.4em;
+  text-align: start;
+  display: grid;
+  gap: 8px;
+}
+
+.tool-install {
+  border-color: var(--primary);
+  color: var(--primary-strong);
+}
+
 /* ---------- Måltidsraden under sidhuvudet ---------- */
 
 .occasion-bar {

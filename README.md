@@ -24,6 +24,25 @@ Logga in genom att hålla Ingrids armband mot plattan. I demon trycker du på
 **"Demo: håll Ingrids armband mot plattan"** längst ner på inloggningssidan. Armbandet
 innehåller hennes **syntetiska** personnummer **19480302-2328**.
 
+### Installera appen (PWA)
+
+Måltider är en installerbar webbapp (PWA): manifest (`src/app/manifest.ts`), ikoner i
+`public/ikoner/` (skapas med `scripts/skapa-ikoner.cjs`) och en service worker
+(`public/sw.js`) som sparar appens egna filer. Patientuppgifter går aldrig genom service
+workern.
+
+- **Frågan:** på inloggningssidan visas "Installera Måltider på plattan?" med *Installera*
+  och *Inte nu*. Efter *Inte nu* visas frågan inte igen på den plattan.
+- **Installera när som helst:** knappen *⤓ Installera* finns i sidhuvudet så länge appen
+  går att installera. På inloggningssidan visas den först efter *Inte nu*. I Chrome och
+  Edge på dator och Chromebook finns dessutom webbläsarens egen installationsikon i
+  adressfältet.
+- **iPad och iPhone** har ingen installationsruta. Där visar *Installera* stegen i Safari:
+  Dela → Lägg till på hemskärmen.
+- Körs appen redan installerad syns varken frågan eller knappen.
+- Installationen kräver HTTPS (eller `localhost`). Service workern registreras bara i
+  produktionsläget (`npm run build && npm start`).
+
 ### Inloggning med armbandet – NFC eller streckkod
 
 Det går inte att skriva in ett personnummer. Plattan läser patientens armband, och det
@@ -278,3 +297,4 @@ Vill ni byta en bild? Lägg en ny fil i `public/mat/` och ändra `image` i `src/
 | ![Tiden har gått ut](docs/skarmbilder/23-tiden-ute.png) | ![Om din kost](docs/skarmbilder/24-om-din-kost.png) |
 | ![Ny beställning överst](docs/skarmbilder/25-ny-bestallning-overst.png) | ![Arabiska](docs/skarmbilder/17-arabiska.png) |
 | ![Streckkoden läses med kameran](docs/skarmbilder/26-streckkod-kamera.png) | ![Ingrids armband](docs/armband/ingrid-armband.png) |
+| ![Installera appen](docs/skarmbilder/27-installera.png) | |
