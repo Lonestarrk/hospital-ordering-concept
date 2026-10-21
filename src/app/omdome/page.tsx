@@ -99,12 +99,21 @@ function Feedback() {
           </button>
         }
       >
-        <div className="done">
-          <div className={`done-check ${shown.rating === "ner" ? "done-check-neutral" : ""}`} aria-hidden>
-            {shown.rating === "upp" ? "👍" : "👎"}
+        <div className="feedback-thanks">
+          {/* Tummen och tacket på en rad, så att allt får plats utan att man behöver scrolla. */}
+          <div className="feedback-thanks-head">
+            <span className="feedback-thanks-image">
+              <img src={dish.image} alt="" />
+              <span className={`feedback-thanks-thumb ${shown.rating === "ner" ? "is-down" : ""}`} aria-hidden>
+                {shown.rating === "upp" ? "👍" : "👎"}
+              </span>
+            </span>
+            <div>
+              <h1>{f.thanks(patient.firstName)}</h1>
+              <p className="lead">{f.kitchenGets(dishName)}</p>
+              {shown.rating === "upp" && <p className="muted">{f.nextTime}</p>}
+            </div>
           </div>
-          <h1>{f.thanks(patient.firstName)}</h1>
-          <p className="lead">{f.kitchenGets(dishName)}</p>
           {tellNurse && (
             <div className="card care feedback-staff">
               <div className="care-icon" aria-hidden>👩‍⚕️</div>
@@ -116,7 +125,6 @@ function Feedback() {
               </div>
             </div>
           )}
-          {shown.rating === "upp" && <p className="muted">{f.nextTime}</p>}
         </div>
       </Screen>
     );
