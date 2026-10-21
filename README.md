@@ -20,16 +20,31 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
-Logga in med Ingrids **syntetiska** personnummer **19480302-2328** (eller tryck på
-"Demo: fyll i Ingrids personnummer" längst ner på inloggningssidan).
+Logga in genom att hålla Ingrids armband mot plattan. I demon trycker du på
+**"Demo: håll Ingrids armband mot plattan"** längst ner på inloggningssidan. Armbandet
+innehåller hennes **syntetiska** personnummer **19480302-2328**.
+
+### Inloggning med NFC-armband
+
+Det går inte att skriva in ett personnummer. Plattan läser patientens armband, och det
+går på tre sätt:
+
+| Sätt | Var det fungerar |
+|---|---|
+| **Web NFC** (`NDEFReader`), plattans inbyggda läsare | Chrome på Android, via HTTPS. Första gången trycker man på *Starta armbandsläsaren* och tillåter NFC. Sedan startar läsaren av sig själv. |
+| **Inkopplad NFC-läsare** (USB eller Bluetooth) som skriver som ett tangentbord | Alla plattor och webbläsare, även iPad. Läsaren skriver numret snabbt och avslutar med Enter. Långsam inmatning för hand godtas inte. |
+| **Demo** | Knappen på inloggningssidan, eller `window.dispatchEvent(new CustomEvent("ingrid-nfc", { detail: "PNR:194803022328" }))` |
+
+Armbandets tagg innehåller en NDEF-textpost (`PNR:ÅÅÅÅMMDDXXXX`). Webbläsare på iPad och
+iPhone har ingen Web NFC, så där behövs en inkopplad läsare eller en inbyggd app. Koden
+finns i `src/lib/wristband.ts`.
 
 ## Användarresan
 
 | Steg | Sida | Vad händer |
 |---|---|---|
-| 1 | `/` | **Språkval** (svenska, English, العربية) och inloggning med personnummer på ett stort sifferblock. Numret kontrolleras (datum och kontrollsiffra) och felen förklaras i klartext. |
-| 2 | `/valkommen` | "Hej Ingrid! Stämmer det här?" – namn, rum, säng, kost och allergier. Har hon ett påbörjat val visas *Fortsätt där jag var*. |
-| 3 | `/tillfalle` | **Välj måltid:** frukost (08:00), lunch (12:00), fika (14:30), middag (17:30) eller **tilltugg** när som helst. Varje kort har en **nedräkning** till låstiden, två timmar före servering. Har tiden passerat står det "Stängt för idag – beställ till imorgon", och beställningen gäller nästa dag. |
+| 1 | `/` | **Språkval** (svenska, English, العربية) och inloggning med **armbandet** mot plattan. Varje fel har en handling: *Försök igen* eller hänvisning till larmknappen. Har hon ett påbörjat val fortsätter hon direkt där hon var. |
+| 2–3 | `/tillfalle` | **"Hej Ingrid!" och hennes beställningar** i tidsordning: nästa måltid överst, och måltider som har passerat gråade. En serverad måltid utan omdöme har knappen *Hur smakade det?*, och en beställning som inte är låst kan ändras. Under listan **väljer hon måltid:** frukost (08:00), lunch (12:00), fika (14:30), middag (17:30) eller **tilltugg** när som helst. Varje kort har en **nedräkning** till låstiden, två timmar före servering. Har tiden passerat står det "Stängt för idag – beställ till imorgon", och beställningen gäller nästa dag. |
 | 4 | `/meny` | **Rätter för vald måltid**, med nedräkning. Lunch och middag har 20 rätter. Bara de som passar hennes kostavvikelser visas: allergier, specialkost och konsistens. En rätt är föreslagen med skälet utskrivet. Under menyn står hur många som är dolda. *Visa dem* visar dem gråade med skälet ("Innehåller selleri", "Passar inte: laktosfri", "Konsistens: timbal"), men de går inte att beställa (`/meny?dolda=1`). |
 | 5 | `/meny/[id]` | Allergener, portionsstorlek ("Hur hungrig är du?") och önskemål som "Skuren i små bitar". |
 | 6 | `/dryck` | Dryck som passar kosten. |
@@ -37,6 +52,10 @@ Logga in med Ingrids **syntetiska** personnummer **19480302-2328** (eller tryck 
 | 8 | `/klart` | Bekräftelse med tid: "Maten kommer till ditt rum ca kl 12:00". |
 | – | `/omdome` | **Omdöme i efterhand:** 👍 eller 👎, valfria skäl och "Hur mycket åt du?". |
 | – | `/min-smak` | **Min smak:** 👍 eller 👎 på olika sorters mat och ❤️ på önskerätter. |
+
+**Sidhuvudet** visar på varje sida patientens namn, rum och säng, och raden **Din kost**:
+diabeteskost, laktosfri och utan selleri. Bakom *Om din kost* står att personalen har
+registrerat kosten, att hon bara ser mat som passar och att bara personalen kan ändra den.
 
 Hjälpmedel på varje sida: **Språk**, **Läs upp / Ljud på** och **Större text**. Appen har
 ingen egen hjälpknapp, eftersom rummet redan har larmknappar. Där det behövs hänvisar
@@ -171,9 +190,11 @@ mikrofon kan man prova kommandona i konsolen:
 | Patientskärmar ska fungera för alla | Svenska, engelska och arabiska, stora tryckytor (≥ 56 px), tydliga kontraster, större text, uppläsning på valt språk, hänvisning till larmknappen, enkelt språk, ett beslut per skärm. |
 | Surfplattan först | Layouten är byggd för liggande surfplatta och fungerar även på mobil. |
 
-> **Obs:** Att logga in med bara personnummer räcker inte i skarp drift. Prototypen
-> visar *upplevelsen*. I verkligheten behövs en kontroll till, till exempel att
-> plattan är kopplad till sängen eller att personalen bekräftar.
+> **Obs om säkerheten:** Armbandet är säkrare än ett nummer som vem som helst kan skriva,
+> men personnumret i klartext på taggen kan läsas av en annan NFC-läsare. I skarp drift
+> bör armbandet bara bära ett slumpat band-ID (gärna en signerad eller krypterad tagg, t.ex.
+> NTAG 424 DNA). Servern slår upp patienten och kontrollerar att bandet hör till sängen
+> som plattan är kopplad till.
 
 ## Dokumentation
 
@@ -234,7 +255,7 @@ Vill ni byta en bild? Lägg en ny fil i `public/mat/` och ändra `image` i `src/
 
 | | |
 |---|---|
-| ![Inloggning](docs/skarmbilder/1-login.png) | ![Välkommen](docs/skarmbilder/2-valkommen.png) |
+| ![Inloggning med armband](docs/skarmbilder/1-login.png) | ![Dina beställningar och kosten i sidhuvudet](docs/skarmbilder/2-bestallningar.png) |
 | ![Meny](docs/skarmbilder/3-meny.png) | ![Rätt](docs/skarmbilder/4-ratt.png) |
 | ![Sammanfattning](docs/skarmbilder/6-sammanfattning.png) | ![Klart](docs/skarmbilder/7-klart.png) |
 | ![Röstkommando](docs/skarmbilder/8-rost.png) | ![Omdöme](docs/skarmbilder/9-omdome.png) |
@@ -242,5 +263,5 @@ Vill ni byta en bild? Lägg en ny fil i `public/mat/` och ändra `image` i `src/
 | ![Min smak](docs/skarmbilder/12-min-smak.png) | ![Menyn efter smak](docs/skarmbilder/13-meny-smak.png) |
 | ![Avbryt med ångra](docs/skarmbilder/18-avbryt.png) | ![Fel med en handling](docs/skarmbilder/20-fel-med-handling.png) |
 | ![Dolda rätter med skäl](docs/skarmbilder/21-dolda-ratter.png) | ![Välj måltid med nedräkning](docs/skarmbilder/22-maltider.png) |
-| ![Tiden har gått ut](docs/skarmbilder/23-tiden-ute.png) | |
-| ![Fortsätt där du var](docs/skarmbilder/16-fortsatt.png) | ![Arabiska](docs/skarmbilder/17-arabiska.png) |
+| ![Tiden har gått ut](docs/skarmbilder/23-tiden-ute.png) | ![Om din kost](docs/skarmbilder/24-om-din-kost.png) |
+| ![Ny beställning överst](docs/skarmbilder/25-ny-bestallning-overst.png) | ![Arabiska](docs/skarmbilder/17-arabiska.png) |

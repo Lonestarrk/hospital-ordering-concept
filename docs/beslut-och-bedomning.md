@@ -85,8 +85,8 @@ AI-modell.
 | Risk | Fråga | Vårt svar | Hur vi minskar risken |
 |---|---|---|---|
 | **Värde** | Kommer Ingrid vilja använda det? | Uppgiften säger att patienter tycker om att bläddra bland bilder – valet är en del av dagen, inte friktion. | Bilder på maten, förslag, "Min smak", ingen tidspress. Mäts med tummen upp och hur mycket som äts. |
-| **Användbarhet** | Klarar hon det första gången? | Inloggning med personnummer i stället för BankID, en sak per skärm, och varje sida säger vad man gör. | Test med personer utanför teamet (protokoll nedan), helst 70+. |
-| **Genomförbarhet** | Går det att bygga på riktigt? | Webbapp som fungerar på vanliga plattor. Kost och allergier antas finnas i sjukhusets system (enligt reglerna). | Ingen AI behövs. Taligenkänning bara i enheten. Integration med kost- och kökssystem är nästa steg. |
+| **Användbarhet** | Klarar hon det första gången? | Inloggning med armbandet mot plattan – inget att skriva, inget BankID. Efter inloggningen ser hon direkt sina beställningar, och kosten står i sidhuvudet. En sak per skärm, och varje sida säger vad man gör. | Test med personer utanför teamet (protokoll nedan), helst 70+. |
+| **Genomförbarhet** | Går det att bygga på riktigt? | Webbapp som fungerar på vanliga plattor. Armbandet läses med Web NFC (Chrome på Android) eller med en inkopplad NFC-läsare som fungerar i alla webbläsare, även på iPad. Kost och allergier antas finnas i sjukhusets system (enligt reglerna). | Ingen AI behövs. Taligenkänning bara i enheten. Integration med kost- och kökssystem är nästa steg. |
 | **Affärsmässig hållbarhet** | Fungerar det för sjukhuset? | Mindre tid för personalen, mindre matsvinn (portionsval, data om vad som äts), nöjdare patienter. | Skyddsräckena inbyggda, pappersmenyn finns kvar som reserv. |
 
 ## Introduktion för nya användare (15 p)
@@ -117,7 +117,7 @@ En introduktion man måste klicka sig igenom är ännu ett steg innan det hon vi
 
 ## "Fler funktioner betyder inte en bättre produkt"
 
-**Kärnresan** – det vi visar först och längst – är: *språk → personnummer → stämmer det här? →
+**Kärnresan** – det vi visar först och längst – är: *språk → armbandet → mina beställningar → välj måltid →
 meny med bilder → portion → dryck → stämmer det här? → klart*.
 
 Omdöme och "Min smak" är **stöd** som gör kärnresan bättre över tid: menyn minns vad
@@ -133,7 +133,7 @@ fungerar (systemet föreslår, människan bestämmer).
 | # | Uppgift | Lyckades utan hjälp? | Tid | Var tvekade hen? |
 |---|---|---|---|---|
 | 1 | Välj ett annat språk och sedan tillbaka till svenska | | | |
-| 2 | Logga in (personnummer **19480302-2328**) | | | |
+| 2 | Logga in med armbandet (demoknappen) och säg vad du har beställt | | | |
 | 3 | Beställ en liten portion av något du gillar, skuret i bitar | | | |
 | 4 | Ändra drycken innan du beställer | | | |
 | 5 | Avbryt och fortsätt sedan där du var | | | |
@@ -144,7 +144,8 @@ vilja använda det här om du låg på sjukhus?
 
 ## Vad vi har lärt oss (hittills)
 
-- **Inloggningen är den största tröskeln.** BankID kräver telefon och kod. Vi bytte till personnummer på ett stort sifferblock.
+- **Inloggningen är den största tröskeln.** BankID kräver telefon och kod. Först bytte vi till personnummer på ett stort sifferblock. Sedan bytte vi till armbandet, som är både enklare och säkrare: ingen kan logga in genom att skriva någon annans nummer.
+- **Det första hon vill veta är vad som redan är beställt.** Därför visar första sidan hennes beställningar, med nästa måltid överst. Välkomstsidan tog vi bort, och kosten står i stället i sidhuvudet på varje sida.
 - **Röst är bra för motoriken men en risk för skyddsräcket.** Webbläsarens standardläge kan skicka ljud till en extern tjänst. Vi tillåter därför bara igenkänning i enheten.
 - **Den snabbaste beställningen är inte målet.** Vi lade till bilder, förslag och tid att bläddra i stället för att korta ner flödet.
 - *Fyll i: vad lärde ni er när ni testade med någon utanför teamet?*

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import { usePathname, useRouter } from "next/navigation";
 import { useOrder, useT } from "./OrderProvider";
 import { languages } from "@/lib/i18n";
+import { consistencyLabels, dietLabels, type Patient } from "@/lib/data";
 import { demoClockActive, hhmm } from "@/lib/clock";
 import { useNow } from "./useNow";
 import {
@@ -56,6 +57,7 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
   const { t, tm, speechLang } = useT();
   const say = (text: string) => speak(text, speechLang);
   const [langOpen, setLangOpen] = useState(false);
+  const [dietOpen, setDietOpen] = useState(false);
   // Avbryt finns efter inloggningen, men inte när beställningen redan är skickad.
   const canCancel = !!patient && !order.placed && pathname !== "/klart";
   const [listen, setListen] = useState<ListenState>({ kind: "idle" });
@@ -164,11 +166,15 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
         <div className="topbar-place">
           <span className="logo" aria-hidden>🍽️</span>
           <div>
-            <div className="topbar-title">{t.appName}</div>
-            {patient && (
-              <div className="topbar-sub">
-                {tm.word(patient.room)} · {tm.word(patient.bed)}
-              </div>
+            {patient ? (
+              <>
+                <div className="topbar-title">{patient.firstName} {patient.lastName}</div>
+                <div className="topbar-sub">
+                  {tm.word(patient.room)} · {tm.word(patient.bed)} · {t.appName}
+                </div>
+              </>
+            ) : (
+              <div className="topbar-title">{t.appName}</div>
             )}
           </div>
           {canCancel && (
@@ -194,6 +200,8 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
           </button>
         </div>
       </header>
+
+      {patient && <DietBar patient={patient} onAbout={() => setDietOpen(true)} />}
 
       {step !== undefined && (
         <ol className="progress" aria-label={t.stepsLabel}>
@@ -240,6 +248,7 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
       )}
 
       {langOpen && <LanguageDialog onClose={() => setLangOpen(false)} />}
+      {dietOpen && patient && <DietDialog onClose={() => setDietOpen(false)} />}
       {/* Visas bara när klockan är ställd med ?klocka=HH:MM för en demo. */}
       {demoClock && <span className="demo-clock" lang="sv">🕒 Demotid {hhmm(clock)}</span>}
     </div>
@@ -273,6 +282,59 @@ export function LanguageChoice({ onChosen }: { onChosen?: () => void }) {
 /** Sätts när patienten avbryter, så att inloggningen kan erbjuda "Ångra" en kort stund. */
 export const STOPPED_KEY = "ingrid-stopped";
 export const UNDO_STOP_MS = 2 * 60 * 1000;
+
+/** Det som styr vilken mat hon ser – registrerat av personalen. */
+export function useDietTexts(patient: Patient) {
+  const { t, tm } = useT();
+  return [
+    ...patient.diet.map((d) => tm.diet(d, dietLabels[d])),
+    ...patient.allergies.map((a) => t.diet.free(tm.allergen(a).toLowerCase())),
+    ...(patient.consistency !== "normal"
+      ? [t.diet.consistency(tm.consistency(patient.consistency, consistencyLabels[patient.consistency]))]
+      : []),
+  ];
+}
+
+/** Kosten syns på varje sida, så att hon vet varför hon ser just den här maten. */
+function DietBar({ patient, onAbout }: { patient: Patient; onAbout: () => void }) {
+  const { t } = useT();
+  const items = useDietTexts(patient);
+  return (
+    <section className="diet-bar" aria-label={t.diet.label}>
+      <span className="diet-label">
+        <span aria-hidden>💚</span> {t.diet.label}:
+      </span>
+      <ul className="diet-items">
+        {items.map((item) => (
+          <li key={item} className="diet-item">✓ {item}</li>
+        ))}
+      </ul>
+      <button className="diet-about" onClick={onAbout}>
+        <span aria-hidden>ⓘ</span> {t.diet.about}
+      </button>
+    </section>
+  );
+}
+
+function DietDialog({ onClose }: { onClose: () => void }) {
+  const { t } = useT();
+  const d = t.diet;
+  return (
+    <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="diet-title" onClick={onClose}>
+      <div className="dialog" onClick={(e) => e.stopPropagation()}>
+        <div className="dialog-icon" aria-hidden>💚</div>
+        <h2 id="diet-title">{d.aboutTitle}</h2>
+        <p>{d.aboutBody}</p>
+        <p className="muted">
+          {d.aboutNote[0]}<strong>{d.aboutNote[1]}</strong>{d.aboutNote[2]}
+        </p>
+        <button className="btn btn-primary btn-large" onClick={onClose} autoFocus>
+          {d.close}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function LanguageDialog({ onClose }: { onClose: () => void }) {
   const { t } = useT();

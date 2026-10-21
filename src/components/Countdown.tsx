@@ -9,15 +9,23 @@ import { dateKey, hhmm, minutesLeft, type Slot } from "@/lib/clock";
 export function useSlotText() {
   const { t } = useT();
   const relative = (d: Date, reference: Date) => {
-    const tomorrow = new Date(reference);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return dateKey(d) === dateKey(reference)
+    const shift = (days: number) => {
+      const x = new Date(reference);
+      x.setDate(x.getDate() + days);
+      return dateKey(x);
+    };
+    const day = dateKey(d);
+    return day === dateKey(reference)
       ? t.when.today(hhmm(d))
-      : dateKey(d) === dateKey(tomorrow)
+      : day === shift(1)
         ? t.when.tomorrow(hhmm(d))
-        : hhmm(d);
+        : day === shift(-1)
+          ? t.when.yesterday(hhmm(d))
+          : hhmm(d);
   };
   return {
+    /** "idag kl 12:00", "imorgon kl 08:00" eller "igår kl 17:30". */
+    at: relative,
     /** "idag kl 12:00", "imorgon kl 08:00" eller "om ca 30 minuter". */
     when: (slot: Slot, reference: Date) => (slot.deadline ? relative(slot.servedAt, reference) : t.when.snack(SNACK_MINUTES)),
     /** Nedräkning till låstiden, eller sista tid om det är långt kvar. */

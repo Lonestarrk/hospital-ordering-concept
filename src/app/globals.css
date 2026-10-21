@@ -139,6 +139,144 @@ button:focus-visible {
   flex-wrap: wrap;
 }
 
+/* ---------- Kosten i sidhuvudet ---------- */
+
+.diet-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  margin: 0 24px 8px;
+  padding: 12px 18px;
+  border-radius: var(--radius);
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+}
+
+.diet-label {
+  font-weight: 700;
+}
+
+.diet-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.diet-item {
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: var(--surface);
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+.diet-about {
+  margin-inline-start: auto;
+  min-height: 48px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 2px solid var(--primary);
+  background: var(--surface);
+  color: var(--primary-strong);
+  font: inherit;
+  font-size: 0.85em;
+  font-weight: 700;
+}
+
+/* ---------- Dina beställningar ---------- */
+
+.order-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.order-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  border-radius: var(--radius);
+  border: 2px solid var(--border);
+  background: var(--surface);
+}
+
+.order-row.is-next {
+  border-color: var(--primary);
+  box-shadow: var(--shadow);
+}
+
+.order-image {
+  width: 96px;
+  height: 72px;
+  flex: none;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+.order-body {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.order-when {
+  font-size: 0.9em;
+}
+
+.order-dish {
+  font-size: 1.1em;
+  font-weight: 700;
+}
+
+.order-status {
+  color: var(--text-muted);
+  font-size: 0.85em;
+}
+
+.order-action {
+  flex: none;
+}
+
+.order-rated {
+  flex: none;
+  color: var(--text-muted);
+  font-size: 0.85em;
+}
+
+.badge-next {
+  display: inline-block;
+  margin-inline-end: 8px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.8em;
+  font-weight: 700;
+}
+
+/* Måltider som har passerat gråas ut, men omdömesknappen syns tydligt. */
+.order-row.is-past {
+  background: var(--surface-2);
+  border-color: transparent;
+}
+
+.order-row.is-past .order-body,
+.order-row.is-past .order-image {
+  opacity: 0.55;
+}
+
+.order-row.is-past .order-image {
+  filter: grayscale(1);
+}
+
 .tool {
   display: inline-flex;
   align-items: center;
@@ -455,46 +593,106 @@ button:focus-visible {
   font-weight: 800;
 }
 
-.login-pad {
+.login-band {
   background: var(--surface);
   border-radius: 28px;
   box-shadow: var(--shadow);
-  padding: 28px;
+  padding: 32px 28px;
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  text-align: center;
 }
 
-.pnr-label {
-  font-weight: 700;
-  display: block;
+/* Markeringen visar var armbandet ska hållas. Ringarna pulserar medan plattan väntar. */
+.band-spot {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 4px dashed var(--primary);
+  background: var(--primary-soft);
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 4px;
 }
 
-.pnr {
-  display: block;
-  margin-top: 10px;
-  padding: 16px 20px;
-  border-radius: 16px;
-  border: 3px solid var(--primary);
-  background: var(--bg);
-  font-size: 1.6em;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.06em;
-  font-weight: 700;
-  white-space: nowrap;
-  overflow: hidden;
+.band-icon {
+  font-size: 64px;
+  line-height: 1;
 }
 
-.pnr-error {
+.band-spot-label {
+  font-weight: 800;
+  color: var(--primary-strong);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.8em;
+}
+
+.band-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 4px solid var(--primary);
+  opacity: 0;
+  animation: band-pulse 2.4s ease-out infinite;
+}
+
+.band-ring-2 {
+  animation-delay: 1.2s;
+}
+
+.is-reading .band-ring {
+  animation-duration: 0.9s;
+}
+
+.is-hello .band-spot {
+  border-style: solid;
+  background: var(--primary);
+}
+
+.is-hello .band-icon,
+.is-hello .band-spot-label {
+  color: #fff;
+}
+
+.is-hello .band-ring,
+.is-error .band-ring {
+  animation: none;
+}
+
+.is-error .band-spot {
   border-color: var(--accent);
 }
 
-.pnr-rest {
-  color: #c4bbae;
-  font-weight: 500;
+@keyframes band-pulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.35); opacity: 0; }
 }
 
-.pnr-hint {
-  color: var(--text-muted);
-  font-size: 0.85em;
-  margin-top: 8px;
+@media (prefers-reduced-motion: reduce) {
+  .band-ring { animation: none; }
+}
+
+.band-text {
+  display: grid;
+  gap: 8px;
+}
+
+.band-text h2 {
+  font-size: 1.4em;
+}
+
+.band-start {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+}
+
+.band-external {
+  font-size: 0.8em;
 }
 
 .error {
@@ -505,45 +703,6 @@ button:focus-visible {
   color: #8a2f1d;
   font-weight: 600;
   font-size: 0.9em;
-}
-
-.keypad {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-top: 20px;
-}
-
-.key {
-  min-height: 76px;
-  border-radius: 18px;
-  border: 2px solid var(--border);
-  background: var(--surface);
-  font-size: 1.5em;
-  font-weight: 700;
-}
-
-.key:active {
-  background: var(--surface-2);
-}
-
-.key-muted {
-  font-size: 0.85em;
-  color: var(--text-muted);
-}
-
-.key-go {
-  font-size: 0.95em;
-  background: var(--primary);
-  border-color: var(--primary);
-  color: #fff;
-}
-
-.key-go:disabled {
-  background: var(--surface-2);
-  border-color: var(--border);
-  color: #a59c8f;
-  cursor: not-allowed;
 }
 
 .demo-link {
@@ -558,41 +717,7 @@ button:focus-visible {
   min-height: 44px;
 }
 
-/* ---------- Välkommen ---------- */
-
-.welcome {
-  max-width: 720px;
-  margin: 0 auto;
-  display: grid;
-  gap: 20px;
-  text-align: center;
-  padding-top: 8px;
-}
-
-.welcome-wave {
-  font-size: 64px;
-}
-
-.identity {
-  display: grid;
-  gap: 16px;
-  text-align: start;
-}
-
-.identity-row {
-  display: grid;
-  grid-template-columns: 110px 1fr;
-  gap: 16px;
-}
-
-.identity-key {
-  color: var(--text-muted);
-}
-
-.identity-val {
-  font-weight: 700;
-  font-size: 1.1em;
-}
+/* ---------- Vårdkort ---------- */
 
 .care {
   display: flex;
@@ -1199,20 +1324,6 @@ button:focus-visible {
   border-radius: 10px;
 }
 
-.resume {
-  display: grid;
-  justify-items: center;
-  gap: 16px;
-}
-
-.resume-image {
-  width: 100%;
-  max-width: 420px;
-  height: 220px;
-  object-fit: cover;
-  border-radius: var(--radius);
-}
-
 /* ---------- Dialoger ---------- */
 
 .overlay {
@@ -1264,6 +1375,11 @@ button:focus-visible {
   :root { --base: 17px; }
   html[data-text-size="stor"] { --base: 21px; }
   .topbar, .content, .footer, .progress { padding-inline: 16px; }
+  .diet-bar { margin-inline: 16px; }
+  .progress { overflow-x: auto; }
+  .diet-about { margin-inline-start: 0; }
+  .order-row { flex-wrap: wrap; }
+  .order-action { width: 100%; }
   .tool { padding: 0 12px; }
   .segmented { grid-template-columns: 1fr; }
   .segmented-4 { grid-template-columns: 1fr 1fr; }
@@ -1314,7 +1430,9 @@ button:focus-visible {
   gap: 6px;
 }
 
-.occasion-body h2 {
+.occasion-body h2,
+.occasion-body h3 {
+  margin: 0;
   font-size: 1.3em;
 }
 

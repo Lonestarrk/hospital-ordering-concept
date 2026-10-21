@@ -1,13 +1,13 @@
-# Produktvideo – manus (57 s)
+# Produktvideo – manus (ca 55 s)
 
 Filen `produktvideo.mp4` är inspelad direkt från prototypen och har svenska textremsor. Det
-här manuset kan läsas in som berättarröst ovanpå videon (tiderna stämmer med bilden).
+här manuset kan läsas in som berättarröst ovanpå videon (tiderna är ungefärliga).
 
 | Tid | Bild | Berättarröst |
 |---|---|---|
 | 0–5 | Titelkort: *Måltider – Ingrid, 78, väljer sin mat själv* | Det här är Ingrid. Hon är 78 och återhämtar sig efter en operation. Maten är det hon ser fram emot. |
-| 5–12 | Inloggning med stort sifferblock | Hon loggar in med sitt personnummer – stora siffror, ingen telefon, inget BankID. |
-| 12–19 | "Hej Ingrid! Stämmer det här?" med kost och allergier | Appen vet redan vad hon får äta. Bara personalen kan ändra det. |
+| 5–11 | Armbandet mot plattan | Hon loggar in med sitt sjukhusarmband – inget att skriva, ingen telefon, inget BankID. |
+| 11–19 | "Hej Ingrid!" med hennes beställningar och kosten i sidhuvudet | Direkt ser hon vad hon har beställt – nästa måltid överst, det som har passerat i grått. Kosten står alltid överst, och bara personalen kan ändra den. |
 | 19–25 | Tummen upp på gårdagens middag | Hur smakade gårdagens middag? Ett tryck, och köket vet. |
 | 25–31 | Välj måltid med nedräkning | Frukost, lunch, fika, middag – eller något litet när hon vill. Nedräkningen visar hur länge hon kan beställa. |
 | 31–39 | Menyn med bilder och förslaget | Hon bläddrar bland bilder i lugn och ro. Hon ser bara mat som passar henne, och ett förslag med skälet. |

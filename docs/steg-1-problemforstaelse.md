@@ -39,8 +39,8 @@ beställt mat på en surfplatta.
 
 ### Vad kan göra det *svårt*?
 - **Inloggningen** – BankID kräver telefon, kod och att växla mellan enheter. Risken är
-  störst att hon ger upp *innan* hon ens ser maten. **Beslut:** vi loggar in med
-  personnummer på ett stort sifferblock direkt på plattan i stället för med BankID.
+  störst att hon ger upp *innan* hon ens ser maten. **Beslut:** hon loggar in genom att
+  hålla sitt sjukhusarmband (NFC) mot plattan – inget att skriva, ingen telefon, inget BankID.
 - Små knappar, mycket text, okända ord ("allergen", "konsistens", "dagens alt. 2").
 - Osäkerhet om vad hon får äta – rädsla att välja "fel" för sin diagnos.
 - Ingen återkoppling – "gick beställningen iväg? När kommer den? Kan jag ändra?"

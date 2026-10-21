@@ -628,6 +628,24 @@ export const servedHistory: Record<string, ServedMeal[]> = {
   ],
 };
 
+/** Beställningar som redan finns när demon startar (dagar räknas från idag: -1 = igår). */
+export type SeedOrder = {
+  occasion: OccasionId;
+  day: number;
+  dishId: string;
+  portion: Portion;
+  drinkId?: string;
+  /** Kopplar beställningen till den serverade måltiden, så att den kan få omdöme. */
+  mealId?: string;
+};
+
+export const orderHistory: Record<string, SeedOrder[]> = {
+  "194803022328": [
+    { occasion: "middag", day: -1, dishId: "kalvspett", portion: "lagom", drinkId: "lingondricka", mealId: "middag-igar" },
+    { occasion: "frukost", day: 0, dishId: "grot", portion: "lagom", drinkId: "kaffe" },
+  ],
+};
+
 // ---------- Smak och önskerätter ----------
 
 export type FoodCategory = { id: string; name: string; emoji: string; voiceWords: string[] };

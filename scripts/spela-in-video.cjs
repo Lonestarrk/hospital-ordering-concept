@@ -36,21 +36,20 @@ const BASE = 'http://localhost:3129';
   // 0–5 s: titel
   await card('<div><h1>🍽️ Måltider</h1><p>Ingrid, 78, väljer sin mat själv – från sängen.</p><p>En prototyp för surfplatta</p></div>');
   await wait(4500); await uncard();
-  // 5–12 s: inloggning
-  await cap('Ingrid loggar in med sitt personnummer – stora siffror, inget BankID.');
-  for (const d of '194803022328') { await tap(p.locator('.key', { hasText: new RegExp('^' + d + '$') })); await wait(120); }
-  await wait(500); await tap(p.locator('.key-go'));
-  await p.waitForURL('**/valkommen'); await wait(300);
-  // 12–19 s: välkommen
-  await cap('Appen känner redan hennes kost och allergier. Bara personalen kan ändra dem.');
-  await wait(5500); await tap(p.locator('.footer .btn-primary'));
+  // 5–11 s: inloggning med armbandet
+  await cap('Ingrid håller sitt armband mot plattan – inget att skriva, inget BankID.');
+  await wait(1800); await tap(p.locator('.demo-link'));
+  await p.waitForURL('**/tillfalle'); await wait(300);
+  // 11–19 s: hennes beställningar och kosten i sidhuvudet
+  await cap('Direkt ser hon sina beställningar – nästa överst, det som har passerat i grått. Kosten står alltid överst.');
+  await wait(5500); await tap(p.locator('.order-row .btn-primary'));
   // 19–25 s: omdöme om gårdagens middag
   await p.waitForURL('**/omdome**'); await cap('Hur smakade gårdagens middag? Ett tryck – köket får veta.');
   await wait(1200); await tap(p.locator('.thumb-up')); await wait(800); await tap(p.locator('.segment', { hasText: 'Allt' })); await wait(900);
   await tap(p.locator('.footer .btn-primary')); await wait(900); await tap(p.locator('.footer .btn-primary'));
   // 25–31 s: välj måltid
   await p.waitForURL('**/tillfalle'); await cap('Frukost, lunch, fika, middag – eller något litet. Nedräkningen visar hur länge hon kan beställa.');
-  await wait(4500); await tap(p.locator('.occasion', { hasText: 'Lunch' }));
+  await p.mouse.wheel(0, 420); await wait(4500); await tap(p.locator('.occasion', { hasText: 'Lunch' }));
   // 31–39 s: menyn
   await p.waitForURL('**/meny'); await p.waitForLoadState('networkidle');
   await cap('Bilder på maten. Bara rätter som passar henne – och ett förslag med skälet.');

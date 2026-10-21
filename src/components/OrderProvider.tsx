@@ -2,8 +2,8 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { initDemoClock } from "@/lib/clock";
-import { emptyTaste, findPatient, servedHistory, type OccasionId, type Patient, type Portion, type ServedMeal, type TasteProfile } from "@/lib/data";
+import { dateKey, initDemoClock, now } from "@/lib/clock";
+import { emptyTaste, findPatient, orderHistory, servedHistory, type OccasionId, type Patient, type Portion, type ServedMeal, type TasteProfile } from "@/lib/data";
 import { dictionaries, languages, terminology, type Lang } from "@/lib/i18n";
 
 export type Order = {
@@ -15,6 +15,10 @@ export type Order = {
   extras: string[];
   drinkId?: string;
   placed: boolean;
+  /** När beställningen skickades (ms). Tilltugg kommer en stund efter det. */
+  placedAt?: number;
+  /** Den serverade måltiden, när den har kommit – så att den kan få omdöme. */
+  mealId?: string;
 };
 
 /** Ett påbörjat val som sparas när patienten loggas ut innan hon har beställt. */
@@ -41,7 +45,8 @@ type State = {
 
 type OrderContextValue = State & {
   hydrated: boolean;
-  login: (patient: Patient) => void;
+  /** Loggar in och fortsätter ett påbörjat val om det finns. Returnerar sidan att gå till. */
+  login: (patient: Patient) => string;
   logout: () => void;
   updateOrder: (patch: Partial<Order>) => void;
   toggleTextSize: () => void;
@@ -55,9 +60,6 @@ type OrderContextValue = State & {
   taste: TasteProfile;
   hasTaste: boolean;
   setTaste: (taste: TasteProfile) => void;
-  /** Påbörjat val från förra gången (finns tills hon fortsätter eller börjar om). */
-  draft: Draft | undefined;
-  resumeDraft: () => string | undefined;
   /** Ångra "Avbryt": logga in samma patient igen och fortsätt där hon var. */
   undoStop: (personnummer: string) => string | undefined;
   /** Börja en ny beställning för en måltid ett visst datum. */
@@ -70,7 +72,6 @@ type OrderContextValue = State & {
   clearOrder: () => void;
   /** Patientens lagda beställningar. */
   placedOrders: Order[];
-  discardDraft: () => void;
 };
 
 const emptyOrder: Order = { portion: "lagom", extras: [], placed: false };
@@ -88,6 +89,15 @@ const initialState: State = {
 const STORAGE_KEY = "ingrid-order";
 /** Plattan loggar ut efter en stunds inaktivitet så att ingen annan ser patientens uppgifter. */
 export const IDLE_LOGOUT_MS = 10 * 60 * 1000;
+
+/** Demo: beställningar som patienten redan har gjort, med datum räknade från idag. */
+function seededOrders(personnummer: string): Order[] {
+  return (orderHistory[personnummer] ?? []).map(({ day, ...seed }) => {
+    const date = now();
+    date.setDate(date.getDate() + day);
+    return { ...seed, date: dateKey(date), extras: [], placed: true };
+  });
+}
 
 const OrderContext = createContext<OrderContextValue | null>(null);
 
@@ -174,15 +184,24 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   const value: OrderContextValue = {
     ...state,
     hydrated,
-    login: (patient) =>
-      setState((s) => ({
-        ...s,
-        patient,
-        order: emptyOrder,
-        history: s.history[patient.personnummer]
-          ? s.history
-          : { ...s.history, [patient.personnummer]: servedHistory[patient.personnummer] ?? [] },
-      })),
+    login: (patient) => {
+      const id = patient.personnummer;
+      const draft = state.drafts[id];
+      setState((s) => {
+        const drafts = { ...s.drafts };
+        delete drafts[id];
+        return {
+          ...s,
+          patient,
+          order: draft?.order ?? emptyOrder,
+          drafts,
+          history: s.history[id] ? s.history : { ...s.history, [id]: servedHistory[id] ?? [] },
+          orders: s.orders[id] ? s.orders : { ...s.orders, [id]: seededOrders(id) },
+        };
+      });
+      // Första sidan visar hennes beställningar och måltiderna hon kan beställa.
+      return draft?.path ?? "/tillfalle";
+    },
     logout: () => setState((s) => logoutKeepingDraft(s, pathname)),
     updateOrder: (patch) => setState((s) => ({ ...s, order: { ...s.order, ...patch } })),
     toggleTextSize: () =>
@@ -194,7 +213,14 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       setState((s) => {
         if (!s.patient) return s;
         const id = s.patient.personnummer;
-        return { ...s, history: { ...s.history, [id]: [meal, ...(s.history[id] ?? [])] } };
+        // Den lagda beställningen får veta att den är serverad.
+        const same = (o: Order) => o.occasion === s.order.occasion && o.date === s.order.date;
+        const orders = (s.orders[id] ?? []).map((o) => (same(o) ? { ...o, mealId: meal.id } : o));
+        return {
+          ...s,
+          history: { ...s.history, [id]: [meal, ...(s.history[id] ?? [])] },
+          orders: { ...s.orders, [id]: orders },
+        };
       }),
     updateMeal: (mealId, patch) =>
       setState((s) => {
@@ -208,34 +234,16 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     hasTaste: !!pnr && !!state.tastes[pnr],
     setTaste: (taste) =>
       setState((s) => (s.patient ? { ...s, tastes: { ...s.tastes, [s.patient.personnummer]: taste } } : s)),
-    draft: pnr ? state.drafts[pnr] : undefined,
-    resumeDraft: () => {
-      const draft = pnr ? state.drafts[pnr] : undefined;
-      if (!draft || !pnr) return undefined;
-      setState((s) => {
-        const drafts = { ...s.drafts };
-        delete drafts[pnr];
-        return { ...s, order: draft.order, drafts };
-      });
-      return draft.path;
-    },
     undoStop: (personnummer) => {
       const patient = findPatient(personnummer);
-      if (!patient) return undefined;
-      const draft = state.drafts[personnummer];
-      setState((s) => {
-        const drafts = { ...s.drafts };
-        delete drafts[personnummer];
-        return { ...s, patient, order: draft?.order ?? emptyOrder, drafts };
-      });
-      return draft?.path ?? "/valkommen";
+      return patient ? value.login(patient) : undefined;
     },
     startOccasion: (occasion, date) => setState((s) => ({ ...s, order: { ...emptyOrder, occasion, date } })),
     placeOrder: () =>
       setState((s) => {
         if (!s.patient) return s;
         const id = s.patient.personnummer;
-        const placed = { ...s.order, placed: true };
+        const placed = { ...s.order, placed: true, placedAt: now().getTime() };
         const others = (s.orders[id] ?? []).filter((o) => !(o.occasion === placed.occasion && o.date === placed.date));
         return { ...s, order: placed, orders: { ...s.orders, [id]: [...others, placed] } };
       }),
@@ -248,13 +256,6 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       }),
     placedOrders: pnr ? state.orders[pnr] ?? [] : [],
     clearOrder: () => setState((s) => ({ ...s, order: emptyOrder })),
-    discardDraft: () =>
-      setState((s) => {
-        if (!s.patient) return s;
-        const drafts = { ...s.drafts };
-        delete drafts[s.patient.personnummer];
-        return { ...s, drafts };
-      }),
   };
 
   return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>;
