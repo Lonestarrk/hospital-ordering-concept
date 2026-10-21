@@ -39,9 +39,7 @@ export default function MenuPage() {
             className={`dish ${order.dishId === dish.id ? "selected" : ""}`}
             onClick={() => choose(dish.id)}
           >
-            <div className="dish-image" style={{ background: dish.color }} aria-hidden>
-              <span>{dish.emoji}</span>
-            </div>
+            <img className="dish-image" src={dish.image} alt={dish.imageAlt} />
             <div className="dish-body">
               {dish.label && <span className="dish-label">{dish.label}</span>}
               <h2>{dish.name}</h2>

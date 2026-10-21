@@ -34,9 +34,7 @@ export default function DishPage() {
       }
     >
       <div className="dish-hero">
-        <div className="dish-hero-image" style={{ background: dish.color }} aria-hidden>
-          <span>{dish.emoji}</span>
-        </div>
+        <img className="dish-hero-image" src={dish.image} alt={dish.imageAlt} />
         <div>
           <p className="eyebrow">Du har valt</p>
           <h1>{dish.name}</h1>

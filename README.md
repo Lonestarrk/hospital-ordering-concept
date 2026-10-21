@@ -19,7 +19,7 @@ Logga in med Ingrids **syntetiska** personnummer **19450120-2388** (eller tryck 
 |---|---|---|
 | 1 | `/` | Inloggning med personnummer på ett stort sifferblock på skärmen. Numret kontrolleras (datum och kontrollsiffra) och felen förklaras i klartext. |
 | 2 | `/valkommen` | "Hej Ingrid! Stämmer det här?" – namn, rum, säng, kost och allergier. |
-| 3 | `/meny` | Bara rätter som passar hennes kost och allergier visas. Det står hur många som är dolda och varför. |
+| 3 | `/meny` | **Foton på maten.** Bara rätter som passar hennes kost och allergier visas. Det står hur många som är dolda och varför. |
 | 4 | `/meny/[id]` | Allergener, portionsstorlek ("Hur hungrig är du?") och önskemål som "Skuren i små bitar". |
 | 5 | `/dryck` | Dryck som passar kosten. |
 | 6 | `/sammanfattning` | "Stämmer det här?" – allt går att ändra. |
@@ -46,6 +46,21 @@ Hjälpmedel på varje sida: **Läs upp** (talsyntes på svenska), **Större text
 
 1. **Förstå problemet** – [docs/steg-1-problemforstaelse.md](docs/steg-1-problemforstaelse.md)
 2. **Prototyp** – den här appen
+
+## Matbilder
+
+Fotona i `public/mat/` kommer från [Pexels](https://www.pexels.com/license/) och får användas fritt, utan krav på att fotografen anges. Kalvspettsbilden är beskuren.
+
+| Rätt | Källa |
+|---|---|
+| Kalvspett med potatismos | https://www.pexels.com/photo/2739250/ |
+| Ugnsbakad lax | https://www.pexels.com/photo/2374946/ |
+| Kycklinggryta med ris | https://www.pexels.com/photo/21822134/ |
+| Grönsakssoppa | https://www.pexels.com/photo/34314393/ |
+| Pannkakor med sylt | https://www.pexels.com/photo/3225506/ |
+| Fiskgratäng | https://www.pexels.com/photo/33042510/ |
+
+Vill ni byta en bild? Lägg en ny fil i `public/mat/` och ändra `image` i `src/lib/data.ts`. I skarp drift fotograferar köket sina egna rätter.
 
 ## Skärmbilder
 

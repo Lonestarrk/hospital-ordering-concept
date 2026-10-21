@@ -45,8 +45,10 @@ export type Dish = {
   id: string;
   name: string;
   description: string;
-  emoji: string;
-  color: string;
+  /** Foto i public/mat – se README för källor. */
+  image: string;
+  /** Beskrivning av bilden för skärmläsare. */
+  imageAlt: string;
   label?: string;
   /** Kostordinationer som rätten passar för. */
   suits: DietTag[];
@@ -62,21 +64,21 @@ export const meal = {
 
 export const dishes: Dish[] = [
   {
-    id: "kottbullar",
-    name: "Köttbullar med potatismos",
-    description: "Med gräddsås och rårörda lingon. Som hemma.",
-    emoji: "🍽️",
-    color: "#F6E3CF",
-    label: "Klassiker",
+    id: "kalvspett",
+    name: "Kalvspett med potatismos",
+    description: "Möra bitar av kalv med grönsaker, potatismos och brun sås.",
+    image: "/mat/kalvspett.jpg",
+    imageAlt: "Kalvspett med zucchini och paprika på potatismos med brun sås",
+    label: "Dagens rätt",
     suits: ["diabetes", "laktosfri"],
-    allergens: ["Ägg", "Mjölkprotein"],
+    allergens: [],
   },
   {
     id: "lax",
     name: "Ugnsbakad lax",
     description: "Med kokt potatis, dillsås och smörkokta morötter.",
-    emoji: "🐟",
-    color: "#F9DCD4",
+    image: "/mat/lax.jpg",
+    imageAlt: "Stekt laxfilé med citronklyfta",
     suits: ["diabetes", "laktosfri", "glutenfri"],
     allergens: ["Fisk"],
   },
@@ -84,8 +86,8 @@ export const dishes: Dish[] = [
     id: "kycklinggryta",
     name: "Kycklinggryta med ris",
     description: "Mild gryta med paprika och grönsaker.",
-    emoji: "🍛",
-    color: "#FBEBC6",
+    image: "/mat/kycklinggryta.jpg",
+    imageAlt: "Kyckling med ris och grönsaker på tallrik",
     suits: ["diabetes", "laktosfri", "glutenfri"],
     allergens: ["Selleri"],
   },
@@ -93,8 +95,8 @@ export const dishes: Dish[] = [
     id: "soppa",
     name: "Grönsakssoppa",
     description: "Värmande soppa med bröd och pålägg. Bra om aptiten är liten.",
-    emoji: "🥣",
-    color: "#DDEBD3",
+    image: "/mat/soppa.jpg",
+    imageAlt: "Grönsakssoppa i röd skål med bröd vid sidan",
     label: "Något lätt",
     suits: ["diabetes", "laktosfri", "konsistensanpassad"],
     allergens: ["Gluten"],
@@ -102,9 +104,9 @@ export const dishes: Dish[] = [
   {
     id: "pannkakor",
     name: "Pannkakor med sylt",
-    description: "Med vispad grädde.",
-    emoji: "🥞",
-    color: "#F6E7C1",
+    description: "Med sylt och vispad grädde.",
+    image: "/mat/pannkakor.jpg",
+    imageAlt: "Pannkakor med jordgubbar och vispad grädde",
     suits: [],
     allergens: ["Ägg", "Mjölk", "Gluten"],
   },
@@ -112,8 +114,8 @@ export const dishes: Dish[] = [
     id: "fiskgratang",
     name: "Fiskgratäng",
     description: "Med potatismos och ost.",
-    emoji: "🧀",
-    color: "#F1E6D6",
+    image: "/mat/fiskgratang.jpg",
+    imageAlt: "Gratäng med gyllene ostyta i ugnsform",
     suits: ["diabetes"],
     allergens: ["Fisk", "Mjölk"],
   },
@@ -141,7 +143,7 @@ export const portions: { id: Portion; name: string; hint: string }[] = [
 export const extras = [
   "Skuren i små bitar",
   "Extra sås",
-  "Utan lingon",
+  "Extra potatis eller ris",
   "Såsen vid sidan",
 ];
 

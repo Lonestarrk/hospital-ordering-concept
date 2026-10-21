@@ -43,11 +43,14 @@ export default function DonePage() {
             <span className="done-time-value">kl {meal.servedAt}</span>
           </div>
           {dish && drink && portion && (
-            <p className="done-order">
-              {dish.emoji} {portion.name} portion {dish.name.toLowerCase()}
-              <br />
-              {drink.emoji} {drink.name}
-            </p>
+            <div className="done-order">
+              <img className="done-image" src={dish.image} alt={dish.imageAlt} />
+              <p>
+                {portion.name} portion {dish.name.toLowerCase()}
+                <br />
+                {drink.emoji} {drink.name}
+              </p>
+            </div>
           )}
         </div>
 

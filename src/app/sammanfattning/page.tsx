@@ -48,7 +48,7 @@ export default function SummaryPage() {
 
       <div className="card summary">
         <div className="summary-row">
-          <div className="summary-image" style={{ background: dish.color }} aria-hidden>{dish.emoji}</div>
+          <img className="summary-image" src={dish.image} alt="" />
           <div className="summary-text">
             <span className="summary-key">Mat</span>
             <strong>{dish.name}</strong>
