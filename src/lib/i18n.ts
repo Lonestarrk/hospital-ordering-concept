@@ -12,7 +12,7 @@ export const languages: { id: Lang; name: string; speech: string; dir: "ltr" | "
 ];
 
 const sv = {
-  appName: "Måltider",
+  appName: "Min måltid",
   readAloud: "Läs upp",
   soundOn: "Ljud på",
   biggerText: "Större text",
@@ -62,16 +62,16 @@ const sv = {
     done: "Avbrutet – du är utloggad. Inget är beställt.",
   },
   install: {
-    title: "Installera Måltider på plattan?",
+    title: "Installera Min måltid på plattan?",
     body: "Då startar appen direkt från hemskärmen, i helskärm och utan adressfält.",
     yes: "Installera",
     no: "Inte nu",
     button: "Installera",
     buttonAria: "Installera appen på plattan",
-    iosTitle: "Så installerar du Måltider",
+    iosTitle: "Så installerar du Min måltid",
     iosSteps: ["Tryck på Dela-knappen (fyrkanten med en pil uppåt).", "Välj ”Lägg till på hemskärmen”.", "Tryck på ”Lägg till”."],
     close: "Stäng",
-    installed: "Måltider är installerad.",
+    installed: "Min måltid är installerad.",
   },
   update: {
     title: "En ny version av appen finns.",
@@ -300,7 +300,7 @@ const sv = {
 export type Dict = typeof sv;
 
 const en: Dict = {
-  appName: "Meals",
+  appName: "My meal",
   readAloud: "Read aloud",
   soundOn: "Sound on",
   biggerText: "Larger text",
@@ -350,16 +350,16 @@ const en: Dict = {
     done: "Cancelled – you are logged out. Nothing has been ordered.",
   },
   install: {
-    title: "Install Meals on this tablet?",
+    title: "Install My meal on this tablet?",
     body: "The app then opens straight from the home screen, full screen and without an address bar.",
     yes: "Install",
     no: "Not now",
     button: "Install",
     buttonAria: "Install the app on this tablet",
-    iosTitle: "How to install Meals",
+    iosTitle: "How to install My meal",
     iosSteps: ["Tap the Share button (the square with an arrow pointing up).", "Choose “Add to Home Screen”.", "Tap “Add”."],
     close: "Close",
-    installed: "Meals is installed.",
+    installed: "My meal is installed.",
   },
   update: {
     title: "A new version of the app is available.",
@@ -584,7 +584,7 @@ const en: Dict = {
 };
 
 const ar: Dict = {
-  appName: "الوجبات",
+  appName: "وجبتي",
   readAloud: "اقرأ بصوت عالٍ",
   soundOn: "الصوت مُفعّل",
   biggerText: "نص أكبر",
@@ -634,16 +634,16 @@ const ar: Dict = {
     done: "تم الإلغاء – تم تسجيل خروجك. لم يُطلب أي شيء.",
   },
   install: {
-    title: "تثبيت الوجبات على هذا الجهاز؟",
+    title: "تثبيت «وجبتي» على هذا الجهاز؟",
     body: "عندها يفتح التطبيق مباشرة من الشاشة الرئيسية، بملء الشاشة ودون شريط العنوان.",
     yes: "تثبيت",
     no: "ليس الآن",
     button: "تثبيت",
     buttonAria: "ثبّتي التطبيق على هذا الجهاز",
-    iosTitle: "طريقة تثبيت الوجبات",
+    iosTitle: "طريقة تثبيت «وجبتي»",
     iosSteps: ["اضغطي على زر المشاركة (المربع مع سهم إلى الأعلى).", "اختاري «إضافة إلى الشاشة الرئيسية».", "اضغطي على «إضافة»."],
     close: "إغلاق",
-    installed: "تم تثبيت الوجبات.",
+    installed: "تم تثبيت «وجبتي».",
   },
   update: {
     title: "يتوفر إصدار جديد من التطبيق.",

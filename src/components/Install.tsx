@@ -42,7 +42,7 @@ export function PwaSetup() {
   return null;
 }
 
-/** Frågan på inloggningssidan: "Installera Måltider på plattan?" Visas tills någon svarar. */
+/** Frågan på inloggningssidan: "Installera Min måltid på plattan?" Visas tills någon svarar. */
 export function InstallBanner() {
   const { t } = useT();
   const k = t.install;
