@@ -2263,6 +2263,24 @@ html[data-text-size="stor"] .dish-body p {
   }
 }
 
+/* ---------- Surfplatta på höjden: rum och säng direkt under namnet, kosten bredvid ---------- */
+
+@media (min-width: 561px) and (max-width: 900px) {
+  .topbar.has-patient {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "name  diet"
+      "sub   diet"
+      "tools tools";
+    gap: 0 16px;
+  }
+  .topbar-name-row { display: contents; }
+  .topbar-title { grid-area: name; align-self: end; }
+  .topbar-sub { grid-area: sub; white-space: nowrap; }
+  .topbar-diet { grid-area: diet; justify-self: start; align-self: center; }
+  .topbar-actions { justify-content: flex-start; margin-top: 12px; }
+}
+
 /* ---------- Mobil: kompakt sidhuvud och knapprad (påverkar inte surfplattan) ---------- */
 
 @media (max-width: 560px) {
