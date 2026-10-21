@@ -1108,110 +1108,6 @@ button:focus-visible {
 
 .taste-invite-icon { font-size: 34px; }
 
-/* ---------- Kökets vy ---------- */
-
-.kitchen {
-  --like: #2f6fd0;
-  --dislike: #d4762a;
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 28px 24px 48px;
-  font-size: 18px;
-}
-
-.kitchen-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 24px;
-  margin-bottom: 24px;
-}
-
-.kitchen-head h1 { font-size: 2em; margin-bottom: 8px; }
-.kitchen-head .muted { max-width: 720px; }
-.kitchen-back { display: inline-flex; align-items: center; text-decoration: none; color: var(--text); white-space: nowrap; }
-
-.kpis {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin-bottom: 28px;
-}
-
-.kpi {
-  background: var(--surface);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 18px 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.kpi-value { font-size: 2.2em; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
-.kpi-label { color: var(--text-muted); font-size: 0.9em; }
-
-.kitchen-section { margin-bottom: 24px; }
-.kitchen-section h2 { margin-bottom: 6px; }
-.kitchen-section > .muted { margin-bottom: 14px; }
-
-.suggestions {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 14px;
-}
-
-.suggestion {
-  background: var(--surface);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 16px 18px;
-  border-top: 5px solid var(--border);
-}
-
-.suggestion h3 { font-size: 1.05em; margin: 8px 0 4px; }
-.suggestion p { color: var(--text-muted); font-size: 0.9em; margin: 0; }
-.suggestion-tag { font-size: 0.75em; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
-.s-atgarda { border-top-color: var(--dislike); }
-.s-se-over { border-top-color: var(--dislike); }
-.s-lagg-till { border-top-color: var(--like); }
-.s-mer-av { border-top-color: var(--text-muted); }
-.s-behall { border-top-color: var(--primary); }
-
-.kitchen-cols {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 20px;
-}
-
-.bars { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 14px; }
-.bar-row { display: flex; gap: 14px; align-items: center; border-radius: 12px; }
-.bar-row:hover { background: var(--surface-2); }
-.bar-thumb { width: 56px; height: 56px; border-radius: 12px; object-fit: cover; flex-shrink: 0; }
-.bar-emoji { width: 32px; text-align: center; font-size: 22px; flex-shrink: 0; }
-.bar-main { flex: 1; min-width: 0; }
-.bar-label { display: flex; justify-content: space-between; gap: 12px; font-size: 0.95em; }
-.bar-label strong { font-variant-numeric: tabular-nums; }
-.bar-track { height: 12px; background: var(--surface-2); border-radius: 4px; margin: 6px 0 4px; }
-.bar-fill { height: 100%; background: var(--like); border-radius: 4px; }
-.bar-meta { color: var(--text-muted); font-size: 0.8em; }
-.bar-row.compact .bar-track { margin-bottom: 0; }
-
-.legend { display: flex; gap: 20px; font-size: 0.85em; color: var(--text-muted); margin: 8px 0 14px; }
-.swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
-.swatch.like { background: var(--like); }
-.swatch.dislike { background: var(--dislike); }
-
-.diverging { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.div-row { display: grid; grid-template-columns: 1fr 200px 1fr; align-items: center; gap: 12px; border-radius: 8px; }
-.div-row:hover { background: var(--surface-2); }
-.div-side { display: flex; align-items: center; gap: 8px; }
-.div-side.left { justify-content: flex-end; }
-.div-bar { height: 14px; border-radius: 4px; min-width: 2px; }
-.div-bar.like { background: var(--like); }
-.div-bar.dislike { background: var(--dislike); }
-.div-value { font-variant-numeric: tabular-nums; font-size: 0.85em; color: var(--text-muted); min-width: 2ch; }
-.div-name { text-align: center; font-weight: 600; font-size: 0.9em; }
-
 /* ---------- Språk ---------- */
 
 .lang-choice {
@@ -1413,9 +1309,6 @@ button:focus-visible {
     gap: 24px;
   }
   .taste-grid, .wish-grid { grid-template-columns: 1fr 1fr; }
-  .kpis { grid-template-columns: 1fr 1fr; }
-  .kitchen-cols { grid-template-columns: 1fr; }
-  .div-row { grid-template-columns: 1fr 130px 1fr; }
   .progress-step {
     justify-content: center;
     padding: 8px;
@@ -1432,7 +1325,6 @@ button:focus-visible {
   .segmented { grid-template-columns: 1fr; }
   .segmented-4 { grid-template-columns: 1fr 1fr; }
   .taste-grid, .wish-grid { grid-template-columns: 1fr; }
-  .kitchen-head { flex-direction: column; }
   .thumb { min-height: 140px; }
   .segment { min-height: 0; }
   .footer { flex-wrap: wrap; }

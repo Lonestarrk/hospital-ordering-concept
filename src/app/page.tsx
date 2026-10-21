@@ -95,7 +95,6 @@ export default function LoginPage() {
           <button className="demo-link" onClick={() => { setError(null); setDigits(DEMO_PERSONNUMMER); }}>
             {l.demoFill}
           </button>
-          <a className="demo-link" href="/koket">{l.staffLink}</a>
         </section>
       </div>
     </Screen>

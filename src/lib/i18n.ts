@@ -1,5 +1,5 @@
 // Språk för patientskärmarna. Data och beställningar använder svenska namn som interna
-// nycklar; här översätts allt som visas och läses upp. Köksvyn är bara på svenska.
+// nycklar; här översätts allt som visas och läses upp.
 
 import type { DietTag, Eaten, Portion } from "./data";
 
@@ -54,7 +54,6 @@ const sv = {
     eraseAria: "Radera en siffra",
     submit: "Fortsätt →",
     demoFill: "Demo: fyll i Ingrids personnummer",
-    staffLink: "Personal: kökets vy →",
     errors: {
       length: "Numret behöver 12 siffror: år, månad, dag och fyra sista siffror.",
       date: "Födelsedatumet ser inte rätt ut. Kontrollera de första åtta siffrorna.",
@@ -261,7 +260,6 @@ const en: Dict = {
     eraseAria: "Delete one digit",
     submit: "Continue →",
     demoFill: "Demo: fill in Ingrid's number",
-    staffLink: "Staff: kitchen view →",
     errors: {
       length: "The number needs 12 digits: year, month, day and the last four digits.",
       date: "The date of birth doesn't look right. Check the first eight digits.",
@@ -465,7 +463,6 @@ const ar: Dict = {
     eraseAria: "حذف رقم واحد",
     submit: "متابعة ←",
     demoFill: "عرض تجريبي: أدخل رقم إنغريد",
-    staffLink: "للطاقم: واجهة المطبخ ←",
     errors: {
       length: "يجب أن يتكون الرقم من 12 خانة: السنة والشهر واليوم والأرقام الأربعة الأخيرة.",
       date: "تاريخ الميلاد لا يبدو صحيحاً. تحققي من الخانات الثماني الأولى.",

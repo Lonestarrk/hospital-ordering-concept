@@ -37,7 +37,6 @@ Logga in med Ingrids **syntetiska** personnummer **19480302-2328** (eller tryck 
 | 7 | `/klart` | Bekräftelse med tid: "Maten kommer till ditt rum ca kl 12:00". |
 | – | `/omdome` | **Omdöme i efterhand:** 👍 eller 👎, valfria skäl och "Hur mycket åt du?". |
 | – | `/min-smak` | **Min smak:** 👍 eller 👎 på olika sorters mat och ❤️ på önskerätter. |
-| – | `/koket` | **Kökets vy** (personal): anonym sammanställning och förslag till nästa meny. |
 
 Hjälpmedel på varje sida: **Språk**, **Läs upp / Ljud på**, **Större text** och
 **Hjälp**, som kallar på personalen.
@@ -69,7 +68,7 @@ riktig lösning behöver anpassa tilltalet efter patienten.
 - **Demo.** På bekräftelsesidan finns länken *"Demo: maten har serverats"*, som hoppar
   fram i tiden så att man kan betygsätta det man just beställde.
 
-## Smak och önskerätter blir underlag för menyn
+## Min smak – det Ingrid tycker om
 
 **Ingrid (`/min-smak`).** Hon når sidan från bekräftelsen ("Vad tycker du om för mat?")
 eller från länken under menyn.
@@ -81,26 +80,9 @@ eller från länken under menyn.
 - **Hennes meny anpassas direkt.** Rätter som matchar det hon gillar hamnar först och
   märks "❤️ Du gillar fisk". Sådant hon ogillar hamnar sist men döljs inte.
 
-**Köket (`/koket`, länk på inloggningssidan).**
-- Sidan lägger ihop syntetiska svar från 46 patienter med svaren som lämnats i prototypen.
-  Ingrids önskan om köttbullar ändrar till exempel siffran direkt.
-- Den visar nyckeltal (andel tummen upp, andel som åt minst hälften), betyg per rätt
-  med vanligaste svaret, de mest önskade rätterna och avdelningens smakprofil.
-- **Förslag till nästa veckas meny** tas fram med enkla regler som går att förklara:
-
-  | Förslag | Regel |
-  |---|---|
-  | Behåll | Minst 75 % tummen upp |
-  | Se över | Under 55 % tummen upp, med vanligaste klagomålet |
-  | Lägg till | De mest önskade rätterna som inte finns på menyn |
-  | Åtgärda | Minst 15 % svarade "För kall", så transporten ses över innan rätten byts ut |
-  | Anpassa | Sorter som fler än dubbelt så många ogillar som gillar |
-
-- **Reglerna följs.** Systemet föreslår och kökschefen och dietisten bestämmer.
-  Kostordinationer påverkas aldrig.
-- **Anonymt.** Köket ser bara summor, inga namn eller personnummer. En rätt visas först
-  när minst 5 patienter har svarat.
-- **Inga AI-anrop.** Förslagen räknas fram i appen, så ingen patientdata lämnar den.
+Svaren från omdömen och "Min smak" sparas med svenska nycklar och utan att något skickas
+till en AI-tjänst. Hur sjukhuset sedan använder dem för menyplaneringen ligger utanför
+prototypen – där gäller principen att systemet föreslår och människan bestämmer.
 
 ## Ljud och röst
 
@@ -182,5 +164,5 @@ Vill ni byta en bild? Lägg en ny fil i `public/mat/` och ändra `image` i `src/
 | ![Röstkommando](docs/skarmbilder/8-rost.png) | ![Omdöme](docs/skarmbilder/9-omdome.png) |
 | ![Tack för omdömet](docs/skarmbilder/10-omdome-tack.png) | ![Menyn minns](docs/skarmbilder/11-meny-minns.png) |
 | ![Min smak](docs/skarmbilder/12-min-smak.png) | ![Menyn efter smak](docs/skarmbilder/13-meny-smak.png) |
-| ![Kökets vy](docs/skarmbilder/14-koket.png) | ![Introduktion](docs/skarmbilder/15-intro.png) |
+| ![Introduktion](docs/skarmbilder/15-intro.png) | |
 | ![Fortsätt där du var](docs/skarmbilder/16-fortsatt.png) | ![Arabiska](docs/skarmbilder/17-arabiska.png) |
