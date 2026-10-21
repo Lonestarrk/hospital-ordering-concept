@@ -1121,7 +1121,6 @@ img.summary-image,
   background: var(--surface);
   box-shadow: var(--shadow);
   overflow: hidden;
-  min-height: var(--dish-size, 150px);
 }
 
 .dish.selected {
@@ -1133,25 +1132,17 @@ img.summary-image,
 }
 
 /*
- * Bildrutans storlek. Den räknas från skärmhöjden så att minst fyra rätter syns samtidigt
- * på surfplattan. Äldre Safari (före iOS 15.4) saknar dvh – där är rutan 150 px. Det måste
- * ske med @supports: en variabel med ett värde webbläsaren inte förstår blir annars tom,
- * och då försvinner storleksgränsen helt.
+ * Bildrutans storlek: stor nog att se maten ordentligt (liggande bilder blir ca 240 px höga,
+ * stående högst 320 px). Ett fast värde, så att det fungerar likadant i alla webbläsare.
  */
 .dish-grid {
-  --dish-size: 150px;
-}
-
-@supports (height: 100dvh) {
-  .dish-grid {
-    --dish-size: clamp(112px, calc((100dvh - 110px) / 4 - 20px), 180px);
-  }
+  --dish-size: 340px;
 }
 
 /* Bilden visas hel, i sina egna proportioner, inom en fast ruta till vänster om texten. */
 .dish-thumb {
-  width: var(--dish-size, 150px);
-  max-width: 180px; /* Gäller alltid, även om storleken ovan inte går att räkna ut. */
+  width: var(--dish-size, 340px);
+  max-width: 40%; /* Texten får alltid minst drygt halva raden. */
   flex: none;
   display: flex;
   align-items: center;
@@ -1164,7 +1155,7 @@ img.summary-image,
   width: auto;
   height: auto;
   max-width: 100%;
-  max-height: calc(var(--dish-size, 150px) - 20px);
+  max-height: calc(var(--dish-size, 340px) - 20px);
   border-radius: 12px;
 }
 
