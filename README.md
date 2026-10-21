@@ -90,7 +90,7 @@ eller i en godkänd tjänst inom vårdgivarens kontroll.
 
 ## Dokumentation
 
-1. **Förstå problemet** – [docs/steg-1-problemforstaelse.md](docs/steg-1-problemforstaelse.md)
+1. **Förstå problemet** – [docs/steg-1-problemforstaelse.md](docs/steg-1-problemforstaelse.md) · ifyllt lunchkort: [svenska](docs/lunch-mission/lunch-mission-sv.png), [English](docs/lunch-mission/lunch-mission-en.png)
 2. **Prototyp** – den här appen
 
 ## Matbilder
