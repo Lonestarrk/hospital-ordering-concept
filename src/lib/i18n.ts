@@ -73,6 +73,10 @@ const sv = {
     close: "Stäng",
     installed: "Måltider är installerad.",
   },
+  update: {
+    title: "En ny version av appen finns.",
+    button: "Uppdatera nu",
+  },
   login: {
     speak:
       "Hej och välkommen! Här beställer du din mat. Håll ditt armband från sjukhuset mot plattan, där det står Armband. Du kan också visa streckkoden på armbandet för kameran. Plattan läser det och vet då vem du är.",
@@ -356,6 +360,10 @@ const en: Dict = {
     close: "Close",
     installed: "Meals is installed.",
   },
+  update: {
+    title: "A new version of the app is available.",
+    button: "Update now",
+  },
   login: {
     speak:
       "Hello and welcome! This is where you order your food. Hold your hospital wristband against the tablet, where it says Wristband. You can also show the barcode on the wristband to the camera. The tablet reads it and knows who you are.",
@@ -634,6 +642,10 @@ const ar: Dict = {
     iosSteps: ["اضغطي على زر المشاركة (المربع مع سهم إلى الأعلى).", "اختاري «إضافة إلى الشاشة الرئيسية».", "اضغطي على «إضافة»."],
     close: "إغلاق",
     installed: "تم تثبيت الوجبات.",
+  },
+  update: {
+    title: "يتوفر إصدار جديد من التطبيق.",
+    button: "حدّثي الآن",
   },
   login: {
     speak:

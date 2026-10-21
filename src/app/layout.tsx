@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { OrderProvider } from "@/components/OrderProvider";
 import { PwaSetup } from "@/components/Install";
 import { PullToRefresh } from "@/components/PullToRefresh";
+import { UpdateChecker } from "@/components/UpdateChecker";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -29,7 +30,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body suppressHydrationWarning>
         <PwaSetup />
         <PullToRefresh />
-        <OrderProvider>{children}</OrderProvider>
+        <OrderProvider>
+          {children}
+          <UpdateChecker />
+        </OrderProvider>
       </body>
     </html>
   );
