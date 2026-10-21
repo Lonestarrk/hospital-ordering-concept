@@ -427,10 +427,14 @@ button:focus-visible {
 
 .order-image {
   width: 96px;
-  height: 72px;
+  height: auto;
   flex: none;
+  align-self: center;
   border-radius: 14px;
-  object-fit: cover;
+}
+
+.order-ghost-icon {
+  height: 72px;
 }
 
 .order-body {
@@ -1115,10 +1119,8 @@ button:focus-visible {
   background: var(--surface);
   box-shadow: var(--shadow);
   overflow: hidden;
-  /* Höjden räknas från skärmen så att minst fyra rätter syns samtidigt när man scrollar
-     (skärmhöjd minus knapparna längst ner, delat på fyra). */
-  height: 160px; /* Äldre Safari (före iOS 15.4) saknar dvh. */
-  height: clamp(120px, calc((100dvh - 110px) / 4 - 14px), 180px);
+  /* Raden blir så hög som bilden (eller texten), så att hela bilden syns. */
+  min-height: 120px;
 }
 
 .dish.selected {
@@ -1129,13 +1131,13 @@ button:focus-visible {
   transform: scale(0.99);
 }
 
+/* Hela bilden syns och fyller sin ruta: bredden är fast, höjden följer bildens form. */
 .dish-image {
-  width: 50%;
+  display: block;
+  width: 240px;
+  height: auto;
   flex-shrink: 0;
-  align-self: stretch;
-  /* Bildens egen höjd räknas inte – raden bestämmer, och bilden beskärs. */
-  contain: size;
-  object-fit: cover;
+  align-self: flex-start;
   background: var(--surface-2);
 }
 
@@ -1369,6 +1371,11 @@ html[data-text-size="stor"] .dish-body p {
   object-fit: cover;
 }
 
+img.summary-image {
+  height: auto;
+  object-fit: fill;
+}
+
 .summary-text {
   flex: 1;
   display: flex;
@@ -1444,8 +1451,8 @@ html[data-text-size="stor"] .dish-body p {
 }
 
 @keyframes done-image-shrink {
-  0%, 85% { width: 112px; height: 75px; }
-  100% { width: 54px; height: 36px; }
+  0%, 85% { width: 112px; }
+  100% { width: 54px; }
 }
 
 @keyframes done-splash-shrink {
@@ -1497,9 +1504,8 @@ html[data-text-size="stor"] .dish-body p {
 
 .done-splash-image {
   width: 112px;
-  height: 75px;
+  height: auto;
   border-radius: 12px;
-  object-fit: cover;
   animation: done-image-shrink 3s ease-in-out forwards;
 }
 
@@ -1582,9 +1588,8 @@ html[data-text-size="stor"] .dish-body p {
 
 .done-receipt-image {
   width: 72px;
-  height: 52px;
+  height: auto;
   border-radius: 10px;
-  object-fit: cover;
 }
 
 .done-receipt-text {
@@ -2124,7 +2129,7 @@ html[data-text-size="stor"] .dish-body p {
 
 /* Mobil: lägre rader, smalare bild och ingen beskrivning – den finns på rättens sida. */
 @media (max-width: 560px) {
-  .dish { height: 128px; }
+  .dish { min-height: 0; }
   .dish-image { width: 38%; }
   .dish-body { padding: 10px 14px; }
   .dish-body h2 { font-size: 1em; }
