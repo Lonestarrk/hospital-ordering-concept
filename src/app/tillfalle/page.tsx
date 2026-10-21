@@ -178,7 +178,7 @@ export default function OccasionPage() {
                       )}
                     </div>
                   )}
-                  {past && meal && !meal.rating && !meal.skipped && (
+                  {past && meal && !meal.rating && (
                     <button className="btn btn-primary order-action" onClick={() => router.push(`/omdome?id=${meal.id}`)}>
                       👍 👎 {m.rate}
                     </button>

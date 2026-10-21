@@ -137,8 +137,10 @@ function Feedback() {
       }
     >
       <div className="feedback-head">
-        <img className="feedback-image" src={dish.image} alt={tm.dish(dish).imageAlt} />
-        <div>
+        <span className="feedback-image">
+          <img src={dish.image} alt={tm.dish(dish).imageAlt} />
+        </span>
+        <div className="feedback-head-text">
           <p className="eyebrow">{tm.word(meal.label)}</p>
           <h1>{f.howWas}</h1>
           <p className="lead">{dishName}</p>
@@ -146,7 +148,7 @@ function Feedback() {
         </div>
       </div>
 
-      <div className="thumbs" role="radiogroup" aria-label={f.howWas}>
+      <div className={`thumbs ${rating ? "has-choice" : ""}`} role="radiogroup" aria-label={f.howWas}>
         <button
           role="radio"
           aria-checked={rating === "upp"}
@@ -166,10 +168,9 @@ function Feedback() {
           {f.notGood}
         </button>
       </div>
-      {!rating && <p className="muted feedback-pick">{f.pickFirst}</p>}
 
       {rating && (
-        <>
+        <div className="feedback-more">
           <section className="section">
             <h2>
               {rating === "upp" ? f.whatGood : f.whatBad} <span className="optional">{t.optional}</span>
@@ -203,7 +204,7 @@ function Feedback() {
               ))}
             </div>
           </section>
-        </>
+        </div>
       )}
     </Screen>
   );
