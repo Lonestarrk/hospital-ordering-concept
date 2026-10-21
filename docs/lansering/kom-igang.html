@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Kom igång med Måltider</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #1f2a24; background: #fff; }
+  .page { width: 210mm; height: 297mm; padding: 16mm 16mm 14mm; position: relative; page-break-after: always; overflow: hidden; }
+  .page:last-child { page-break-after: auto; }
+  .brand { display: flex; align-items: center; gap: 10px; color: #2f6b4f; font-weight: 800; font-size: 13pt; }
+  .brand span { width: 34px; height: 34px; border-radius: 10px; background: #e3efe8; display: grid; place-items: center; font-size: 18px; }
+  .kicker { color: #2f6b4f; font-weight: 800; font-size: 9pt; letter-spacing: .08em; text-transform: uppercase; margin-top: 6mm; }
+  h1 { font-size: 24pt; line-height: 1.1; margin: 2mm 0 3mm; }
+  .lead { font-size: 11pt; color: #4a554f; max-width: 160mm; }
+  h2 { font-size: 12.5pt; margin: 0 0 2.5mm; }
+  p, li { font-size: 9.8pt; line-height: 1.42; }
+  ul { padding-left: 4.5mm; }
+  li { margin-bottom: 1.2mm; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; margin-top: 5mm; }
+  .box { border: 1.5px solid #e4dccf; border-radius: 4mm; padding: 4.5mm 5mm; }
+  .box.green { background: #e3efe8; border-color: #e3efe8; }
+  .box.sand { background: #fbf7f2; }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3.5mm; margin-top: 5mm; }
+  .step { background: #fbf7f2; border-radius: 4mm; padding: 4mm; }
+  .num { width: 9mm; height: 9mm; border-radius: 50%; background: #2f6b4f; color: #fff; display: grid; place-items: center; font-weight: 800; margin-bottom: 2.5mm; }
+  .step b { display: block; font-size: 10.5pt; margin-bottom: 1mm; }
+  .step p { font-size: 9pt; }
+  .full { grid-column: 1 / -1; }
+  table { width: 100%; border-collapse: collapse; }
+  td { font-size: 9.4pt; padding: 1.8mm 0; border-top: 1px solid #e4dccf; vertical-align: top; }
+  td:first-child { font-weight: 700; width: 46%; padding-right: 4mm; }
+  .foot { position: absolute; left: 16mm; right: 16mm; bottom: 9mm; display: flex; justify-content: space-between; font-size: 8pt; color: #7a857f; }
+
+  /* Sängkort */
+  .card h1 { font-size: 30pt; margin-top: 5mm; }
+  .card .lead { font-size: 15pt; }
+  .big-steps { display: grid; gap: 4mm; margin-top: 6mm; }
+  .big { display: grid; grid-template-columns: 18mm 1fr; gap: 5mm; align-items: start; border: 2px solid #e4dccf; border-radius: 6mm; padding: 4.5mm 5mm; }
+  .big .icon { width: 18mm; height: 18mm; border-radius: 6mm; background: #e3efe8; display: grid; place-items: center; font-size: 34px; }
+  .big b { font-size: 17pt; display: block; margin-bottom: 1.5mm; }
+  .big p { font-size: 13pt; color: #2a352f; }
+  .big .tr { font-size: 10.5pt; color: #5b6660; margin-top: 1.2mm; }
+  .big .tr[dir="rtl"] { text-align: right; font-size: 11.5pt; }
+  .helpline { margin-top: 5mm; background: #fbe9e5; border-radius: 6mm; padding: 5mm; display: grid; grid-template-columns: 18mm 1fr; gap: 6mm; align-items: center; }
+  .helpline .icon { font-size: 40px; text-align: center; }
+  .helpline b { font-size: 17pt; color: #8a2f1d; display: block; }
+  .helpline p { font-size: 12pt; }
+  .helpline .tr { font-size: 10.5pt; color: #5b2a1d; margin-top: 1mm; }
+  .helpline .tr[dir="rtl"] { text-align: right; }
+</style>
+</head>
+<body>
+
+<!-- Sida 1: för avdelningen -->
+<section class="page">
+  <div class="brand"><span>🍽️</span> Måltider</div>
+  <p class="kicker">Kom igång · för avdelningens personal</p>
+  <h1>Låt patienten välja sin mat själv – från sängen</h1>
+  <p class="lead">Måltider är en surfplatta där patienten bläddrar bland bilder och beställer det hon vill äta. Appen visar bara mat som passar den kost och de allergier ni redan har registrerat. Ni behöver inte gå runt med menyn – bara finnas till hands om någon ber om hjälp.</p>
+
+  <div class="steps">
+    <div class="step"><div class="num">1</div><b>Ställ fram plattan</b><p>Laddad och inom räckhåll på sängbordet. Patientens kost och allergier ska finnas i journalen.</p></div>
+    <div class="step"><div class="num">2</div><b>Visa språkknappen</b><p>Svenska, English eller العربية väljs högst upp. Uppläsning och större text finns på varje sida.</p></div>
+    <div class="step"><div class="num">3</div><b>Personnumret</b><p>Patienten skriver sitt personnummer på det stora sifferblocket. Hjälp till vid behov.</p></div>
+    <div class="step"><div class="num">4</div><b>Låt appen visa resten</b><p>Första gången visas en kort introduktion i tre steg. Sedan klarar de flesta sig själva.</p></div>
+  </div>
+
+  <div class="grid">
+    <div class="box green">
+      <h2>Det här gör systemet</h2>
+      <ul>
+        <li>Visar bara rätter som passar ordinerad kost och allergier.</li>
+        <li>Föreslår en rätt och förklarar varför.</li>
+        <li>Frågar efter måltiden hur det smakade och hur mycket patienten åt.</li>
+        <li>Sammanställer svaren anonymt till köket med förslag på menyn.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h2>Det här gör ni – undantagen</h2>
+      <ul>
+        <li><b>Hjälp-signal:</b> gå till patienten när den kommer.</li>
+        <li><b>Fel kost eller allergi?</b> Ändra i journalen. Appen ändrar aldrig en ordination själv.</li>
+        <li><b>"Svårt att tugga"</b> visas som en signal till er – ni och dietisten bedömer.</li>
+        <li><b>Vill inte använda plattan?</b> Pappersmenyn finns kvar.</li>
+      </ul>
+    </div>
+
+    <div class="box sand full">
+      <h2>Vanliga frågor</h2>
+      <table>
+        <tr><td>Patienten minns inte sitt personnummer</td><td>Läs upp det från armbandet eller journalen och låt patienten skriva det själv.</td></tr>
+        <tr><td>Patienten ser dåligt eller har svårt med händerna</td><td>Tryck på <b>Större text</b> och <b>Läs upp</b>. På plattor med lokal taligenkänning går det också att prata.</td></tr>
+        <tr><td>Patienten blev avbruten mitt i</td><td>Plattan loggar ut efter 10 minuter utan aktivitet. Vid nästa inloggning kan patienten fortsätta där hon var.</td></tr>
+        <tr><td>Är patientuppgifterna säkra?</td><td>Inget skickas till AI-tjänster. Röst tolkas bara i plattan. Köket ser bara summor – inga namn.</td></tr>
+        <tr><td>Sista tid för beställning?</td><td>Lunch kan ändras fram till kl 10:00. Appen visar tiden för patienten.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="foot"><span>Måltider – konceptprototyp · syntetisk data</span><span>Sida 1 av 2 · Sängkortet finns på sida 2</span></div>
+</section>
+
+<!-- Sida 2: sängkort för patienten -->
+<section class="page card">
+  <div class="brand"><span>🍽️</span> Måltider</div>
+  <h1>Så beställer du din mat</h1>
+  <p class="lead">Det tar ungefär två minuter. Du kan inte göra fel – allt går att ändra.</p>
+
+  <div class="big-steps">
+    <div class="big">
+      <div class="icon">🌐</div>
+      <div>
+        <b>1. Välj språk</b>
+        <p>Tryck på Svenska, English eller العربية.</p>
+        <p class="tr">Choose your language.</p>
+        <p class="tr" dir="rtl" lang="ar">اختاري لغتك.</p>
+      </div>
+    </div>
+    <div class="big">
+      <div class="icon">🔢</div>
+      <div>
+        <b>2. Skriv ditt personnummer</b>
+        <p>Använd de stora siffrorna på skärmen.</p>
+        <p class="tr">Enter your personal identity number.</p>
+        <p class="tr" dir="rtl" lang="ar">أدخلي رقمك الشخصي.</p>
+      </div>
+    </div>
+    <div class="big">
+      <div class="icon">🍽️</div>
+      <div>
+        <b>3. Titta och välj</b>
+        <p>Tryck på maten du vill ha. Du ser bara mat som passar dig.</p>
+        <p class="tr">Press the food you would like. You only see food that suits you.</p>
+        <p class="tr" dir="rtl" lang="ar">اضغطي على الطعام الذي تريدينه. سترين فقط الطعام المناسب لكِ.</p>
+      </div>
+    </div>
+    <div class="big">
+      <div class="icon">🔈</div>
+      <div>
+        <b>Läs upp och större text</b>
+        <p>Knapparna finns uppe i hörnet på varje sida.</p>
+        <p class="tr">Read aloud and larger text are in the top corner.</p>
+        <p class="tr" dir="rtl" lang="ar">القراءة بصوت عالٍ والنص الأكبر في أعلى الشاشة.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="helpline">
+    <div class="icon">🙋</div>
+    <div>
+      <b>Behöver du hjälp? Tryck på Hjälp.</b>
+      <p>Personalen får en signal och kommer till dig.</p>
+      <p class="tr">Need help? Press Help.</p>
+      <p class="tr" dir="rtl" lang="ar">تحتاجين مساعدة؟ اضغطي على مساعدة.</p>
+    </div>
+  </div>
+
+  <div class="foot"><span>Ställ kortet vid sängen</span><span>Sida 2 av 2</span></div>
+</section>
+
+</body>
+</html>

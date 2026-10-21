@@ -1,7 +1,17 @@
 # Ingrids måltid – konceptprototyp
 
-Tävlingsbidrag till *The Great Product Challenge*: Ingrid ligger på sjukhus och ska för
-första gången beställa sin mat på en surfplatta – från inloggning till bekräftad måltid.
+Tävlingsbidrag till *The Great Product Challenge*: Ingrid, 78, återhämtar sig efter en
+operation och ska för första gången beställa sin mat på en surfplatta – från inloggning
+till bekräftad måltid.
+
+**Leveranserna**
+
+| Leverans | Var |
+|---|---|
+| 1. Produkten – en komplett resa, surfplattan först | Den här appen (`npm run dev`) |
+| 2. Introduktionen | `/intro` – visas automatiskt första gången, se [beslut och bedömning](docs/beslut-och-bedomning.md#introduktion-för-nya-användare-15-p) |
+| 3. Lanseringen | [60-sekundersvideo](docs/lansering/produktvideo.mp4) · [videomanus](docs/lansering/videomanus.md) · [kom igång-guide (PDF)](docs/lansering/kom-igang.pdf) |
+| Underlag för juryn | [Beslut och bedömning](docs/beslut-och-bedomning.md): skyddsräcken, de sex principerna, Cagans fyra risker, testprotokoll |
 
 ## Kom igång
 
@@ -17,9 +27,10 @@ Logga in med Ingrids **syntetiska** personnummer **19480302-2328** (eller tryck 
 
 | Steg | Sida | Vad händer |
 |---|---|---|
-| 1 | `/` | Inloggning med personnummer på ett stort sifferblock på skärmen. Numret kontrolleras (datum och kontrollsiffra) och felen förklaras i klartext. |
-| 2 | `/valkommen` | "Hej Ingrid! Stämmer det här?" – namn, rum, säng, kost och allergier. |
-| 3 | `/meny` | **Foton på maten.** Bara rätter som passar hennes kost och allergier visas. Det står hur många som är dolda och varför. |
+| 1 | `/` | **Språkval** (svenska, English, العربية) och inloggning med personnummer på ett stort sifferblock. Numret kontrolleras (datum och kontrollsiffra) och felen förklaras i klartext. |
+| 2 | `/valkommen` | "Hej Ingrid! Stämmer det här?" – namn, rum, säng, kost och allergier. Har hon ett påbörjat val visas *Fortsätt där jag var*. |
+| – | `/intro` | **Introduktion** i tre steg första gången: titta och välj, du kan inte välja fel, hjälp finns alltid här. |
+| 3 | `/meny` | **Foton på maten.** Bara rätter som passar hennes kost och allergier visas, och en rätt är föreslagen med skälet utskrivet. Det står hur många som är dolda och varför. |
 | 4 | `/meny/[id]` | Allergener, portionsstorlek ("Hur hungrig är du?") och önskemål som "Skuren i små bitar". |
 | 5 | `/dryck` | Dryck som passar kosten. |
 | 6 | `/sammanfattning` | "Stämmer det här?" – allt går att ändra. |
@@ -28,8 +39,20 @@ Logga in med Ingrids **syntetiska** personnummer **19480302-2328** (eller tryck 
 | – | `/min-smak` | **Min smak:** 👍 eller 👎 på olika sorters mat och ❤️ på önskerätter. |
 | – | `/koket` | **Kökets vy** (personal): anonym sammanställning och förslag till nästa meny. |
 
-Hjälpmedel på varje sida: **Läs upp / Ljud på**, **Större text** och **Hjälp**, som
-kallar på personalen.
+Hjälpmedel på varje sida: **Språk**, **Läs upp / Ljud på**, **Större text** och
+**Hjälp**, som kallar på personalen.
+
+**Avbruten mitt i?** Plattan loggar ut efter 10 minuter utan aktivitet så att ingen annan
+ser patientens uppgifter, men valet sparas. Vid nästa inloggning kan hon fortsätta exakt
+där hon var. Testa direkt: `window.dispatchEvent(new Event("ingrid-idle"))`.
+
+## Språk
+
+Alla patientskärmar finns på **svenska, engelska och arabiska**. Arabiska visas från höger
+till vänster, och uppläsningen sker på valt språk. Texterna finns i `src/lib/i18n.ts`, där
+det är lätt att lägga till fler språk. Röstkommandona finns bara på svenska, så på andra
+språk används tryck och uppläsning. Den arabiska texten tilltalar Ingrid i femininum. En
+riktig lösning behöver anpassa tilltalet efter patienten.
 
 ## Omdöme i efterhand – tummen upp eller ner
 
@@ -99,25 +122,24 @@ eller från länken under menyn.
 | Min smak | "jag gillar fisk" · "jag tycker inte om kryddig mat" · "köttbullar" · "skicka" |
 | Alla sidor | "hjälp" · "läs upp" / "upprepa" · "större text" · "tyst" |
 
-Rösten fungerar i Chrome, Edge och Safari via webbläsarens inbyggda Web Speech API. Det
-kräver `localhost` eller https och tillåten mikrofon. Utan mikrofon kan man prova i
-konsolen: `window.dispatchEvent(new CustomEvent("ingrid-voice", { detail: "laxen" }))`.
+**Integritet (skyddsräcke 2).** Uppläsningen sker i enheten. Taligenkänningen används
+**bara** när webbläsaren kan köra den i plattan (`processLocally`, med en svensk modell som
+laddas ner en gång). Kan den inte det döljs mikrofonen, och inget ljud skickas någonsin
+till en extern taltjänst eller AI-modell. Rösten finns inte heller på inloggningen.
 
-**Integritet.** Uppläsningen sker alltid i enheten. Taligenkänningen körs i enheten om
-webbläsaren har en svensk modell (`processLocally`). Annars skickar webbläsaren ljudet
-till sin egen taltjänst, till exempel Googles i Chrome. Därför finns rösten *inte* på
-inloggningen, så personnumret sägs aldrig högt eller skickas iväg som ljud. Under
-vistelsen tar rösten bara emot menyval. I skarp drift bör igenkänningen ske i enheten
-eller i en godkänd tjänst inom vårdgivarens kontroll.
+Mikrofonen syns i webbläsare som har API:t för taligenkänning i enheten (nyare Chrome).
+Om en svensk modell saknas säger appen det när man trycker på knappen och döljer den. Utan
+mikrofon kan man prova kommandona i konsolen:
+`window.dispatchEvent(new CustomEvent("ingrid-voice", { detail: "laxen" }))`.
 
 ## Hur vi följer reglerna
 
 | Regel | Så här |
 |---|---|
 | Allergener och ordinerad kost ändras aldrig automatiskt | Kost och allergier kommer från vården och visas bara. Appen filtrerar menyn men kan aldrig ändra en ordination. Ingrid uppmanas be personalen om något inte stämmer. Rätter som inte passar går inte att välja, inte ens via direktlänk. |
-| Patientdata går aldrig okontrollerat till en AI-modell | Prototypen anropar ingen AI-tjänst. All data finns lokalt i webbläsaren (sessionStorage). |
+| Patientdata går aldrig okontrollerat till en AI-modell | Prototypen anropar ingen AI-tjänst. Röst tolkas bara i plattan. All data finns lokalt i webbläsaren (sessionStorage). |
 | Bara syntetisk data | Ingrid är påhittad. Personnumret är ett officiellt testpersonnummer från Skatteverket. |
-| Patientskärmar ska fungera för alla | Stora tryckytor (≥ 56 px), tydliga kontraster, större text, uppläsning, hjälpknapp, enkelt språk, ett beslut per skärm. |
+| Patientskärmar ska fungera för alla | Svenska, engelska och arabiska, stora tryckytor (≥ 56 px), tydliga kontraster, större text, uppläsning på valt språk, hjälpknapp, enkelt språk, ett beslut per skärm. |
 | Surfplattan först | Layouten är byggd för liggande surfplatta och fungerar även på mobil. |
 
 > **Obs:** Att logga in med bara personnummer räcker inte i skarp drift. Prototypen
@@ -128,6 +150,8 @@ eller i en godkänd tjänst inom vårdgivarens kontroll.
 
 1. **Förstå problemet** – [docs/steg-1-problemforstaelse.md](docs/steg-1-problemforstaelse.md) · ifyllt lunchkort: [svenska](docs/lunch-mission/lunch-mission-sv.png), [English](docs/lunch-mission/lunch-mission-en.png)
 2. **Prototyp** – den här appen
+3. **Beslut och bedömning** – [docs/beslut-och-bedomning.md](docs/beslut-och-bedomning.md)
+4. **Lansering** – [video](docs/lansering/produktvideo.mp4), [manus](docs/lansering/videomanus.md), [kom igång-guide](docs/lansering/kom-igang.pdf). Videon spelas in igen med `scripts/spela-in-video.cjs`.
 
 ## Matbilder
 
@@ -158,4 +182,5 @@ Vill ni byta en bild? Lägg en ny fil i `public/mat/` och ändra `image` i `src/
 | ![Röstkommando](docs/skarmbilder/8-rost.png) | ![Omdöme](docs/skarmbilder/9-omdome.png) |
 | ![Tack för omdömet](docs/skarmbilder/10-omdome-tack.png) | ![Menyn minns](docs/skarmbilder/11-meny-minns.png) |
 | ![Min smak](docs/skarmbilder/12-min-smak.png) | ![Menyn efter smak](docs/skarmbilder/13-meny-smak.png) |
-| ![Kökets vy](docs/skarmbilder/14-koket.png) | |
+| ![Kökets vy](docs/skarmbilder/14-koket.png) | ![Introduktion](docs/skarmbilder/15-intro.png) |
+| ![Fortsätt där du var](docs/skarmbilder/16-fortsatt.png) | ![Arabiska](docs/skarmbilder/17-arabiska.png) |
