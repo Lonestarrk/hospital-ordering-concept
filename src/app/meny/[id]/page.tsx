@@ -60,8 +60,11 @@ export default function DishPage() {
     router.push("/dryck");
   };
 
+  // Önskemål som "såsen vid sidan" gäller bara lagad mat.
+  const hasExtras = order.occasion === "lunch" || order.occasion === "middag";
+
   const commands: VoiceCommand[] = [
-    ...extras.map((e) => ({ phrases: e.voiceWords, action: () => toggleExtra(e.name) })),
+    ...(hasExtras ? extras : []).map((e) => ({ phrases: e.voiceWords, action: () => toggleExtra(e.name) })),
     { phrases: ["liten", "lilla", "lite"], action: () => choosePortion("liten") },
     { phrases: ["lagom", "normal*", "vanlig*", "mellan*"], action: () => choosePortion("lagom") },
     { phrases: ["stor", "stora", "mycket", "hungrig"], action: () => choosePortion("stor") },
@@ -73,7 +76,7 @@ export default function DishPage() {
 
   return (
     <Screen
-      step={1}
+      step={2}
       speakText={k.speak(text.name)}
       commands={commands}
       voiceHint="”liten”, ”stor” eller ”nästa”"
@@ -120,6 +123,7 @@ export default function DishPage() {
         <p className="muted">{k.more}</p>
       </section>
 
+      {hasExtras && (
       <section className="section">
         <h2>{k.wishes} <span className="optional">{t.optional}</span></h2>
         <div className="chips">
@@ -138,6 +142,7 @@ export default function DishPage() {
           })}
         </div>
       </section>
+      )}
     </Screen>
   );
 }

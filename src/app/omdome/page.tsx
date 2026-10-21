@@ -29,7 +29,7 @@ function Feedback() {
   const meal = meals.find((m) => m.id === params.get("id")) ?? meals.find((m) => !m.rating && !m.skipped);
   const dish = dishes.find((d) => d.id === meal?.dishId);
   // Efter omdömet: tillbaka till bekräftelsen om man kom därifrån, annars vidare till menyn.
-  const next = params.get("sen") === "klart" ? "/klart" : "/meny";
+  const next = params.get("sen") === "klart" ? "/klart" : "/tillfalle";
   if (!patient || !meal || !dish) return null;
 
   // Tack-läget har en egen adress (&skickat=1) och visar det som sparats på måltiden.
@@ -95,7 +95,7 @@ function Feedback() {
         voiceHint="”fortsätt”"
         footer={
           <button className="btn btn-primary btn-large footer-end" onClick={() => router.push(next)}>
-            {next === "/meny" ? f.orderToday : t.continue}
+            {next === "/tillfalle" ? f.orderToday : t.continue}
           </button>
         }
       >

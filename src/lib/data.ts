@@ -75,14 +75,37 @@ export type Dish = {
   suits: DietTag[];
   allergens: string[];
   consistency: Consistency;
+  /** Måltider rätten finns på. */
+  occasions: OccasionId[];
 };
 
-export const meal = {
-  name: "Lunch",
-  day: "Idag",
-  servedAt: "12:00",
-  orderBefore: "10:00",
+// ---------- Måltider ----------
+
+export type OccasionId = "frukost" | "lunch" | "fika" | "middag" | "tilltugg";
+
+export type Occasion = {
+  id: OccasionId;
+  name: string;
+  emoji: string;
+  /** Bild på kortet där man väljer måltid. */
+  image: string;
+  /** Serveringstid "HH:MM". Saknas för tilltugg, som kan beställas när som helst. */
+  servedAt?: string;
+  voiceWords: string[];
 };
+
+export const occasions: Occasion[] = [
+  { id: "frukost", name: "Frukost", emoji: "🌅", image: "/mat/grot.jpg", servedAt: "08:00", voiceWords: ["frukost*"] },
+  { id: "lunch", name: "Lunch", emoji: "🍽️", image: "/mat/kalvspett.jpg", servedAt: "12:00", voiceWords: ["lunch*"] },
+  { id: "fika", name: "Fika", emoji: "☕", image: "/mat/muffin.jpg", servedAt: "14:30", voiceWords: ["fika*", "kaffe"] },
+  { id: "middag", name: "Middag", emoji: "🌙", image: "/mat/lax.jpg", servedAt: "17:30", voiceWords: ["middag*", "kvällsmat"] },
+  { id: "tilltugg", name: "Tilltugg", emoji: "🍎", image: "/mat/frukt.jpg", voiceWords: ["tilltugg*", "mellanmål*", "något litet", "snacks"] },
+];
+
+/** Låstid: måltider måste beställas så här många timmar innan de serveras. */
+export const LOCK_HOURS = 2;
+/** Tilltugg kommer ungefär så här snabbt. */
+export const SNACK_MINUTES = 30;
 
 export const dishes: Dish[] = [
   {
@@ -96,6 +119,7 @@ export const dishes: Dish[] = [
     suits: ["diabetes", "laktosfri"],
     allergens: [],
     consistency: "normal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "lax",
@@ -107,6 +131,7 @@ export const dishes: Dish[] = [
     suits: ["diabetes", "laktosfri", "glutenfri"],
     allergens: ["Fisk"],
     consistency: "normal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "soppa",
@@ -119,6 +144,7 @@ export const dishes: Dish[] = [
     suits: ["diabetes", "laktosfri"],
     allergens: ["Gluten"],
     consistency: "normal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "artsoppa",
@@ -130,6 +156,7 @@ export const dishes: Dish[] = [
     suits: ["diabetes", "laktosfri", "glutenfri"],
     allergens: ["Senap"],
     consistency: "normal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "kycklingcurry",
@@ -141,6 +168,7 @@ export const dishes: Dish[] = [
     suits: ["diabetes", "laktosfri", "glutenfri"],
     allergens: [],
     consistency: "normal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "kalops",
@@ -152,6 +180,7 @@ export const dishes: Dish[] = [
     suits: ["diabetes", "laktosfri", "glutenfri"],
     allergens: [],
     consistency: "normal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "sejfile",
@@ -163,6 +192,7 @@ export const dishes: Dish[] = [
     suits: ["diabetes", "laktosfri", "glutenfri"],
     allergens: ["Fisk"],
     consistency: "normal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "pannbiff",
@@ -174,6 +204,7 @@ export const dishes: Dish[] = [
     suits: ["diabetes", "laktosfri"],
     allergens: ["Ägg"],
     consistency: "normal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "gulasch",
@@ -185,6 +216,7 @@ export const dishes: Dish[] = [
     suits: ["diabetes", "laktosfri", "glutenfri"],
     allergens: [],
     consistency: "normal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "bonchili",
@@ -196,6 +228,7 @@ export const dishes: Dish[] = [
     suits: ["diabetes", "laktosfri", "glutenfri", "vegetarisk"],
     allergens: [],
     consistency: "normal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "kycklinggryta",
@@ -207,6 +240,7 @@ export const dishes: Dish[] = [
     suits: ["diabetes", "laktosfri", "glutenfri"],
     allergens: ["Selleri"],
     consistency: "normal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "spaghetti",
@@ -218,6 +252,7 @@ export const dishes: Dish[] = [
     suits: ["diabetes", "laktosfri"],
     allergens: ["Gluten", "Selleri"],
     consistency: "normal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "ugnskyckling",
@@ -229,6 +264,7 @@ export const dishes: Dish[] = [
     suits: ["diabetes", "laktosfri", "glutenfri"],
     allergens: ["Selleri"],
     consistency: "normal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "pannkakor",
@@ -240,6 +276,7 @@ export const dishes: Dish[] = [
     suits: [],
     allergens: ["Ägg", "Mjölk", "Gluten"],
     consistency: "normal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "paneradfisk",
@@ -251,6 +288,7 @@ export const dishes: Dish[] = [
     suits: ["laktosfri"],
     allergens: ["Fisk", "Ägg", "Gluten", "Senap"],
     consistency: "normal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "fiskgratang",
@@ -262,6 +300,7 @@ export const dishes: Dish[] = [
     suits: ["diabetes"],
     allergens: ["Fisk", "Mjölk"],
     consistency: "normal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "lasagne",
@@ -273,6 +312,7 @@ export const dishes: Dish[] = [
     suits: ["diabetes"],
     allergens: ["Gluten", "Mjölk"],
     consistency: "normal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "schnitzel",
@@ -284,6 +324,7 @@ export const dishes: Dish[] = [
     suits: ["diabetes"],
     allergens: ["Gluten", "Ägg", "Mjölk"],
     consistency: "normal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "timbal",
@@ -295,6 +336,7 @@ export const dishes: Dish[] = [
     suits: ["diabetes", "laktosfri"],
     allergens: ["Ägg"],
     consistency: "timbal",
+    occasions: ["lunch", "middag"],
   },
   {
     id: "naringssoppa",
@@ -306,6 +348,187 @@ export const dishes: Dish[] = [
     suits: ["diabetes", "laktosfri", "glutenfri"],
     allergens: [],
     consistency: "flytande",
+    occasions: ["lunch", "middag"],
+  },
+  {
+    id: "grot",
+    name: "Havregrynsgröt med bär",
+    description: "Varm gröt med laktosfri mjölk, färska bär och lite kanel.",
+    image: "/mat/grot.jpg",
+    imageAlt: "Havregrynsgröt med jordgubbar och blåbär",
+    voiceWords: ["gröt*", "havre*"],
+    suits: ["diabetes", "laktosfri", "vegetarisk"],
+    allergens: ["Gluten"],
+    consistency: "normal",
+    occasions: ["frukost"],
+  },
+  {
+    id: "kokttagg",
+    name: "Kokt ägg med rostat bröd",
+    description: "Löskokt ägg, rostat bröd och laktosfritt smör.",
+    image: "/mat/kokttagg.jpg",
+    imageAlt: "Kokt ägg i äggkopp med rostat bröd",
+    voiceWords: ["kokt ägg", "ägg"],
+    suits: ["diabetes", "laktosfri", "vegetarisk"],
+    allergens: ["Ägg", "Gluten"],
+    consistency: "normal",
+    occasions: ["frukost"],
+  },
+  {
+    id: "yoghurtmusli",
+    name: "Yoghurt med bär och müsli",
+    description: "Laktosfri yoghurt med blåbär, hallon och osötad müsli.",
+    image: "/mat/yoghurtmusli.jpg",
+    imageAlt: "Yoghurt med bär och müsli i skål",
+    voiceWords: ["yoghurt*", "müsli*"],
+    suits: ["diabetes", "laktosfri", "vegetarisk"],
+    allergens: ["Mjölkprotein", "Gluten"],
+    consistency: "normal",
+    occasions: ["frukost"],
+  },
+  {
+    id: "aggbacon",
+    name: "Stekt ägg med bacon",
+    description: "Stekt ägg, bacon, bönor och rostat bröd.",
+    image: "/mat/aggbacon.jpg",
+    imageAlt: "Stekt ägg med bacon och bönor på tallrik",
+    voiceWords: ["bacon*", "stekt ägg"],
+    suits: ["diabetes", "laktosfri"],
+    allergens: ["Ägg", "Gluten"],
+    consistency: "normal",
+    occasions: ["frukost"],
+  },
+  {
+    id: "varmsmorgas",
+    name: "Varm smörgås med skinka och ost",
+    description: "Grillad smörgås med skinka och smält ost.",
+    image: "/mat/varmsmorgas.jpg",
+    imageAlt: "Grillad smörgås med skinka och ost",
+    voiceWords: ["varm smörgås", "skinka*"],
+    suits: ["diabetes"],
+    allergens: ["Gluten", "Mjölk"],
+    consistency: "normal",
+    occasions: ["frukost"],
+  },
+  {
+    id: "omelett",
+    name: "Omelett med tomat",
+    description: "Fluffig omelett med tomat, oliver och fetaost.",
+    image: "/mat/omelett.jpg",
+    imageAlt: "Omelett med tomater på tallrik",
+    voiceWords: ["omelett*"],
+    suits: ["diabetes", "glutenfri", "vegetarisk"],
+    allergens: ["Ägg", "Mjölk"],
+    consistency: "normal",
+    occasions: ["frukost"],
+  },
+  {
+    id: "muffin",
+    name: "Sockerfri blåbärsmuffin",
+    description: "Saftig muffin sötad utan socker.",
+    image: "/mat/muffin.jpg",
+    imageAlt: "Blåbärsmuffins på galler",
+    voiceWords: ["muffin*", "blåbär*"],
+    suits: ["diabetes", "laktosfri", "vegetarisk"],
+    allergens: ["Ägg", "Gluten"],
+    consistency: "normal",
+    occasions: ["fika"],
+  },
+  {
+    id: "fruktsallad",
+    name: "Fruktsallad",
+    description: "Vattenmelon, kiwi och bär – fräscht och lätt.",
+    image: "/mat/fruktsallad.jpg",
+    imageAlt: "Fruktsallad med vattenmelon på tallrikar",
+    voiceWords: ["fruktsallad*"],
+    suits: ["diabetes", "laktosfri", "glutenfri", "vegetarisk"],
+    allergens: [],
+    consistency: "normal",
+    occasions: ["fika"],
+  },
+  {
+    id: "kanelbulle",
+    name: "Kanelbulle",
+    description: "Nybakad kanelbulle med pärlsocker.",
+    image: "/mat/kanelbulle.jpg",
+    imageAlt: "Kanelbulle i handen",
+    voiceWords: ["kanelbull*", "bulle*"],
+    suits: ["vegetarisk"],
+    allergens: ["Gluten", "Mjölk", "Ägg"],
+    consistency: "normal",
+    occasions: ["fika"],
+  },
+  {
+    id: "chokladtarta",
+    name: "Chokladtårta",
+    description: "Mjuk chokladtårta med grädde.",
+    image: "/mat/chokladtarta.jpg",
+    imageAlt: "Bit av chokladtårta på tallrik",
+    voiceWords: ["choklad*", "tårta*"],
+    suits: ["vegetarisk"],
+    allergens: ["Gluten", "Mjölk", "Ägg"],
+    consistency: "normal",
+    occasions: ["fika"],
+  },
+  {
+    id: "frukt",
+    name: "Färsk frukt",
+    description: "Äpple, päron eller apelsin – välj när den kommer.",
+    image: "/mat/frukt.jpg",
+    imageAlt: "Äpplen i en skål",
+    voiceWords: ["frukt", "äpple*"],
+    suits: ["diabetes", "laktosfri", "glutenfri", "vegetarisk"],
+    allergens: [],
+    consistency: "normal",
+    occasions: ["tilltugg"],
+  },
+  {
+    id: "notmix",
+    name: "Nötmix",
+    description: "Osaltade mandlar, cashewnötter och pistagenötter.",
+    image: "/mat/notmix.jpg",
+    imageAlt: "Blandade nötter i skål",
+    voiceWords: ["nöt*", "mandl*"],
+    suits: ["diabetes", "laktosfri", "glutenfri", "vegetarisk"],
+    allergens: ["Nötter"],
+    consistency: "normal",
+    occasions: ["tilltugg"],
+  },
+  {
+    id: "ostsmorgas",
+    name: "Smörgås med laktosfri ost",
+    description: "Grovt bröd med laktosfri ost och grönsaker.",
+    image: "/mat/ostsmorgas.jpg",
+    imageAlt: "Smörgås med ost och grönsaker",
+    voiceWords: ["smörgås*", "macka", "ost*"],
+    suits: ["diabetes", "laktosfri", "vegetarisk"],
+    allergens: ["Gluten", "Mjölkprotein"],
+    consistency: "normal",
+    occasions: ["tilltugg"],
+  },
+  {
+    id: "yoghurtbar",
+    name: "Laktosfri yoghurt med bär",
+    description: "En liten skål yoghurt med färska bär.",
+    image: "/mat/yoghurtbar.jpg",
+    imageAlt: "Yoghurt med bär och granola",
+    voiceWords: ["yoghurt*"],
+    suits: ["diabetes", "laktosfri", "vegetarisk"],
+    allergens: ["Mjölkprotein"],
+    consistency: "normal",
+    occasions: ["tilltugg"],
+  },
+  {
+    id: "bakelse",
+    name: "Chokladbakelse",
+    description: "En liten bit chokladbakelse.",
+    image: "/mat/bakelse.jpg",
+    imageAlt: "Chokladbakelse på tallrik",
+    voiceWords: ["bakelse*", "choklad*"],
+    suits: ["vegetarisk"],
+    allergens: ["Gluten", "Mjölk", "Ägg"],
+    consistency: "normal",
+    occasions: ["tilltugg"],
   },
 ];
 
@@ -350,6 +573,7 @@ export const drinks: Drink[] = [
   { id: "mjolk", name: "Laktosfri mjölk", emoji: "🥛", voiceWords: ["mjölk*"], suits: ["diabetes", "laktosfri", "glutenfri", "vegetarisk"] },
   { id: "lingondricka", name: "Lingondricka utan socker", emoji: "🍹", voiceWords: ["lingon*", "dricka"], suits: ["diabetes", "laktosfri", "glutenfri", "vegetarisk"] },
   { id: "kaffe", name: "Kaffe", emoji: "☕", voiceWords: ["kaffe"], suits: ["diabetes", "laktosfri", "glutenfri", "vegetarisk"] },
+  { id: "ingen", name: "Inget att dricka", emoji: "🚫", voiceWords: ["inget", "ingenting", "nej tack"], suits: ["diabetes", "laktosfri", "glutenfri", "vegetarisk"] },
   { id: "saft", name: "Saft", emoji: "🧃", voiceWords: ["saft*"], suits: ["laktosfri", "glutenfri", "vegetarisk"] },
 ];
 
@@ -437,6 +661,21 @@ export const dishCategories: Record<string, string[]> = {
   schnitzel: ["kyckling"],
   timbal: ["kott"],
   naringssoppa: ["soppor"],
+  grot: ["husmanskost"],
+  kokttagg: ["husmanskost"],
+  yoghurtmusli: ["vegetariskt"],
+  aggbacon: ["kott"],
+  varmsmorgas: ["kott"],
+  omelett: ["vegetariskt"],
+  muffin: ["sott"],
+  fruktsallad: ["sott", "vegetariskt"],
+  kanelbulle: ["sott"],
+  chokladtarta: ["sott"],
+  frukt: ["vegetariskt"],
+  notmix: ["vegetariskt"],
+  ostsmorgas: ["vegetariskt"],
+  yoghurtbar: ["vegetariskt"],
+  bakelse: ["sott"],
   lax: ["fisk"],
   kycklinggryta: ["kyckling", "pasta"],
   soppa: ["soppor", "vegetariskt"],

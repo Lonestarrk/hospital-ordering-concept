@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Screen } from "@/components/Screen";
 import { useRequirePatient, useT } from "@/components/OrderProvider";
-import { dietLabels, dishes, meal } from "@/lib/data";
+import { dietLabels, dishes } from "@/lib/data";
 import { pathAfterWelcome } from "@/lib/flow";
 import type { VoiceCommand } from "@/lib/voice";
 
@@ -106,7 +106,7 @@ export default function WelcomePage() {
               </div>
             </div>
 
-            <p className="muted">{w.today(tm.word(meal.name).toLowerCase(), meal.servedAt)}</p>
+            <p className="muted">{w.next}</p>
           </>
         )}
       </div>

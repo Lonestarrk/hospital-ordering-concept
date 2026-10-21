@@ -29,7 +29,7 @@ export default function DrinkPage() {
 
   return (
     <Screen
-      step={2}
+      step={3}
       speakText={t.drink.speak(t.list(suitable.map((d) => tm.drink(d.id, d.name))))}
       commands={commands}
       voiceHint="”vatten” eller ”kaffe”"

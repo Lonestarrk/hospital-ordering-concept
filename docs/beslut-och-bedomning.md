@@ -23,7 +23,7 @@ Underlag för juryn och för teamets presentation. Varje del svarar på juryns e
 ### 2. Systemet gör jobbet, människan fattar besluten
 *Testfråga: När användaren öppnar skärmen – ser hon ett färdigt förslag eller ett tomt formulär?*
 
-Ett färdigt förslag. Menyn är redan filtrerad efter kost och allergier och sorterad efter
+Ett färdigt förslag. Måltidsvalet visar redan vad som går att beställa och hur länge – stängda måltider är flyttade till nästa dag. Menyn är redan filtrerad efter kost och allergier och sorterad efter
 Ingrids smak. En rätt är föreslagen med skälet utskrivet ("Eftersom du gav den tummen upp
 förra gången"), och portionen är förvald. Ingrid väljer.
 
@@ -35,6 +35,7 @@ förra gången"), och portionen är förvald. Ingrid väljer.
 | Ingrid **åt lite** eller **inget** | Anna | Titta till Ingrid och erbjuda något extra, t.ex. näringsdryck | Före kl 15 går det vidare till avdelningens dietist |
 | Maten var **svår att tugga** | Anna | Bedöma, tillsammans med dietisten, om kosten ska ändras | Före kl 15 går det vidare till dietisten |
 | **Fel i personnumret** | Ingrid | En knapp: *Rätta de fyra sista siffrorna* / *Börja om* | Inget – hon kan inte gå vidare med fel nummer |
+| **Låstiden passerar** medan hon väljer | Ingrid | En knapp: *Beställ till imorgon i stället* | Inget – beställningen kan inte skickas för en stängd måltid |
 | **Numret hittas inte** | Ingrid | En knapp: *Skriv numret igen*. Texten hänvisar också till larmknappen vid sängen. | Inget – hon kommer inte vidare med fel nummer |
 
 Inga röda märken eller varningar som Ingrid måste tolka själv. Allergin visas som det som
@@ -47,9 +48,9 @@ redan är gjort ("✓ Utan selleri"), inte som en ⚠-varning.
 - Anna agerar bara på undantagen i tabellen ovan, och varje undantag talar om varför det kom till henne.
 - **Det som går att ångra sker direkt, med en ångra-knapp. Inga bekräftelsedialoger:**
   - **Avbryt:** Ingrid loggas ut direkt. Inloggningen visar "Du har avslutat. Inget är beställt. Det du hade valt är sparat." med knappen **Ångra – fortsätt där jag var**, som gäller i 2 minuter.
-  - **Beställningen:** kan ändras fram till kl 10:00 via *Ändra beställningen*.
+  - **Beställningen:** kan ändras fram till låstiden (två timmar före servering) via *Ändra beställningen*.
 - **Det som inte går att ångra** (en ändrad kostordination) föreslås bara, och en människa beslutar.
-- **Inga siffror som låtsas vara exakta:** "ca kl 12:00", "ungefär två minuter".
+- **Inga siffror som låtsas vara exakta:** "ca 30 minuter" för tilltugg, "ungefär två minuter". Nedräkningen räknar mot en fast låstid och är därför exakt.
 
 ### 5. Tappa aldrig sammanhanget
 *Testfråga: Om användaren blir avbruten i 20 minuter – kommer hon tillbaka till exakt samma läge?*

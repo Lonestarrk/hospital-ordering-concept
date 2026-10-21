@@ -2,10 +2,14 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { emptyTaste, findPatient, servedHistory, type Patient, type Portion, type ServedMeal, type TasteProfile } from "@/lib/data";
+import { initDemoClock } from "@/lib/clock";
+import { emptyTaste, findPatient, servedHistory, type OccasionId, type Patient, type Portion, type ServedMeal, type TasteProfile } from "@/lib/data";
 import { dictionaries, languages, terminology, type Lang } from "@/lib/i18n";
 
 export type Order = {
+  /** Vald måltid och datum ("ÅÅÅÅ-MM-DD") den serveras. */
+  occasion?: OccasionId;
+  date?: string;
   dishId?: string;
   portion: Portion;
   extras: string[];
@@ -31,6 +35,8 @@ type State = {
   tastes: Record<string, TasteProfile>;
   /** Påbörjade val per personnummer, så att man kan fortsätta där man var. */
   drafts: Record<string, Draft>;
+  /** Lagda beställningar per personnummer. */
+  orders: Record<string, Order[]>;
 };
 
 type OrderContextValue = State & {
@@ -54,6 +60,16 @@ type OrderContextValue = State & {
   resumeDraft: () => string | undefined;
   /** Ångra "Avbryt": logga in samma patient igen och fortsätt där hon var. */
   undoStop: (personnummer: string) => string | undefined;
+  /** Börja en ny beställning för en måltid ett visst datum. */
+  startOccasion: (occasion: OccasionId, date: string) => void;
+  /** Skicka den aktuella beställningen (ersätter en tidigare för samma måltid och datum). */
+  placeOrder: () => void;
+  /** Öppna den senast lagda beställningen igen för att ändra den. */
+  reopenOrder: () => void;
+  /** Töm den aktuella beställningen inför nästa (den lagda finns kvar i placedOrders). */
+  clearOrder: () => void;
+  /** Patientens lagda beställningar. */
+  placedOrders: Order[];
   discardDraft: () => void;
 };
 
@@ -67,6 +83,7 @@ const initialState: State = {
   history: {},
   tastes: {},
   drafts: {},
+  orders: {},
 };
 const STORAGE_KEY = "ingrid-order";
 /** Plattan loggar ut efter en stunds inaktivitet så att ingen annan ser patientens uppgifter. */
@@ -83,6 +100,7 @@ function keep(s: State): Partial<State> {
     history: s.history,
     tastes: s.tastes,
     drafts: s.drafts,
+    orders: s.orders,
   };
 }
 
@@ -94,6 +112,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
 
   // Sparas i sessionStorage så att en omladdning av sidan inte tappar beställningen.
   useEffect(() => {
+    initDemoClock();
     try {
       const saved = sessionStorage.getItem(STORAGE_KEY);
       if (saved) setState({ ...initialState, ...JSON.parse(saved) });
@@ -210,6 +229,24 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       });
       return draft?.path ?? "/valkommen";
     },
+    startOccasion: (occasion, date) => setState((s) => ({ ...s, order: { ...emptyOrder, occasion, date } })),
+    placeOrder: () =>
+      setState((s) => {
+        if (!s.patient) return s;
+        const id = s.patient.personnummer;
+        const placed = { ...s.order, placed: true };
+        const others = (s.orders[id] ?? []).filter((o) => !(o.occasion === placed.occasion && o.date === placed.date));
+        return { ...s, order: placed, orders: { ...s.orders, [id]: [...others, placed] } };
+      }),
+    reopenOrder: () =>
+      setState((s) => {
+        if (!s.patient) return s;
+        const id = s.patient.personnummer;
+        const others = (s.orders[id] ?? []).filter((o) => !(o.occasion === s.order.occasion && o.date === s.order.date));
+        return { ...s, order: { ...s.order, placed: false }, orders: { ...s.orders, [id]: others } };
+      }),
+    placedOrders: pnr ? state.orders[pnr] ?? [] : [],
+    clearOrder: () => setState((s) => ({ ...s, order: emptyOrder })),
     discardDraft: () =>
       setState((s) => {
         if (!s.patient) return s;

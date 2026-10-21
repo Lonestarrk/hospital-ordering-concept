@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import { usePathname, useRouter } from "next/navigation";
 import { useOrder, useT } from "./OrderProvider";
 import { languages } from "@/lib/i18n";
+import { demoClockActive, hhmm } from "@/lib/clock";
+import { useNow } from "./useNow";
 import {
   chime,
   listenOnce,
@@ -58,6 +60,9 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
   const canCancel = !!patient && !order.placed && pathname !== "/klart";
   const [listen, setListen] = useState<ListenState>({ kind: "idle" });
   const [micAvailable, setMicAvailable] = useState(false);
+  const [demoClock, setDemoClock] = useState(false);
+  const clock = useNow();
+  useEffect(() => setDemoClock(demoClockActive()), []);
   const abortRef = useRef<() => void>(() => {});
 
   // Mikrofonen visas bara om taligenkänningen kan köras i enheten (inget ljud lämnar plattan).
@@ -235,6 +240,8 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
       )}
 
       {langOpen && <LanguageDialog onClose={() => setLangOpen(false)} />}
+      {/* Visas bara när klockan är ställd med ?klocka=HH:MM för en demo. */}
+      {demoClock && <span className="demo-clock" lang="sv">🕒 Demotid {hhmm(clock)}</span>}
     </div>
   );
 }

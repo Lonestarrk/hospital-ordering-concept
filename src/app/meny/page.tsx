@@ -1,10 +1,13 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Screen, useAnnounce } from "@/components/Screen";
 import { useRequirePatient, useT } from "@/components/OrderProvider";
-import { dishBlockers, dishCategories, dishSuits, dishes, foodCategories, meal } from "@/lib/data";
+import { dishBlockers, dishCategories, dishSuits, dishes, foodCategories } from "@/lib/data";
+import { slotFor } from "@/lib/clock";
+import { Countdown, useSlotText } from "@/components/Countdown";
+import { useNow } from "@/components/useNow";
 import { useBlockerText } from "@/components/useBlockerText";
 import { speak, type VoiceCommand } from "@/lib/voice";
 
@@ -33,7 +36,16 @@ function Menu() {
   const { t, tm } = useT();
   const m = t.menu;
   const announce = useAnnounce();
-  if (!patient) return null;
+  const reference = useNow();
+  const { when } = useSlotText();
+  // Menyn hör alltid till en vald måltid – utan den börjar man med att välja måltid.
+  useEffect(() => {
+    if (patient && !order.occasion) router.replace("/tillfalle");
+  }, [patient, order.occasion, router]);
+  if (!patient || !order.occasion || !order.date) return null;
+  const occasion = order.occasion;
+  const slot = slotFor(occasion, order.date, reference);
+  const forOccasion = dishes.filter((d) => d.occasions.includes(occasion));
 
   // Senaste omdömet per rätt, så att menyn kommer ihåg vad Ingrid tycker om.
   const lastRating = (dishId: string) => meals.find((x) => x.dishId === dishId && x.rating)?.rating;
@@ -46,8 +58,8 @@ function Menu() {
       0,
     ) + (lastRating(dishId) === "upp" ? 2 : lastRating(dishId) === "ner" ? -2 : 0);
 
-  const suitable = dishes.filter((d) => dishSuits(d, patient)).sort((a, b) => score(b.id) - score(a.id));
-  const hidden = dishes.filter((d) => !suitable.includes(d));
+  const suitable = forOccasion.filter((d) => dishSuits(d, patient)).sort((a, b) => score(b.id) - score(a.id));
+  const hidden = forOccasion.filter((d) => !suitable.includes(d));
 
   // Förslaget: den rätt som passar henne bäst – bara om vi kan förklara varför.
   const top = suitable[0];
@@ -74,28 +86,29 @@ function Menu() {
     })),
     { phrases: ["visa dolda", "visa de andra", "visa alla"], action: () => router.replace("/meny?dolda=1") },
     { phrases: ["dölj"], action: () => router.replace("/meny") },
-    { phrases: ["tillbaka"], action: () => router.push("/valkommen") },
+    { phrases: ["tillbaka", "annan måltid"], action: () => router.push("/tillfalle") },
   ];
 
-  const mealName = tm.word(meal.name);
+  const mealName = t.occasions[occasion];
   const items = suitable
     .map((d, i) => `${m.ordinals[i] ?? ""}: ${tm.dish(d).name}. ${tm.dish(d).description}`)
     .join(" ");
 
   return (
     <Screen
-      step={1}
+      step={2}
       speakText={`${topReason ? `${m.suggestion}: ${tm.dish(top).name}. ${m.suggestionWhy(topReason)}. ` : ""}${m.speak(mealName.toLowerCase(), items)}`}
       commands={commands}
       voiceHint={suitable.slice(0, 2).map((d) => `”${d.voiceWords[0].replace("*", "")}”`).join(" eller ")}
       footer={
-        <button className="btn btn-ghost" onClick={() => router.push("/valkommen")}>{t.back}</button>
+        <button className="btn btn-ghost" onClick={() => router.push("/tillfalle")}>{t.back}</button>
       }
     >
       <div className="page-head">
-        <p className="eyebrow">{m.eyebrow(mealName, meal.servedAt)}</p>
-        <h1>{m.title(patient.firstName)}</h1>
+        <p className="eyebrow">{m.eyebrow(mealName, when(slot, reference))}</p>
+        <h1>{occasion === "tilltugg" ? m.titleSnack(patient.firstName) : m.title(patient.firstName, mealName.toLowerCase())}</h1>
         <p className="lead">{m.lead}</p>
+        {slot.deadline && <Countdown slot={slot} />}
       </div>
 
       <div className="dish-grid">

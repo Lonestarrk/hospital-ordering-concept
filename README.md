@@ -29,11 +29,12 @@ Logga in med Ingrids **syntetiska** personnummer **19480302-2328** (eller tryck 
 |---|---|---|
 | 1 | `/` | **Språkval** (svenska, English, العربية) och inloggning med personnummer på ett stort sifferblock. Numret kontrolleras (datum och kontrollsiffra) och felen förklaras i klartext. |
 | 2 | `/valkommen` | "Hej Ingrid! Stämmer det här?" – namn, rum, säng, kost och allergier. Har hon ett påbörjat val visas *Fortsätt där jag var*. |
-| 3 | `/meny` | **20 rätter med foton.** Bara de som passar hennes kostavvikelser visas: allergier, specialkost och konsistens. En rätt är föreslagen med skälet utskrivet. Under menyn står hur många som är dolda. *Visa dem* visar dem gråade med skälet ("Innehåller selleri", "Passar inte: laktosfri", "Konsistens: timbal"), men de går inte att beställa (`/meny?dolda=1`). |
-| 4 | `/meny/[id]` | Allergener, portionsstorlek ("Hur hungrig är du?") och önskemål som "Skuren i små bitar". |
-| 5 | `/dryck` | Dryck som passar kosten. |
-| 6 | `/sammanfattning` | "Stämmer det här?" – allt går att ändra. |
-| 7 | `/klart` | Bekräftelse med tid: "Maten kommer till ditt rum ca kl 12:00". |
+| 3 | `/tillfalle` | **Välj måltid:** frukost (08:00), lunch (12:00), fika (14:30), middag (17:30) eller **tilltugg** när som helst. Varje kort har en **nedräkning** till låstiden, två timmar före servering. Har tiden passerat står det "Stängt för idag – beställ till imorgon", och beställningen gäller nästa dag. |
+| 4 | `/meny` | **Rätter för vald måltid**, med nedräkning. Lunch och middag har 20 rätter. Bara de som passar hennes kostavvikelser visas: allergier, specialkost och konsistens. En rätt är föreslagen med skälet utskrivet. Under menyn står hur många som är dolda. *Visa dem* visar dem gråade med skälet ("Innehåller selleri", "Passar inte: laktosfri", "Konsistens: timbal"), men de går inte att beställa (`/meny?dolda=1`). |
+| 5 | `/meny/[id]` | Allergener, portionsstorlek ("Hur hungrig är du?") och önskemål som "Skuren i små bitar". |
+| 6 | `/dryck` | Dryck som passar kosten. |
+| 7 | `/sammanfattning` | "Stämmer det här?" – allt går att ändra. |
+| 8 | `/klart` | Bekräftelse med tid: "Maten kommer till ditt rum ca kl 12:00". |
 | – | `/omdome` | **Omdöme i efterhand:** 👍 eller 👎, valfria skäl och "Hur mycket åt du?". |
 | – | `/min-smak` | **Min smak:** 👍 eller 👎 på olika sorters mat och ❤️ på önskerätter. |
 
@@ -77,6 +78,22 @@ riktig lösning behöver anpassa tilltalet efter patienten.
 - **Röst.** Hon kan säga "tummen upp", "för kall", "jag åt allt" och "skicka".
 - **Demo.** På bekräftelsesidan finns länken *"Demo: maten har serverats"*, som hoppar
   fram i tiden så att man kan betygsätta det man just beställde.
+
+## Måltider, nedräkning och låstid
+
+| Måltid | Serveras | Sista beställning | Utbud |
+|---|---|---|---|
+| Frukost | 08:00 | 06:00 | 6 rätter |
+| Lunch | 12:00 | 10:00 | 20 rätter |
+| Fika | 14:30 | 12:30 | 4 rätter |
+| Middag | 17:30 | 15:30 | 20 rätter |
+| Tilltugg | ca 30 min efter beställning | Ingen låstid | 5 rätter |
+
+- **Låstid två timmar** (`LOCK_HOURS` i `src/lib/data.ts`). Nedräkningen visas på måltidskortet, i menyn och i sammanfattningen. Den sista halvtimmen blir den gul.
+- **Går tiden ut medan hon väljer** säger sammanfattningen "Tiden för att beställa har gått ut" och erbjuder **Beställ till imorgon i stället**. Beställ-knappen går inte att trycka på förrän det är löst.
+- **Flera beställningar.** Efter en beställning kan hon trycka **Beställ något mer**. Måltidsvalet visar "✓ Beställt: Ugnsbakad lax". Beställningen kan ändras fram till låstiden.
+- **Önskemål** som "såsen vid sidan" visas bara för lunch och middag. Alla måltider har dryckesvalet **Inget att dricka**.
+- **Demotid:** lägg till `?klocka=09:15` i adressen för att ställa appens klocka. En liten markering visar demotiden, och `?klocka=` återställer.
 
 ## Kostavvikelser och dolda rätter
 
@@ -167,6 +184,21 @@ Fotona i `public/mat/` kommer från [Pexels](https://www.pexels.com/license/) oc
 
 | Rätt | Källa |
 |---|---|
+| Havregrynsgröt | https://www.pexels.com/photo/5604832/ |
+| Kokt ägg | https://www.pexels.com/photo/2402506/ |
+| Yoghurt med müsli | https://www.pexels.com/photo/8892364/ |
+| Stekt ägg med bacon | https://www.pexels.com/photo/5840085/ |
+| Varm smörgås | https://www.pexels.com/photo/15110224/ |
+| Omelett | https://www.pexels.com/photo/1437268/ |
+| Blåbärsmuffin | https://www.pexels.com/photo/7935281/ |
+| Fruktsallad | https://www.pexels.com/photo/8755094/ |
+| Kanelbulle | https://www.pexels.com/photo/31762658/ |
+| Chokladtårta | https://www.pexels.com/photo/3740237/ |
+| Färsk frukt | https://www.pexels.com/photo/5512652/ |
+| Nötmix | https://www.pexels.com/photo/529632/ |
+| Ostsmörgås | https://www.pexels.com/photo/4559174/ |
+| Yoghurt med bär | https://www.pexels.com/photo/8063447/ |
+| Chokladbakelse | https://www.pexels.com/photo/24247232/ |
 | Ärtsoppa med fläsk | https://www.pexels.com/photo/7190222/ |
 | Kycklingcurry med ris | https://www.pexels.com/photo/674574/ |
 | Kalops | https://www.pexels.com/photo/1618952/ |
@@ -205,5 +237,6 @@ Vill ni byta en bild? Lägg en ny fil i `public/mat/` och ändra `image` i `src/
 | ![Tack för omdömet](docs/skarmbilder/10-omdome-tack.png) | ![Menyn minns](docs/skarmbilder/11-meny-minns.png) |
 | ![Min smak](docs/skarmbilder/12-min-smak.png) | ![Menyn efter smak](docs/skarmbilder/13-meny-smak.png) |
 | ![Avbryt med ångra](docs/skarmbilder/18-avbryt.png) | ![Fel med en handling](docs/skarmbilder/20-fel-med-handling.png) |
-| ![Dolda rätter med skäl](docs/skarmbilder/21-dolda-ratter.png) | |
+| ![Dolda rätter med skäl](docs/skarmbilder/21-dolda-ratter.png) | ![Välj måltid med nedräkning](docs/skarmbilder/22-maltider.png) |
+| ![Tiden har gått ut](docs/skarmbilder/23-tiden-ute.png) | |
 | ![Fortsätt där du var](docs/skarmbilder/16-fortsatt.png) | ![Arabiska](docs/skarmbilder/17-arabiska.png) |
