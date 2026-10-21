@@ -27,6 +27,8 @@ type ScreenProps = {
   commands?: VoiceCommand[];
   /** Exempel på vad man kan säga, t.ex. "lax" eller "soppa". */
   voiceHint?: string;
+  /** Sidans rubrik. Anges den står kosten på samma rad som rubriken i stället för under sidhuvudet. */
+  heading?: ReactNode;
   children: ReactNode;
   footer?: ReactNode;
 };
@@ -50,7 +52,7 @@ export function useAnnounce() {
   );
 }
 
-export function Screen({ speakText, step, commands, voiceHint, children, footer }: ScreenProps) {
+export function Screen({ speakText, step, commands, voiceHint, heading, children, footer }: ScreenProps) {
   const { patient, textSize, toggleTextSize, soundOn, setSoundOn, lang, order, logout } = useOrder();
   const router = useRouter();
   const pathname = usePathname();
@@ -201,7 +203,7 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
         </div>
       </header>
 
-      {patient && <DietBar patient={patient} onAbout={() => setDietOpen(true)} />}
+      {patient && !heading && <DietBar patient={patient} onAbout={() => setDietOpen(true)} />}
 
       {step !== undefined && (
         <ol className="progress" aria-label={t.stepsLabel}>
@@ -218,7 +220,15 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
         </ol>
       )}
 
-      <main className="content">{children}</main>
+      <main className="content">
+        {heading && (
+          <div className="heading-row">
+            {heading}
+            {patient && <DietBar patient={patient} onAbout={() => setDietOpen(true)} />}
+          </div>
+        )}
+        {children}
+      </main>
 
       {(footer || showMic) && (
         <footer className="footer">

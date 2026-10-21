@@ -75,10 +75,8 @@ export default function OccasionPage() {
       speakText={`${m.hello(patient.firstName)} ${ordersText} ${o.speak(patient.firstName, items)}`}
       commands={commands}
       voiceHint="”lunch” eller ”fika”"
+      heading={<h1>{m.hello(patient.firstName)}</h1>}
     >
-      <div className="page-head">
-        <h1>{m.hello(patient.firstName)}</h1>
-      </div>
 
       <section className="section my-orders" aria-labelledby="my-orders-title">
         <h2 id="my-orders-title">{m.title}</h2>
