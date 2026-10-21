@@ -412,11 +412,18 @@ button:focus-visible {
   list-style: none;
 }
 
+/*
+ * Kortet: bilden fyller hela höjden längst till vänster. Till höger om den står texten och
+ * knapparna, och längst ner en list med låstiden som går ända ut till kortets högra kant.
+ */
 .order-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "img body actions"
+    "img bar  bar";
   align-items: center;
-  gap: 16px;
-  padding: 12px;
+  overflow: hidden;
   border-radius: var(--radius);
   border: 2px solid var(--border);
   background: var(--surface);
@@ -428,14 +435,15 @@ button:focus-visible {
 }
 
 .order-image {
-  width: 80px;
-  height: 80px;
-  flex: none;
-  border-radius: 14px;
+  grid-area: img;
+  align-self: stretch;
+  width: 100%;
+  height: 100%;
+  min-height: 108px;
+  object-fit: cover;
 }
 
 /* Matbilder visas hela – ingenting beskärs. */
-img.order-image,
 img.summary-image,
 .done-receipt-image {
   object-fit: contain;
@@ -443,10 +451,30 @@ img.summary-image,
 }
 
 .order-body {
-  flex: 1;
+  grid-area: body;
   min-width: 0;
   display: grid;
   gap: 2px;
+  padding: 14px 16px;
+}
+
+/* Listen längst ner: låstid, nedräkning eller "köket lagar maten". */
+.order-bar {
+  grid-area: bar;
+  align-self: end;
+  margin: 0;
+  padding: 8px 16px;
+  font-size: 0.8em;
+  font-weight: 700;
+}
+
+.order-bar .countdown {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  font-size: 1em;
 }
 
 .order-when {
@@ -459,8 +487,8 @@ img.summary-image,
 }
 
 .order-status {
+  background: var(--surface-2);
   color: var(--text-muted);
-  font-size: 0.85em;
 }
 
 .order-action {
@@ -468,14 +496,8 @@ img.summary-image,
 }
 
 .order-lock {
-  justify-self: start;
-  margin-top: 4px;
-  padding: 2px 10px;
-  border-radius: 999px;
   background: var(--primary-soft);
   color: var(--primary-strong);
-  font-size: 0.8em;
-  font-weight: 700;
 }
 
 .order-lock.urgent {
@@ -483,11 +505,17 @@ img.summary-image,
   color: #7a4b00;
 }
 
+.order-actions,
+.order-row > .order-action,
+.order-row > .order-rated {
+  grid-area: actions;
+  margin-inline-end: 16px;
+}
+
 .order-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  flex: none;
 }
 
 .order-change {
@@ -548,6 +576,11 @@ img.summary-image,
   color: var(--text-muted);
 }
 
+.order-row.is-ghost .order-bar {
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+}
+
 .order-ghost-action {
   border-color: var(--primary);
   color: var(--primary-strong);
@@ -556,11 +589,6 @@ img.summary-image,
 .order-ghost-text {
   color: var(--text-muted);
   font-weight: 600;
-}
-
-.order-row.is-ghost .countdown {
-  justify-self: start;
-  margin-top: 4px;
 }
 
 /* Måltider som har passerat gråas ut, men omdömesknappen syns tydligt. */
@@ -1927,9 +1955,6 @@ html[data-text-size="stor"] .dish-body p {
   .occasion-bar { margin-inline: 16px; display: flex; overflow-x: auto; }
   .occasion-tab { flex: 0 0 auto; min-width: 116px; }
   .progress { overflow-x: auto; }
-  .order-row { flex-wrap: wrap; }
-  .order-actions, .order-action { width: 100%; }
-  .order-actions .order-action { flex: 1; width: auto; }
   .tool { padding: 0 12px; }
   .segmented { grid-template-columns: 1fr; }
   .segmented-4 { grid-template-columns: 1fr 1fr; }
@@ -2356,10 +2381,19 @@ html[data-text-size="stor"] .dish-body p {
   .segment span:last-child { font-size: 0.75em; }
 
   /* Obeställda måltider: liten knapp under texten i stället för en knapp över hela bredden. */
-  .order-image { width: 56px; height: 56px; }
-  .order-row.is-ghost { padding: 10px 12px; gap: 6px 12px; }
-  .order-row.is-ghost .order-actions { width: 100%; justify-content: flex-end; }
-  .order-row.is-ghost .order-action { flex: none; width: auto; min-height: 48px; padding: 0 16px; }
+  /* Beställningskorten: bilden till vänster, knapparna under texten, listen längst ner. */
+  .order-row {
+    grid-template-columns: 96px minmax(0, 1fr);
+    grid-template-areas:
+      "img body"
+      "img actions"
+      "img bar";
+  }
+  .order-body { padding: 12px 12px 8px; }
+  .order-actions,
+  .order-row > .order-action,
+  .order-row > .order-rated { margin: 0 12px 12px; justify-self: start; }
+  .order-actions .order-action { min-height: 48px; padding: 0 14px; }
 
   /* Ensam mikrofon (sidor utan knappar) står i mitten. */
   .footer > .voice:only-child { margin-inline: auto; }

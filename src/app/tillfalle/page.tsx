@@ -134,12 +134,14 @@ export default function OccasionPage() {
                         <strong>{t.occasions[occasion.id]}</strong> · {at(slot.servedAt, reference)}
                       </p>
                       <p className="order-dish order-ghost-text">{m.notOrdered}</p>
-                      <Countdown slot={slot} />
                     </div>
                     <div className="order-actions">
                       <button className="btn btn-ghost order-action order-ghost-action" onClick={() => choose(occasion.id)}>
                         {m.order}
                       </button>
+                    </div>
+                    <div className="order-bar">
+                      <Countdown slot={slot} />
                     </div>
                   </li>
                 );
@@ -157,15 +159,6 @@ export default function OccasionPage() {
                       <strong>{t.occasions[order.occasion!]}</strong> · {past ? m.was(at(time, reference)) : m.arrives(at(time, reference))}
                     </p>
                     <p className="order-dish">{tm.dish(dish).name}</p>
-                    {!past && slot.deadline && !open && <p className="order-status">{m.locked}</p>}
-                    {open && (() => {
-                      const mins = minutesLeft(slot, reference);
-                      return (
-                        <p className={`order-lock ${mins <= 30 ? "urgent" : ""}`} role="timer" aria-live="off">
-                          {m.locksIn(Math.floor(mins / 60), mins % 60)}
-                        </p>
-                      );
-                    })()}
                   </div>
                   {(open || canCancel) && (
                     <div className="order-actions">
@@ -194,6 +187,16 @@ export default function OccasionPage() {
                   {past && meal?.rating && (
                     <span className="order-rated"><Icon name={meal.rating === "upp" ? "thumbUp" : "thumbDown"} size={18} /> {m.rated}</span>
                   )}
+                  {/* Låstiden som en list längs kortets underkant, till höger om bilden. */}
+                  {!past && slot.deadline && !open && <p className="order-bar order-status">{m.locked}</p>}
+                  {open && (() => {
+                    const mins = minutesLeft(slot, reference);
+                    return (
+                      <p className={`order-bar order-lock ${mins <= 30 ? "urgent" : ""}`} role="timer" aria-live="off">
+                        {m.locksIn(Math.floor(mins / 60), mins % 60)}
+                      </p>
+                    );
+                  })()}
                 </li>
               );
             })}
