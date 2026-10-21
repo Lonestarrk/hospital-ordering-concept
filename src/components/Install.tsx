@@ -29,9 +29,16 @@ function useInstall() {
   return { ...state, available: state.canPrompt || state.ios, dismissed };
 }
 
-/** Registrerar service workern en gång när appen startar. */
+/** Registrerar service workern en gång när appen startar, och gör tryck synliga på iPad. */
 export function PwaSetup() {
   useEffect(() => registerServiceWorker(), []);
+  // Safari och Chrome på iPad visar bara "nedtryckt"-läget (:active) när sidan lyssnar på
+  // pekningar – annars syns ingen reaktion när man trycker.
+  useEffect(() => {
+    const noop = () => {};
+    document.addEventListener("touchstart", noop, { passive: true });
+    return () => document.removeEventListener("touchstart", noop);
+  }, []);
   return null;
 }
 
