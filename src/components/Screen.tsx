@@ -1,33 +1,131 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useOrder } from "./OrderProvider";
+import {
+  chime,
+  listenOnce,
+  matchCommand,
+  recognitionSupported,
+  speak,
+  stopSpeaking,
+  type VoiceCommand,
+} from "@/lib/voice";
 
 const STEPS = ["Mat", "Dryck", "Kolla", "Klart"];
 
-function speak(text: string) {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "sv-SE";
-  utterance.rate = 0.9;
-  window.speechSynthesis.speak(utterance);
-}
-
 type ScreenProps = {
-  /** Texten som läses upp när man trycker på "Läs upp". */
+  /** Texten som läses upp i ljudläge och när man trycker på "Ljud". */
   speakText: string;
   /** Vilket steg (1–4) som ska markeras i stegindikatorn. Utelämna för att dölja den. */
   step?: number;
+  /** Röstkommandon för sidan. Utelämna för att dölja mikrofonknappen. */
+  commands?: VoiceCommand[];
+  /** Exempel på vad man kan säga, t.ex. "lax" eller "soppa". */
+  voiceHint?: string;
   children: ReactNode;
   footer?: ReactNode;
 };
 
-export function Screen({ speakText, step, children, footer }: ScreenProps) {
-  const { patient, textSize, toggleTextSize } = useOrder();
-  const [helpOpen, setHelpOpen] = useState(false);
+type ListenState =
+  | { kind: "idle" }
+  | { kind: "listening" }
+  | { kind: "heard"; text: string; understood: boolean };
 
-  useEffect(() => () => window.speechSynthesis?.cancel(), []);
+/** Bekräftar ett val med en ljudsignal – och tal om text anges – när ljudläget är på. */
+export function useAnnounce() {
+  const { soundOn } = useOrder();
+  return useCallback(
+    (text?: string) => {
+      if (!soundOn) return;
+      chime();
+      if (text) speak(text);
+    },
+    [soundOn],
+  );
+}
+
+export function Screen({ speakText, step, commands, voiceHint, children, footer }: ScreenProps) {
+  const { patient, textSize, toggleTextSize, soundOn, setSoundOn } = useOrder();
+  const [helpOpen, setHelpOpen] = useState(false);
+  const [listen, setListen] = useState<ListenState>({ kind: "idle" });
+  const [micAvailable, setMicAvailable] = useState(false);
+  const abortRef = useRef<() => void>(() => {});
+
+  useEffect(() => setMicAvailable(recognitionSupported()), []);
+
+  // I ljudläge läses varje ny sida upp automatiskt.
+  useEffect(() => {
+    if (soundOn) speak(speakText);
+    return () => stopSpeaking();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const toggleSound = () => {
+    if (soundOn) {
+      stopSpeaking();
+      setSoundOn(false);
+    } else {
+      setSoundOn(true);
+      speak(speakText);
+    }
+  };
+
+  const globalCommands: VoiceCommand[] = [
+    {
+      phrases: ["hjälp", "personal*", "sköterska*"],
+      action: () => {
+        setHelpOpen(true);
+        speak("Vill du att personalen kommer? Tryck på den gröna knappen.");
+      },
+    },
+    { phrases: ["läs upp", "läs menyn", "upprepa", "igen", "vad sa du"], action: () => speak(speakText) },
+    { phrases: ["större text", "större"], action: () => textSize === "normal" && toggleTextSize() },
+    { phrases: ["mindre text", "mindre"], action: () => textSize === "stor" && toggleTextSize() },
+    { phrases: ["tyst", "stäng av ljud*"], action: () => { stopSpeaking(); setSoundOn(false); } },
+  ];
+
+  const handleHeard = (alternatives: string[]) => {
+    const all = [...(commands ?? []), ...globalCommands];
+    const match = matchCommand(alternatives, all);
+    const text = alternatives[0] ?? "";
+    setListen({ kind: "heard", text, understood: !!match });
+    if (match) {
+      match.action();
+    } else {
+      speak(`Jag hörde "${text}", men förstod inte. ${voiceHint ? `Du kan säga till exempel ${voiceHint}.` : ""}`);
+    }
+  };
+
+  // Gör att man kan prova röstkommandon utan mikrofon (demo/test):
+  // window.dispatchEvent(new CustomEvent("ingrid-voice", { detail: "lax" }))
+  const handleHeardRef = useRef(handleHeard);
+  handleHeardRef.current = handleHeard;
+  useEffect(() => {
+    const onVoice = (e: Event) => handleHeardRef.current([(e as CustomEvent<string>).detail]);
+    window.addEventListener("ingrid-voice", onVoice);
+    return () => window.removeEventListener("ingrid-voice", onVoice);
+  }, []);
+
+  const startListening = async () => {
+    if (listen.kind === "listening") {
+      abortRef.current();
+      return;
+    }
+    stopSpeaking();
+    setSoundOn(true);
+    setListen({ kind: "listening" });
+    abortRef.current = await listenOnce({
+      onResult: handleHeard,
+      onError: (error) => {
+        if (error === "no-speech") speak("Jag hörde ingenting. Tryck på mikrofonen och försök igen.");
+        else if (error === "not-allowed") speak("Mikrofonen är avstängd. Tryck på Hjälp så kommer personalen.");
+      },
+      onEnd: () => setListen((l) => (l.kind === "listening" ? { kind: "idle" } : l)),
+    });
+  };
+
+  const showMic = commands !== undefined && micAvailable;
 
   return (
     <div className="screen">
@@ -44,8 +142,8 @@ export function Screen({ speakText, step, children, footer }: ScreenProps) {
           </div>
         </div>
         <div className="topbar-actions">
-          <button className="tool" onClick={() => speak(speakText)}>
-            <span aria-hidden>🔊</span> Läs upp
+          <button className="tool" onClick={toggleSound} aria-pressed={soundOn}>
+            <span aria-hidden>{soundOn ? "🔊" : "🔈"}</span> {soundOn ? "Ljud på" : "Läs upp"}
           </button>
           <button
             className="tool"
@@ -78,7 +176,32 @@ export function Screen({ speakText, step, children, footer }: ScreenProps) {
 
       <main className="content">{children}</main>
 
-      {footer && <footer className="footer">{footer}</footer>}
+      {(footer || showMic) && (
+        <footer className="footer">
+          {footer}
+          {showMic && (
+            <div className="voice">
+              {listen.kind !== "idle" && (
+                <div className={`voice-bubble ${listen.kind === "heard" && !listen.understood ? "voice-miss" : ""}`} role="status">
+                  {listen.kind === "listening" ? (
+                    <>Jag lyssnar… {voiceHint && <span>Säg till exempel <strong>{voiceHint}</strong></span>}</>
+                  ) : (
+                    <>Du sa: <strong>”{listen.text}”</strong>{!listen.understood && <span> – försök igen</span>}</>
+                  )}
+                </div>
+              )}
+              <button
+                className={`mic ${listen.kind === "listening" ? "mic-on" : ""}`}
+                onClick={startListening}
+                aria-label={listen.kind === "listening" ? "Sluta lyssna" : "Prata – säg vad du vill"}
+              >
+                <span aria-hidden>🎤</span>
+                <span className="mic-label">{listen.kind === "listening" ? "Lyssnar…" : "Prata"}</span>
+              </button>
+            </div>
+          )}
+        </footer>
+      )}
 
       {helpOpen && <HelpDialog onClose={() => setHelpOpen(false)} />}
     </div>

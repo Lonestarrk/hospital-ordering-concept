@@ -1,13 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Screen } from "@/components/Screen";
+import { Screen, useAnnounce } from "@/components/Screen";
+import type { VoiceCommand } from "@/lib/voice";
 import { useRequirePatient } from "@/components/OrderProvider";
 import { dishes, drinks, meal, portions } from "@/lib/data";
 
 export default function SummaryPage() {
   const router = useRouter();
   const { patient, order, updateOrder } = useRequirePatient();
+  const announce = useAnnounce();
   if (!patient) return null;
 
   const dish = dishes.find((d) => d.id === order.dishId);
@@ -27,13 +29,23 @@ export default function SummaryPage() {
 
   const place = () => {
     updateOrder({ placed: true });
+    announce();
     router.push("/klart");
   };
+
+  const commands: VoiceCommand[] = [
+    { phrases: ["ändra mat*", "annan mat", "maten", "byt mat*"], action: () => router.push(`/meny/${dish.id}`) },
+    { phrases: ["ändra dryck*", "drycken", "annan dryck", "byt dryck*"], action: () => router.push("/dryck") },
+    { phrases: ["tillbaka", "ändra"], action: () => router.push("/dryck") },
+    { phrases: ["ja", "beställ*", "bekräfta", "skicka", "stämmer", "japp"], action: place },
+  ];
 
   return (
     <Screen
       step={3}
-      speakText={`Stämmer det här? ${meal.name} kl ${meal.servedAt}: ${portion.name} portion ${dish.name}${order.extras.length ? `, ${order.extras.join(", ")}` : ""}. Att dricka: ${drink.name}. Tryck på Beställ för att skicka.`}
+      speakText={`Du valde ${drink.name} att dricka. Så här ser din beställning ut: ${portion.name} portion ${dish.name}${order.extras.length ? `, ${order.extras.join(", ")}` : ""}, och ${drink.name}. Den kommer kl ${meal.servedAt}. Stämmer det? Säg ja, eller tryck på Beställ.`}
+      commands={commands}
+      voiceHint="”ja”, ”ändra maten” eller ”ändra drycken”"
       footer={
         <>
           <button className="btn btn-ghost" onClick={() => router.push("/dryck")}>← Tillbaka</button>

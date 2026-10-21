@@ -18,6 +18,8 @@ type State = {
   patient: Patient | null;
   order: Order;
   textSize: TextSize;
+  /** Ljudläge: sidor läses upp automatiskt och val bekräftas med ljud. */
+  soundOn: boolean;
 };
 
 type OrderContextValue = State & {
@@ -26,10 +28,11 @@ type OrderContextValue = State & {
   logout: () => void;
   updateOrder: (patch: Partial<Order>) => void;
   toggleTextSize: () => void;
+  setSoundOn: (on: boolean) => void;
 };
 
 const emptyOrder: Order = { portion: "lagom", extras: [], placed: false };
-const initialState: State = { patient: null, order: emptyOrder, textSize: "normal" };
+const initialState: State = { patient: null, order: emptyOrder, textSize: "normal", soundOn: false };
 const STORAGE_KEY = "ingrid-order";
 
 const OrderContext = createContext<OrderContextValue | null>(null);
@@ -63,10 +66,11 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     ...state,
     hydrated,
     login: (patient) => setState((s) => ({ ...s, patient, order: emptyOrder })),
-    logout: () => setState((s) => ({ ...initialState, textSize: s.textSize })),
+    logout: () => setState((s) => ({ ...initialState, textSize: s.textSize, soundOn: s.soundOn })),
     updateOrder: (patch) => setState((s) => ({ ...s, order: { ...s.order, ...patch } })),
     toggleTextSize: () =>
       setState((s) => ({ ...s, textSize: s.textSize === "normal" ? "stor" : "normal" })),
+    setSoundOn: (soundOn) => setState((s) => ({ ...s, soundOn })),
   };
 
   return <OrderContext.Provider value={value}>{children}</OrderContext.Provider>;

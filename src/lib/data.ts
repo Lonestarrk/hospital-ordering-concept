@@ -50,6 +50,8 @@ export type Dish = {
   /** Beskrivning av bilden för skärmläsare. */
   imageAlt: string;
   label?: string;
+  /** Ord som Ingrid kan säga för att välja rätten (se VoiceCommand i lib/voice.ts). */
+  voiceWords: string[];
   /** Kostordinationer som rätten passar för. */
   suits: DietTag[];
   allergens: string[];
@@ -70,6 +72,7 @@ export const dishes: Dish[] = [
     image: "/mat/kalvspett.jpg",
     imageAlt: "Kalvspett med zucchini och paprika på potatismos med brun sås",
     label: "Dagens rätt",
+    voiceWords: ["kalv*", "spett*", "potatismos", "kött*"],
     suits: ["diabetes", "laktosfri"],
     allergens: [],
   },
@@ -79,6 +82,7 @@ export const dishes: Dish[] = [
     description: "Med kokt potatis, dillsås och smörkokta morötter.",
     image: "/mat/lax.jpg",
     imageAlt: "Stekt laxfilé med citronklyfta",
+    voiceWords: ["lax*", "fisk"],
     suits: ["diabetes", "laktosfri", "glutenfri"],
     allergens: ["Fisk"],
   },
@@ -88,6 +92,7 @@ export const dishes: Dish[] = [
     description: "Mild gryta med paprika och grönsaker.",
     image: "/mat/kycklinggryta.jpg",
     imageAlt: "Kyckling med ris och grönsaker på tallrik",
+    voiceWords: ["kyckling*", "gryta*", "ris"],
     suits: ["diabetes", "laktosfri", "glutenfri"],
     allergens: ["Selleri"],
   },
@@ -98,6 +103,7 @@ export const dishes: Dish[] = [
     image: "/mat/soppa.jpg",
     imageAlt: "Grönsakssoppa i röd skål med bröd vid sidan",
     label: "Något lätt",
+    voiceWords: ["sopp*", "grönsak*"],
     suits: ["diabetes", "laktosfri", "konsistensanpassad"],
     allergens: ["Gluten"],
   },
@@ -107,6 +113,7 @@ export const dishes: Dish[] = [
     description: "Med sylt och vispad grädde.",
     image: "/mat/pannkakor.jpg",
     imageAlt: "Pannkakor med jordgubbar och vispad grädde",
+    voiceWords: ["pannkak*"],
     suits: [],
     allergens: ["Ägg", "Mjölk", "Gluten"],
   },
@@ -116,6 +123,7 @@ export const dishes: Dish[] = [
     description: "Med potatismos och ost.",
     image: "/mat/fiskgratang.jpg",
     imageAlt: "Gratäng med gyllene ostyta i ugnsform",
+    voiceWords: ["fiskgratäng*", "gratäng*"],
     suits: ["diabetes"],
     allergens: ["Fisk", "Mjölk"],
   },
@@ -140,21 +148,21 @@ export const portions: { id: Portion; name: string; hint: string }[] = [
   { id: "stor", name: "Stor", hint: "Jag är hungrig" },
 ];
 
-export const extras = [
-  "Skuren i små bitar",
-  "Extra sås",
-  "Extra potatis eller ris",
-  "Såsen vid sidan",
+export const extras: { name: string; voiceWords: string[] }[] = [
+  { name: "Skuren i små bitar", voiceWords: ["bitar", "skuren", "skär*"] },
+  { name: "Såsen vid sidan", voiceWords: ["vid sidan"] },
+  { name: "Extra sås", voiceWords: ["extra sås", "mer sås"] },
+  { name: "Extra potatis eller ris", voiceWords: ["extra potatis", "extra ris", "mer potatis", "mer ris"] },
 ];
 
-export type Drink = { id: string; name: string; emoji: string; suits: DietTag[] };
+export type Drink = { id: string; name: string; emoji: string; voiceWords: string[]; suits: DietTag[] };
 
 export const drinks: Drink[] = [
-  { id: "vatten", name: "Vatten", emoji: "💧", suits: ["diabetes", "laktosfri", "glutenfri", "konsistensanpassad"] },
-  { id: "mjolk", name: "Laktosfri mjölk", emoji: "🥛", suits: ["diabetes", "laktosfri", "glutenfri", "konsistensanpassad"] },
-  { id: "lingondricka", name: "Lingondricka utan socker", emoji: "🍹", suits: ["diabetes", "laktosfri", "glutenfri", "konsistensanpassad"] },
-  { id: "kaffe", name: "Kaffe", emoji: "☕", suits: ["diabetes", "laktosfri", "glutenfri", "konsistensanpassad"] },
-  { id: "saft", name: "Saft", emoji: "🧃", suits: ["laktosfri", "glutenfri", "konsistensanpassad"] },
+  { id: "vatten", name: "Vatten", emoji: "💧", voiceWords: ["vatten"], suits: ["diabetes", "laktosfri", "glutenfri", "konsistensanpassad"] },
+  { id: "mjolk", name: "Laktosfri mjölk", emoji: "🥛", voiceWords: ["mjölk*"], suits: ["diabetes", "laktosfri", "glutenfri", "konsistensanpassad"] },
+  { id: "lingondricka", name: "Lingondricka utan socker", emoji: "🍹", voiceWords: ["lingon*", "dricka"], suits: ["diabetes", "laktosfri", "glutenfri", "konsistensanpassad"] },
+  { id: "kaffe", name: "Kaffe", emoji: "☕", voiceWords: ["kaffe"], suits: ["diabetes", "laktosfri", "glutenfri", "konsistensanpassad"] },
+  { id: "saft", name: "Saft", emoji: "🧃", voiceWords: ["saft*"], suits: ["laktosfri", "glutenfri", "konsistensanpassad"] },
 ];
 
 export function drinkSuits(drink: Drink, diet: DietTag[]): boolean {

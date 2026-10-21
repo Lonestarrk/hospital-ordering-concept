@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Screen } from "@/components/Screen";
 import { useRequirePatient } from "@/components/OrderProvider";
 import { dishes, drinks, meal, portions } from "@/lib/data";
+import type { VoiceCommand } from "@/lib/voice";
 
 export default function DonePage() {
   const router = useRouter();
@@ -18,14 +19,24 @@ export default function DonePage() {
     logout();
     router.replace("/");
   };
+  const change = () => {
+    updateOrder({ placed: false });
+    router.push("/sammanfattning");
+  };
+  const commands: VoiceCommand[] = [
+    { phrases: ["ändra*", "ångra"], action: change },
+    { phrases: ["klar", "tack", "färdig*", "logga ut", "hej då"], action: done },
+  ];
 
   return (
     <Screen
       step={4}
-      speakText={`Tack ${patient.firstName}! Din beställning är skickad till köket. Din mat kommer till ditt rum ungefär klockan ${meal.servedAt}. Smaklig måltid!`}
+      speakText={`Tack ${patient.firstName}! Din beställning är skickad till köket. ${dish && portion ? `${portion.name} portion ${dish.name}` : "Din mat"} kommer till ditt rum ungefär klockan ${meal.servedAt}. Smaklig måltid!`}
+      commands={commands}
+      voiceHint="”klar” eller ”ändra”"
       footer={
         <>
-          <button className="btn btn-ghost" onClick={() => { updateOrder({ placed: false }); router.push("/sammanfattning"); }}>
+          <button className="btn btn-ghost" onClick={change}>
             Ändra beställningen
           </button>
           <button className="btn btn-primary btn-large" onClick={done}>Klar</button>

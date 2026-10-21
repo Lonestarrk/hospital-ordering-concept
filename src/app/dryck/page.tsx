@@ -1,28 +1,39 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Screen } from "@/components/Screen";
+import { Screen, useAnnounce } from "@/components/Screen";
+import type { VoiceCommand } from "@/lib/voice";
 import { useRequirePatient } from "@/components/OrderProvider";
 import { drinkSuits, drinks } from "@/lib/data";
 
 export default function DrinkPage() {
   const router = useRouter();
   const { patient, order, updateOrder } = useRequirePatient();
+  const announce = useAnnounce();
   if (!patient) return null;
 
   const suitable = drinks.filter((d) => drinkSuits(d, patient.diet));
 
   const choose = (id: string) => {
     updateOrder({ drinkId: id });
+    announce();
     router.push("/sammanfattning");
   };
+
+  const back = () => router.push(order.dishId ? `/meny/${order.dishId}` : "/meny");
+  const commands: VoiceCommand[] = [
+    ...suitable.map((d) => ({ phrases: d.voiceWords, action: () => choose(d.id) })),
+    { phrases: ["tillbaka", "ångra"], action: back },
+  ];
 
   return (
     <Screen
       step={2}
-      speakText={`Vad vill du dricka? Du kan välja: ${suitable.map((d) => d.name).join(", ")}.`}
+      speakText={`Vad vill du dricka? Du kan välja ${suitable.map((d) => d.name).join(", ")}.`}
+      commands={commands}
+      voiceHint="”vatten” eller ”kaffe”"
       footer={
-        <button className="btn btn-ghost" onClick={() => router.push(order.dishId ? `/meny/${order.dishId}` : "/meny")}>
+        <button className="btn btn-ghost" onClick={back}>
           ← Tillbaka
         </button>
       }

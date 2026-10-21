@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Screen } from "@/components/Screen";
 import { useRequirePatient } from "@/components/OrderProvider";
 import { dietLabels, meal } from "@/lib/data";
+import type { VoiceCommand } from "@/lib/voice";
 
 export default function WelcomePage() {
   const router = useRouter();
@@ -11,14 +12,21 @@ export default function WelcomePage() {
   if (!patient) return null;
 
   const diets = patient.diet.map((d) => dietLabels[d]);
+  const notMe = () => { logout(); router.replace("/"); };
+  const commands: VoiceCommand[] = [
+    { phrases: ["nej", "inte jag", "fel"], action: notMe },
+    { phrases: ["ja", "det är jag", "stämmer", "fortsätt", "japp", "absolut"], action: () => router.push("/meny") },
+  ];
   const allergies = patient.allergies.length > 0 ? patient.allergies.join(" och ") : "inga";
 
   return (
     <Screen
-      speakText={`Hej ${patient.firstName}! Är det du, ${patient.firstName} ${patient.lastName}, i ${patient.room}, ${patient.bed}? Vi vet redan att du ska ha ${diets.join(" och ")}. Du är allergisk mot ${allergies}. Du ser bara mat som passar dig. Tryck på Ja, det är jag för att fortsätta.`}
+      speakText={`Hej ${patient.firstName}! Är det du, ${patient.firstName} ${patient.lastName}, i ${patient.room}, ${patient.bed}? Vi vet redan att du ska ha ${diets.join(" och ")}. Du är allergisk mot ${allergies}. Du ser bara mat som passar dig. Tryck på Ja, det är jag – eller tryck på mikrofonen och säg ja.`}
+      commands={commands}
+      voiceHint="”ja” eller ”nej”"
       footer={
         <>
-          <button className="btn btn-ghost" onClick={() => { logout(); router.replace("/"); }}>
+          <button className="btn btn-ghost" onClick={notMe}>
             Nej, det är inte jag
           </button>
           <button className="btn btn-primary btn-large" onClick={() => router.push("/meny")}>

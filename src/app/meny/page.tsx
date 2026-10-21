@@ -1,27 +1,52 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Screen } from "@/components/Screen";
+import { Screen, useAnnounce } from "@/components/Screen";
 import { useRequirePatient } from "@/components/OrderProvider";
 import { dishSuits, dishes, meal } from "@/lib/data";
+import { speak, type VoiceCommand } from "@/lib/voice";
+
+const ORDINALS = [
+  ["första", "ettan", "nummer ett"],
+  ["andra", "tvåan", "nummer två"],
+  ["tredje", "trean", "nummer tre"],
+  ["fjärde", "fyran", "nummer fyra"],
+];
 
 export default function MenuPage() {
   const router = useRouter();
   const { patient, order, updateOrder } = useRequirePatient();
+  const announce = useAnnounce();
   if (!patient) return null;
 
   const suitable = dishes.filter((d) => dishSuits(d, patient));
   const hiddenCount = dishes.length - suitable.length;
 
+  const hidden = dishes.filter((d) => !suitable.includes(d));
+
   const choose = (id: string) => {
     updateOrder({ dishId: id });
+    announce();
     router.push(`/meny/${id}`);
   };
+
+  const commands: VoiceCommand[] = [
+    ...suitable.map((d) => ({ phrases: d.voiceWords, action: () => choose(d.id) })),
+    ...suitable.map((d, i) => ({ phrases: ORDINALS[i] ?? [], action: () => choose(d.id) })),
+    // Säger Ingrid en rätt som inte passar henne förklarar vi varför den inte finns.
+    ...hidden.map((d) => ({
+      phrases: d.voiceWords,
+      action: () => speak(`${d.name} passar tyvärr inte din kost idag. Du kan välja ${suitable.map((s) => s.name).join(", eller ")}.`),
+    })),
+    { phrases: ["tillbaka"], action: () => router.push("/valkommen") },
+  ];
 
   return (
     <Screen
       step={1}
-      speakText={`Vad vill du äta till ${meal.name.toLowerCase()}? Du kan välja mellan: ${suitable.map((d) => d.name).join(", ")}. Tryck på den mat du vill ha.`}
+      speakText={`Vad vill du äta till ${meal.name.toLowerCase()}? ${suitable.map((d, i) => `${ORDINALS[i]?.[0] ?? ""}: ${d.name}. ${d.description}`).join(" ")} Tryck på maten, eller tryck på mikrofonen och säg vad du vill ha.`}
+      commands={commands}
+      voiceHint={suitable.slice(0, 2).map((d) => `”${d.voiceWords[0].replace("*", "")}”`).join(" eller ")}
       footer={
         <button className="btn btn-ghost" onClick={() => router.push("/valkommen")}>← Tillbaka</button>
       }

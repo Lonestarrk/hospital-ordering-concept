@@ -25,8 +25,37 @@ Logga in med Ingrids **syntetiska** personnummer **19450120-2388** (eller tryck 
 | 6 | `/sammanfattning` | "Stämmer det här?" – allt går att ändra. |
 | 7 | `/klart` | Bekräftelse med tid: "Maten kommer till ditt rum ca kl 12:00". |
 
-Hjälpmedel på varje sida: **Läs upp** (talsyntes på svenska), **Större text** och
-**Hjälp**, som kallar på personalen.
+Hjälpmedel på varje sida: **Läs upp / Ljud på**, **Större text** och **Hjälp**, som
+kallar på personalen.
+
+## Ljud och röst
+
+- **Ljudläge.** Ett tryck på **Läs upp** slår på ljudet. Sedan läses varje sida upp
+  automatiskt, och varje val bekräftas med en mjuk signal och tal ("Liten portion",
+  "Du valde kaffe att dricka …").
+- **Röstkommandon.** Tryck på den runda **🎤 Prata**-knappen och säg vad du vill.
+  Bubblan visar vad appen hörde. Förstår den inte säger den vad man kan säga i stället.
+
+| Sida | Exempel på vad Ingrid kan säga |
+|---|---|
+| Välkommen | "ja" · "nej, det är inte jag" |
+| Meny | "laxen", "soppa", "den första". En rätt som inte passar henne ger en förklaring. |
+| Rätt | "liten", "lagom", "stor" · "skär i bitar", "såsen vid sidan" · "nästa" · "tillbaka" |
+| Dryck | "kaffe", "vatten", "mjölk" |
+| Sammanfattning | "ja, beställ" · "ändra maten" · "ändra drycken" |
+| Klart | "klar" · "ändra" |
+| Alla sidor | "hjälp" · "läs upp" / "upprepa" · "större text" · "tyst" |
+
+Rösten fungerar i Chrome, Edge och Safari via webbläsarens inbyggda Web Speech API. Det
+kräver `localhost` eller https och tillåten mikrofon. Utan mikrofon kan man prova i
+konsolen: `window.dispatchEvent(new CustomEvent("ingrid-voice", { detail: "laxen" }))`.
+
+**Integritet.** Uppläsningen sker alltid i enheten. Taligenkänningen körs i enheten om
+webbläsaren har en svensk modell (`processLocally`). Annars skickar webbläsaren ljudet
+till sin egen taltjänst, till exempel Googles i Chrome. Därför finns rösten *inte* på
+inloggningen, så personnumret sägs aldrig högt eller skickas iväg som ljud. Under
+vistelsen tar rösten bara emot menyval. I skarp drift bör igenkänningen ske i enheten
+eller i en godkänd tjänst inom vårdgivarens kontroll.
 
 ## Hur vi följer reglerna
 
@@ -60,6 +89,10 @@ Fotona i `public/mat/` kommer från [Pexels](https://www.pexels.com/license/) oc
 | Pannkakor med sylt | https://www.pexels.com/photo/3225506/ |
 | Fiskgratäng | https://www.pexels.com/photo/33042510/ |
 
+AI-genererade bilder har vi provat (Pollinations och FLUX via Hugging Face), men utan
+API-nyckel blev kvaliteten för låg eller kvoten tog slut. Med en nyckel går det att
+generera bilder i en enhetlig stil.
+
 Vill ni byta en bild? Lägg en ny fil i `public/mat/` och ändra `image` i `src/lib/data.ts`. I skarp drift fotograferar köket sina egna rätter.
 
 ## Skärmbilder
@@ -69,3 +102,4 @@ Vill ni byta en bild? Lägg en ny fil i `public/mat/` och ändra `image` i `src/
 | ![Inloggning](docs/skarmbilder/1-login.png) | ![Välkommen](docs/skarmbilder/2-valkommen.png) |
 | ![Meny](docs/skarmbilder/3-meny.png) | ![Rätt](docs/skarmbilder/4-ratt.png) |
 | ![Sammanfattning](docs/skarmbilder/6-sammanfattning.png) | ![Klart](docs/skarmbilder/7-klart.png) |
+| ![Röstkommando](docs/skarmbilder/8-rost.png) | |
