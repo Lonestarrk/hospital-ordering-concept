@@ -2,83 +2,113 @@
 
 import { useRouter } from "next/navigation";
 import { Screen } from "@/components/Screen";
-import { useRequirePatient } from "@/components/OrderProvider";
-import { dietLabels, meal } from "@/lib/data";
+import { useRequirePatient, useT } from "@/components/OrderProvider";
+import { dietLabels, dishes, meal } from "@/lib/data";
+import { pathAfterWelcome } from "@/lib/flow";
 import type { VoiceCommand } from "@/lib/voice";
 
 export default function WelcomePage() {
   const router = useRouter();
-  const { patient, logout, meals } = useRequirePatient();
+  const { patient, logout, meals, isOnboarded, draft, resumeDraft, discardDraft } = useRequirePatient();
+  const { t, tm } = useT();
+  const w = t.welcome;
   if (!patient) return null;
 
-  // Finns en serverad måltid utan omdöme frågar vi om den först (går att hoppa över).
-  const pending = meals.find((m) => !m.rating && !m.skipped);
-  const proceed = () => router.push(pending ? `/omdome?id=${pending.id}` : "/meny");
-
-  const diets = patient.diet.map((d) => dietLabels[d]);
+  const proceed = () => router.push(pathAfterWelcome(isOnboarded, meals));
+  const draftDish = dishes.find((d) => d.id === draft?.order.dishId);
+  const resume = () => {
+    const path = resumeDraft();
+    router.push(path ?? "/meny");
+  };
+  const restart = () => {
+    discardDraft();
+    proceed();
+  };
   const notMe = () => { logout(); router.replace("/"); };
+
+  const diets = patient.diet.map((d) => tm.diet(d, dietLabels[d]));
+  const allergies = patient.allergies.map((a) => tm.allergen(a));
+  const place = `${tm.word(patient.room)}, ${tm.word(patient.bed)}`;
+
   const commands: VoiceCommand[] = [
     { phrases: ["nej", "inte jag", "fel"], action: notMe },
+    ...(draftDish ? [{ phrases: ["fortsätt", "där jag var"], action: resume }, { phrases: ["börja om"], action: restart }] : []),
     { phrases: ["ja", "det är jag", "stämmer", "fortsätt", "japp", "absolut"], action: proceed },
   ];
-  const allergies = patient.allergies.length > 0 ? patient.allergies.join(" och ") : "inga";
+
+  const speakText = draftDish
+    ? w.resumeSpeak(tm.dish(draftDish).name)
+    : w.speak({
+        name: patient.firstName,
+        full: `${patient.firstName} ${patient.lastName}`,
+        place,
+        diets: t.and(diets),
+        allergies: allergies.length ? t.and(allergies) : w.noAllergies,
+      });
 
   return (
     <Screen
-      speakText={`Hej ${patient.firstName}! Är det du, ${patient.firstName} ${patient.lastName}, i ${patient.room}, ${patient.bed}? Vi vet redan att du ska ha ${diets.join(" och ")}. Du är allergisk mot ${allergies}. Du ser bara mat som passar dig. Tryck på Ja, det är jag – eller tryck på mikrofonen och säg ja.`}
+      speakText={speakText}
       commands={commands}
       voiceHint="”ja” eller ”nej”"
       footer={
-        <>
-          <button className="btn btn-ghost" onClick={notMe}>
-            Nej, det är inte jag
-          </button>
-          <button className="btn btn-primary btn-large" onClick={proceed}>
-            Ja, det är jag →
-          </button>
-        </>
+        draftDish ? (
+          <>
+            <button className="btn btn-ghost" onClick={restart}>{w.restart}</button>
+            <button className="btn btn-primary btn-large" onClick={resume}>{w.resume}</button>
+          </>
+        ) : (
+          <>
+            <button className="btn btn-ghost" onClick={notMe}>{w.no}</button>
+            <button className="btn btn-primary btn-large" onClick={proceed}>{w.yes}</button>
+          </>
+        )
       }
     >
       <div className="welcome">
         <div className="welcome-wave" aria-hidden>👋</div>
-        <h1>Hej {patient.firstName}!</h1>
-        <p className="lead">Stämmer det här?</p>
+        <h1>{draftDish ? w.resumeTitle : w.hello(patient.firstName)}</h1>
 
-        <div className="card identity">
-          <div className="identity-row">
-            <span className="identity-key">Namn</span>
-            <span className="identity-val">{patient.firstName} {patient.lastName}</span>
+        {draftDish ? (
+          <div className="card resume">
+            <img className="resume-image" src={draftDish.image} alt={tm.dish(draftDish).imageAlt} />
+            <p className="lead">{w.resumeBody(tm.dish(draftDish).name)}</p>
           </div>
-          <div className="identity-row">
-            <span className="identity-key">Plats</span>
-            <span className="identity-val">{patient.ward}<br />{patient.room}, {patient.bed}</span>
-          </div>
-        </div>
+        ) : (
+          <>
+            <p className="lead">{w.isThisRight}</p>
 
-        <div className="card care">
-          <div className="care-icon" aria-hidden>💚</div>
-          <div>
-            <h2>Vi har koll på din kost</h2>
-            <p>
-              Vårdpersonalen har registrerat din kost och dina allergier. Du ser bara mat som
-              passar dig – så du kan välja fritt utan att oroa dig.
-            </p>
-            <div className="chips">
-              {diets.map((d) => <span key={d} className="chip chip-static">✓ {d}</span>)}
-              {patient.allergies.map((a) => (
-                <span key={a} className="chip chip-static chip-allergy">⚠ Allergi: {a}</span>
-              ))}
+            <div className="card identity">
+              <div className="identity-row">
+                <span className="identity-key">{w.name}</span>
+                <span className="identity-val">{patient.firstName} {patient.lastName}</span>
+              </div>
+              <div className="identity-row">
+                <span className="identity-key">{w.place}</span>
+                <span className="identity-val">{tm.word(patient.ward)}<br />{place}</span>
+              </div>
             </div>
-            <p className="care-note">
-              Stämmer något inte? Tryck på <strong>Hjälp</strong>. Bara personalen kan ändra din kost
-              och dina allergier.
-            </p>
-          </div>
-        </div>
 
-        <p className="muted">
-          {meal.day} beställer du <strong>{meal.name.toLowerCase()}</strong> som serveras kl {meal.servedAt}.
-        </p>
+            <div className="card care">
+              <div className="care-icon" aria-hidden>💚</div>
+              <div>
+                <h2>{w.careTitle}</h2>
+                <p>{w.careBody}</p>
+                <div className="chips">
+                  {diets.map((d) => <span key={d} className="chip chip-static">✓ {d}</span>)}
+                  {allergies.map((a) => (
+                    <span key={a} className="chip chip-static chip-allergy">⚠ {w.allergy}: {a}</span>
+                  ))}
+                </div>
+                <p className="care-note">
+                  {w.careNote[0]}<strong>{w.careNote[1]}</strong>{w.careNote[2]}
+                </p>
+              </div>
+            </div>
+
+            <p className="muted">{w.today(tm.word(meal.name).toLowerCase(), meal.servedAt)}</p>
+          </>
+        )}
       </div>
     </Screen>
   );

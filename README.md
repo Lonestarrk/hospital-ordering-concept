@@ -10,7 +10,7 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
-Logga in med Ingrids **syntetiska** personnummer **19450120-2388** (eller tryck på
+Logga in med Ingrids **syntetiska** personnummer **19480302-2328** (eller tryck på
 "Demo: fyll i Ingrids personnummer" längst ner på inloggningssidan).
 
 ## Användarresan

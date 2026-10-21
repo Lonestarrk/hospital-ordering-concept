@@ -24,10 +24,10 @@ export type Patient = {
 
 const patients: Patient[] = [
   {
-    personnummer: "194501202388",
+    personnummer: "194803022328",
     firstName: "Ingrid",
     lastName: "Andersson",
-    ward: "Avdelning 12 – Geriatrik",
+    ward: "Avdelning 12 – Kirurgi",
     room: "Rum 4",
     bed: "Säng B",
     diet: ["diabetes", "laktosfri"],
@@ -39,7 +39,7 @@ export function findPatient(personnummer: string): Patient | undefined {
   return patients.find((p) => p.personnummer === personnummer);
 }
 
-export const DEMO_PERSONNUMMER = "194501202388";
+export const DEMO_PERSONNUMMER = "194803022328";
 
 export type Dish = {
   id: string;
@@ -211,7 +211,7 @@ export const eatenOptions: { id: Eaten; name: string; voiceWords: string[] }[] =
 
 /** Syntetisk historik: måltider Ingrid redan har fått serverade. */
 export const servedHistory: Record<string, ServedMeal[]> = {
-  "194501202388": [
+  "194803022328": [
     { id: "middag-igar", dishId: "kalvspett", label: "Gårdagens middag", reasons: [] },
   ],
 };

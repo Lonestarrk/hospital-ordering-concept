@@ -7,10 +7,14 @@
 
 ## 1. Vem är Ingrid, egentligen?
 
-**Antagen bild:** äldre (ca 75–85 år), bor hemma, kanske ensam. Har en smartphone men
+**Från uppgiften:** Ingrid, 78 år, återhämtar sig efter en operation och har legat på
+sjukhus i flera dagar. Hon ligger mest i sängen och det händer inte mycket – men hon ser
+fram emot maten. Vissa patienter tycker om att bläddra i menyn, titta på bilder och fundera
+på vad de ska äta; den snabbaste beställningen är inte nödvändigtvis det Ingrid vill.
+
+**Våra antaganden utöver det:** bor hemma, kanske ensam. Har en smartphone men
 använder den till samtal, bilder på barnbarnen och ibland BankID – med hjälp. Har aldrig
-beställt mat på en surfplatta. Är inlagd några dagar efter t.ex. en fallolycka, operation
-eller infektion.
+beställt mat på en surfplatta. 
 
 ### Hennes situation just nu
 | Kroppen | Huvudet | Känslan |
@@ -92,7 +96,7 @@ Ingrid säger *"Det här var faktiskt riktigt trevligt!"* när:
 > gången, kunna välja mat hon vill äta och som är rätt för henne."
 
 **Talarstöd (90 s):**
-1. *Vem:* Ingrid, ~80, trött, nål i handen, glasögonen i väskan, aldrig gjort detta förut. (20 s)
+1. *Vem:* Ingrid, 78, nyopererad, trött, nål i handen, glasögonen i väskan, aldrig gjort detta förut. (20 s)
 2. *Det egentliga problemet:* inte beställningen – kontroll, trygghet, och att maten blir uppäten. (30 s)
 3. *Största risken:* att hon ger upp redan vid inloggningen och aldrig når maten. (20 s)
 4. *Framgång:* hon klarar det själv första gången och ser fram emot maten. (20 s)

@@ -1,18 +1,18 @@
 // Tal och röstkommandon med webbläsarens inbyggda Web Speech API.
-// Uppläsning (speechSynthesis) sker alltid lokalt i enheten. Taligenkänning körs lokalt
-// när webbläsaren stöder det (processLocally); annars skickar webbläsaren ljudet till sin
-// egen tjänst – se README. Inga personnummer eller journaldata tas emot via röst.
+// Uppläsning (speechSynthesis) sker i enheten. Taligenkänning används BARA när den kan köras
+// i enheten (processLocally). Annars döljs mikrofonen – ljud får aldrig skickas till en
+// extern taltjänst/AI-modell (skyddsräcke 2: patientdata går aldrig okontrollerat till AI).
 
-export function speak(text: string, onEnd?: () => void) {
+export function speak(text: string, lang = "sv-SE", onEnd?: () => void) {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
     onEnd?.();
     return;
   }
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "sv-SE";
+  utterance.lang = lang;
   utterance.rate = 0.9;
-  const voice = window.speechSynthesis.getVoices().find((v) => v.lang.startsWith("sv"));
+  const voice = window.speechSynthesis.getVoices().find((v) => v.lang.startsWith(lang.slice(0, 2)));
   if (voice) utterance.voice = voice;
   if (onEnd) {
     utterance.onend = () => onEnd();
@@ -66,8 +66,11 @@ type Recognition = {
   abort: () => void;
 };
 
+type LocalOptions = { langs: string[]; processLocally: boolean };
+
 type RecognitionCtor = (new () => Recognition) & {
-  available?: (opts: { langs: string[]; processLocally: boolean }) => Promise<string>;
+  available?: (opts: LocalOptions) => Promise<string>;
+  install?: (opts: LocalOptions) => Promise<boolean>;
 };
 
 function getRecognitionCtor(): RecognitionCtor | null {
@@ -76,8 +79,15 @@ function getRecognitionCtor(): RecognitionCtor | null {
   return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
 }
 
-export function recognitionSupported(): boolean {
-  return getRecognitionCtor() !== null;
+const LOCAL: LocalOptions = { langs: ["sv-SE"], processLocally: true };
+
+/**
+ * Sant om webbläsaren har API:t för taligenkänning i enheten. Själva kontrollen att en svensk
+ * modell finns görs först när patienten trycker på mikrofonen (se listenOnce) – att fråga
+ * direkt vid sidladdning kan krascha webbläsare som saknar taltjänst.
+ */
+export function localRecognitionSupported(): boolean {
+  return typeof getRecognitionCtor()?.available === "function";
 }
 
 /** Lyssnar efter ett yttrande och returnerar de tolkningar webbläsaren föreslår. */
@@ -87,26 +97,32 @@ export async function listenOnce(handlers: {
   onEnd: () => void;
 }): Promise<() => void> {
   const Ctor = getRecognitionCtor();
-  if (!Ctor) {
-    handlers.onError("not-supported");
+  const fail = (error: string) => {
+    handlers.onError(error);
     handlers.onEnd();
     return () => {};
+  };
+  if (!Ctor?.available) return fail("not-local");
+
+  // Kräv igenkänning i enheten. Saknas modellen laddas den ner först (en gång).
+  try {
+    let status = await Ctor.available(LOCAL);
+    if (status === "downloadable" && Ctor.install) {
+      handlers.onError("installing");
+      if (await Ctor.install(LOCAL)) status = "available";
+    }
+    if (status !== "available") return fail("not-local");
+  } catch {
+    return fail("not-local");
   }
+
   const recognition = new Ctor();
+  if (!("processLocally" in recognition)) return fail("not-local");
+  recognition.processLocally = true;
   recognition.lang = "sv-SE";
   recognition.interimResults = false;
   recognition.continuous = false;
   recognition.maxAlternatives = 3;
-
-  // Föredra igenkänning i enheten när webbläsaren har en svensk modell installerad.
-  try {
-    if (Ctor.available && "processLocally" in recognition) {
-      const status = await Ctor.available({ langs: ["sv-SE"], processLocally: true });
-      if (status === "available") recognition.processLocally = true;
-    }
-  } catch {
-    // Äldre webbläsare – använd standardläget.
-  }
 
   recognition.onresult = (e) => {
     const first = e.results[0];

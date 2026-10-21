@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Screen, useAnnounce } from "@/components/Screen";
-import { useRequirePatient } from "@/components/OrderProvider";
+import { useRequirePatient, useT } from "@/components/OrderProvider";
 import { dishCategories, dishSuits, dishes, foodCategories, meal } from "@/lib/data";
 import { speak, type VoiceCommand } from "@/lib/voice";
 
@@ -16,25 +16,33 @@ const ORDINALS = [
 export default function MenuPage() {
   const router = useRouter();
   const { patient, order, updateOrder, meals, taste } = useRequirePatient();
+  const { t, tm } = useT();
+  const m = t.menu;
   const announce = useAnnounce();
   if (!patient) return null;
 
+  // Senaste omdömet per rätt, så att menyn kommer ihåg vad Ingrid tycker om.
+  const lastRating = (dishId: string) => meals.find((x) => x.dishId === dishId && x.rating)?.rating;
+  const likedCategory = (dishId: string) =>
+    foodCategories.find((c) => (dishCategories[dishId] ?? []).includes(c.id) && taste.likes.includes(c.id));
   // Rätter som matchar Ingrids smak visas först, sådant hon inte gillar sist – inget döljs.
-  const tasteScore = (dishId: string) =>
+  const score = (dishId: string) =>
     (dishCategories[dishId] ?? []).reduce(
       (sum, c) => sum + (taste.likes.includes(c) ? 1 : 0) - (taste.dislikes.includes(c) ? 1 : 0),
       0,
-    );
-  const likedCategory = (dishId: string) =>
-    foodCategories.find((c) => (dishCategories[dishId] ?? []).includes(c.id) && taste.likes.includes(c.id));
-  const suitable = dishes
-    .filter((d) => dishSuits(d, patient))
-    .sort((a, b) => tasteScore(b.id) - tasteScore(a.id));
-  const hiddenCount = dishes.length - suitable.length;
+    ) + (lastRating(dishId) === "upp" ? 2 : lastRating(dishId) === "ner" ? -2 : 0);
 
+  const suitable = dishes.filter((d) => dishSuits(d, patient)).sort((a, b) => score(b.id) - score(a.id));
   const hidden = dishes.filter((d) => !suitable.includes(d));
-  // Senaste omdömet per rätt, så att menyn kommer ihåg vad Ingrid tycker om.
-  const lastRating = (dishId: string) => meals.find((m) => m.dishId === dishId && m.rating)?.rating;
+
+  // Förslaget: den rätt som passar henne bäst – bara om vi kan förklara varför.
+  const top = suitable[0];
+  const topReason =
+    top && score(top.id) > 0
+      ? lastRating(top.id) === "upp"
+        ? m.whyLiked
+        : likedCategory(top.id) && m.whyCategory(tm.category(likedCategory(top.id)!.id, likedCategory(top.id)!.name).toLowerCase())
+      : undefined;
 
   const choose = (id: string) => {
     updateOrder({ dishId: id });
@@ -48,60 +56,69 @@ export default function MenuPage() {
     // Säger Ingrid en rätt som inte passar henne förklarar vi varför den inte finns.
     ...hidden.map((d) => ({
       phrases: d.voiceWords,
-      action: () => speak(`${d.name} passar tyvärr inte din kost idag. Du kan välja ${suitable.map((s) => s.name).join(", eller ")}.`),
+      action: () => speak(`${d.name} passar tyvärr inte din kost idag. Du kan välja ${suitable.map((x) => x.name).join(", eller ")}.`),
     })),
     { phrases: ["tillbaka"], action: () => router.push("/valkommen") },
   ];
 
+  const mealName = tm.word(meal.name);
+  const items = suitable
+    .map((d, i) => `${m.ordinals[i] ?? ""}: ${tm.dish(d).name}. ${tm.dish(d).description}`)
+    .join(" ");
+
   return (
     <Screen
       step={1}
-      speakText={`Vad vill du äta till ${meal.name.toLowerCase()}? ${suitable.map((d, i) => `${ORDINALS[i]?.[0] ?? ""}: ${d.name}. ${d.description}`).join(" ")} Tryck på maten, eller tryck på mikrofonen och säg vad du vill ha.`}
+      speakText={`${topReason ? `${m.suggestion}: ${tm.dish(top).name}. ${m.suggestionWhy(topReason)}. ` : ""}${m.speak(mealName.toLowerCase(), items)}`}
       commands={commands}
       voiceHint={suitable.slice(0, 2).map((d) => `”${d.voiceWords[0].replace("*", "")}”`).join(" eller ")}
       footer={
-        <button className="btn btn-ghost" onClick={() => router.push("/valkommen")}>← Tillbaka</button>
+        <button className="btn btn-ghost" onClick={() => router.push("/valkommen")}>{t.back}</button>
       }
     >
       <div className="page-head">
-        <p className="eyebrow">{meal.name} · serveras kl {meal.servedAt}</p>
-        <h1>Vad vill du äta, {patient.firstName}?</h1>
-        <p className="lead">Tryck på maten du vill ha.</p>
+        <p className="eyebrow">{m.eyebrow(mealName, meal.servedAt)}</p>
+        <h1>{m.title(patient.firstName)}</h1>
+        <p className="lead">{m.lead}</p>
       </div>
 
       <div className="dish-grid">
-        {suitable.map((dish) => (
-          <button
-            key={dish.id}
-            className={`dish ${order.dishId === dish.id ? "selected" : ""}`}
-            onClick={() => choose(dish.id)}
-          >
-            <img className="dish-image" src={dish.image} alt={dish.imageAlt} />
-            <div className="dish-body">
-              <div className="dish-badges">
-                {dish.label && <span className="dish-label">{dish.label}</span>}
-                {lastRating(dish.id) === "upp" && <span className="dish-label dish-liked">👍 Du gillade den</span>}
-                {lastRating(dish.id) === "ner" && <span className="dish-label dish-disliked">👎 Inte din favorit</span>}
-                {likedCategory(dish.id) && (
-                  <span className="dish-label dish-taste">❤️ Du gillar {likedCategory(dish.id)!.name.toLowerCase()}</span>
+        {suitable.map((dish) => {
+          const text = tm.dish(dish);
+          const liked = likedCategory(dish.id);
+          const suggested = dish === top && !!topReason;
+          return (
+            <button
+              key={dish.id}
+              className={`dish ${order.dishId === dish.id ? "selected" : ""} ${suggested ? "suggested" : ""}`}
+              onClick={() => choose(dish.id)}
+            >
+              <img className="dish-image" src={dish.image} alt={text.imageAlt} />
+              <div className="dish-body">
+                {suggested && (
+                  <span className="dish-suggestion">⭐ {m.suggestion} · {m.suggestionWhy(topReason!)}</span>
                 )}
+                <div className="dish-badges">
+                  {text.label && <span className="dish-label">{text.label}</span>}
+                  {lastRating(dish.id) === "upp" && <span className="dish-label dish-liked">{m.liked}</span>}
+                  {lastRating(dish.id) === "ner" && <span className="dish-label dish-disliked">{m.disliked}</span>}
+                  {liked && (
+                    <span className="dish-label dish-taste">{m.tasteBadge(tm.category(liked.id, liked.name).toLowerCase())}</span>
+                  )}
+                </div>
+                <h2>{text.name}</h2>
+                <p>{text.description}</p>
+                <span className="dish-ok">{m.suits}</span>
               </div>
-              <h2>{dish.name}</h2>
-              <p>{dish.description}</p>
-              <span className="dish-ok">✓ Passar dig</span>
-            </div>
-          </button>
-        ))}
+            </button>
+          );
+        })}
       </div>
 
-      {hiddenCount > 0 && (
-        <p className="muted center">
-          {hiddenCount} rätter visas inte eftersom de inte passar din kost eller allergi.
-        </p>
-      )}
+      {hidden.length > 0 && <p className="muted center">{m.hidden(hidden.length)}</p>}
 
       <button className="taste-link" onClick={() => router.push("/min-smak?sen=meny")}>
-        ❤️ Berätta vad du tycker om för mat
+        {m.tasteLink}
       </button>
     </Screen>
   );

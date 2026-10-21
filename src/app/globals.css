@@ -182,7 +182,7 @@ button:focus-visible {
 }
 
 .footer > :only-child {
-  margin-right: auto;
+  margin-inline-end: auto;
 }
 
 /* ---------- Röst ---------- */
@@ -260,6 +260,7 @@ button:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   .mic-on,
+  .topbar-actions.highlight .tool,
   .done-check {
     animation: none;
   }
@@ -552,7 +553,7 @@ button:focus-visible {
 .identity {
   display: grid;
   gap: 16px;
-  text-align: left;
+  text-align: start;
 }
 
 .identity-row {
@@ -573,7 +574,7 @@ button:focus-visible {
 .care {
   display: flex;
   gap: 18px;
-  text-align: left;
+  text-align: start;
   background: var(--primary-soft);
   box-shadow: none;
 }
@@ -617,7 +618,7 @@ button:focus-visible {
 .dish {
   display: flex;
   align-items: stretch;
-  text-align: left;
+  text-align: start;
   padding: 0;
   border: 3px solid transparent;
   border-radius: var(--radius);
@@ -905,7 +906,7 @@ button:focus-visible {
   display: flex;
   align-items: center;
   gap: 18px;
-  text-align: left;
+  text-align: start;
 }
 
 .done-image {
@@ -1003,12 +1004,12 @@ button:focus-visible {
 .plate-inget { --fill: 0%; }
 
 .feedback-staff {
-  text-align: left;
+  text-align: start;
   align-items: center;
 }
 
 .footer .footer-end {
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 
 /* ---------- Min smak ---------- */
@@ -1069,7 +1070,7 @@ button:focus-visible {
   border-radius: 18px;
   border: 2px solid var(--border);
   background: var(--surface);
-  text-align: left;
+  text-align: start;
   font-weight: 600;
 }
 
@@ -1100,7 +1101,7 @@ button:focus-visible {
   gap: 16px;
   width: 100%;
   border: 2px solid var(--accent);
-  text-align: left;
+  text-align: start;
   font-size: 0.95em;
   line-height: 1.35;
 }
@@ -1211,6 +1212,167 @@ button:focus-visible {
 .div-value { font-variant-numeric: tabular-nums; font-size: 0.85em; color: var(--text-muted); min-width: 2ch; }
 .div-name { text-align: center; font-weight: 600; font-size: 0.9em; }
 
+/* ---------- Språk ---------- */
+
+.lang-choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.dialog .lang-choice {
+  flex-direction: column;
+  margin: 8px 0 0;
+}
+
+.lang-option {
+  min-height: 56px;
+  padding: 0 22px;
+  border-radius: 999px;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  font-weight: 700;
+}
+
+.lang-option.selected {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+}
+
+/* ---------- Introduktion ---------- */
+
+.intro {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+  display: grid;
+  gap: 16px;
+}
+
+.intro-count {
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.intro-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.intro-dots span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+.intro-dots span.on {
+  background: var(--primary);
+  width: 32px;
+  border-radius: 6px;
+}
+
+.intro-visual {
+  min-height: 210px;
+  display: grid;
+  place-items: center;
+}
+
+.intro-photos {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+}
+
+.intro-photos img {
+  width: 190px;
+  height: 190px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.intro-photos img:nth-child(2) {
+  transform: translateY(-14px);
+}
+
+.intro-safe {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+}
+
+.intro-big {
+  font-size: 96px;
+  line-height: 1;
+}
+
+.intro-tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.tool-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 56px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  font-weight: 600;
+}
+
+.tool-demo-help {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.topbar-actions.highlight .tool {
+  animation: tool-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes tool-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(47, 107, 79, 0.5); }
+  50% { box-shadow: 0 0 0 8px rgba(47, 107, 79, 0); }
+}
+
+/* ---------- Förslag och fortsätt ---------- */
+
+.dish.suggested {
+  border-color: #e0b44a;
+}
+
+.dish-suggestion {
+  align-self: flex-start;
+  background: #fff4e0;
+  color: #6b4500;
+  font-weight: 700;
+  font-size: 0.75em;
+  padding: 6px 10px;
+  border-radius: 10px;
+}
+
+.resume {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+}
+
+.resume-image {
+  width: 100%;
+  max-width: 420px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: var(--radius);
+}
+
 /* ---------- Hjälpdialog ---------- */
 
 .overlay {
@@ -1264,7 +1426,8 @@ button:focus-visible {
 @media (max-width: 560px) {
   :root { --base: 17px; }
   html[data-text-size="stor"] { --base: 21px; }
-  .topbar, .content, .footer, .progress { padding-left: 16px; padding-right: 16px; }
+  .topbar, .content, .footer, .progress { padding-inline: 16px; }
+  .intro-photos img { width: 30vw; height: 30vw; }
   .tool { padding: 0 12px; }
   .segmented { grid-template-columns: 1fr; }
   .segmented-4 { grid-template-columns: 1fr 1fr; }

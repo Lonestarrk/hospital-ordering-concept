@@ -32,24 +32,27 @@ function dateOk(year: number, month: number, day: number): boolean {
   );
 }
 
+/** Felkod – texten som visas för patienten finns i lib/i18n.ts. */
+export type PersonnummerError = "length" | "date" | "checksum";
+
 export type PersonnummerCheck =
   | { ok: true; normalized: string }
-  | { ok: false; reason: string };
+  | { ok: false; reason: PersonnummerError };
 
 /** Validerar ett 12-siffrigt personnummer och returnerar det normaliserat (ÅÅÅÅMMDDXXXX). */
 export function checkPersonnummer(input: string): PersonnummerCheck {
   const d = onlyDigits(input);
   if (d.length < 12) {
-    return { ok: false, reason: "Numret behöver 12 siffror: år, månad, dag och fyra sista siffror." };
+    return { ok: false, reason: "length" };
   }
   const year = Number(d.slice(0, 4));
   const month = Number(d.slice(4, 6));
   const day = Number(d.slice(6, 8));
   if (!dateOk(year, month, day)) {
-    return { ok: false, reason: "Födelsedatumet ser inte rätt ut. Kontrollera de första åtta siffrorna." };
+    return { ok: false, reason: "date" };
   }
   if (!luhnOk(d.slice(2))) {
-    return { ok: false, reason: "Numret stämmer inte riktigt. Kontrollera de fyra sista siffrorna." };
+    return { ok: false, reason: "checksum" };
   }
   return { ok: true, normalized: d };
 }

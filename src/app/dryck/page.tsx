@@ -3,13 +3,14 @@
 import { useRouter } from "next/navigation";
 import { Screen, useAnnounce } from "@/components/Screen";
 import type { VoiceCommand } from "@/lib/voice";
-import { useRequirePatient } from "@/components/OrderProvider";
+import { useRequirePatient, useT } from "@/components/OrderProvider";
 import { drinkSuits, drinks } from "@/lib/data";
 
 export default function DrinkPage() {
   const router = useRouter();
   const { patient, order, updateOrder } = useRequirePatient();
   const announce = useAnnounce();
+  const { t, tm } = useT();
   if (!patient) return null;
 
   const suitable = drinks.filter((d) => drinkSuits(d, patient.diet));
@@ -29,18 +30,18 @@ export default function DrinkPage() {
   return (
     <Screen
       step={2}
-      speakText={`Vad vill du dricka? Du kan välja ${suitable.map((d) => d.name).join(", ")}.`}
+      speakText={t.drink.speak(t.list(suitable.map((d) => tm.drink(d.id, d.name))))}
       commands={commands}
       voiceHint="”vatten” eller ”kaffe”"
       footer={
         <button className="btn btn-ghost" onClick={back}>
-          ← Tillbaka
+          {t.back}
         </button>
       }
     >
       <div className="page-head">
-        <h1>Vad vill du dricka?</h1>
-        <p className="lead">Tryck på en dryck.</p>
+        <h1>{t.drink.title}</h1>
+        <p className="lead">{t.drink.lead}</p>
       </div>
       <div className="drink-grid">
         {suitable.map((drink) => (
@@ -50,7 +51,7 @@ export default function DrinkPage() {
             onClick={() => choose(drink.id)}
           >
             <span className="drink-emoji" aria-hidden>{drink.emoji}</span>
-            <span>{drink.name}</span>
+            <span>{tm.drink(drink.id, drink.name)}</span>
           </button>
         ))}
       </div>

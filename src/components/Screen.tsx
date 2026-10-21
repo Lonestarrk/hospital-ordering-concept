@@ -1,29 +1,30 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import { useOrder } from "./OrderProvider";
+import { useOrder, useT } from "./OrderProvider";
+import { languages } from "@/lib/i18n";
 import {
   chime,
   listenOnce,
   matchCommand,
   normalize,
-  recognitionSupported,
+  localRecognitionSupported,
   speak,
   stopSpeaking,
   type VoiceCommand,
 } from "@/lib/voice";
-
-const STEPS = ["Mat", "Dryck", "Kolla", "Klart"];
 
 type ScreenProps = {
   /** Texten som läses upp i ljudläge och när man trycker på "Ljud". */
   speakText: string;
   /** Vilket steg (1–4) som ska markeras i stegindikatorn. Utelämna för att dölja den. */
   step?: number;
-  /** Röstkommandon för sidan. Utelämna för att dölja mikrofonknappen. */
+  /** Röstkommandon för sidan (svenska). Utelämna för att dölja mikrofonknappen. */
   commands?: VoiceCommand[];
   /** Exempel på vad man kan säga, t.ex. "lax" eller "soppa". */
   voiceHint?: string;
+  /** Får knapparna i hörnet att pulsera – används i introduktionen. */
+  highlightTools?: boolean;
   children: ReactNode;
   footer?: ReactNode;
 };
@@ -36,28 +37,35 @@ type ListenState =
 /** Bekräftar ett val med en ljudsignal – och tal om text anges – när ljudläget är på. */
 export function useAnnounce() {
   const { soundOn } = useOrder();
+  const { speechLang } = useT();
   return useCallback(
     (text?: string) => {
       if (!soundOn) return;
       chime();
-      if (text) speak(text);
+      if (text) speak(text, speechLang);
     },
-    [soundOn],
+    [soundOn, speechLang],
   );
 }
 
-export function Screen({ speakText, step, commands, voiceHint, children, footer }: ScreenProps) {
-  const { patient, textSize, toggleTextSize, soundOn, setSoundOn } = useOrder();
+export function Screen({ speakText, step, commands, voiceHint, highlightTools, children, footer }: ScreenProps) {
+  const { patient, textSize, toggleTextSize, soundOn, setSoundOn, lang } = useOrder();
+  const { t, tm, speechLang } = useT();
+  const say = (text: string) => speak(text, speechLang);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const [listen, setListen] = useState<ListenState>({ kind: "idle" });
   const [micAvailable, setMicAvailable] = useState(false);
   const abortRef = useRef<() => void>(() => {});
 
-  useEffect(() => setMicAvailable(recognitionSupported()), []);
+  // Mikrofonen visas bara om taligenkänningen kan köras i enheten (inget ljud lämnar plattan).
+  useEffect(() => {
+    setMicAvailable(localRecognitionSupported());
+  }, []);
 
   // I ljudläge läses varje ny sida upp automatiskt.
   useEffect(() => {
-    if (soundOn) speak(speakText);
+    if (soundOn) say(speakText);
     return () => stopSpeaking();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -68,7 +76,7 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
       setSoundOn(false);
     } else {
       setSoundOn(true);
-      speak(speakText);
+      say(speakText);
     }
   };
 
@@ -77,7 +85,7 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
       phrases: ["hjälp", "personal*", "sköterska*"],
       action: () => {
         setHelpOpen(true);
-        speak("Vill du att personalen kommer? Tryck på den gröna knappen.");
+        say(t.helpDialog.speak);
       },
     },
     { phrases: ["läs upp", "läs menyn", "upprepa", "igen", "vad sa du"], action: () => speak(speakText) },
@@ -121,12 +129,18 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
       onError: (error) => {
         if (error === "no-speech") speak("Jag hörde ingenting. Tryck på mikrofonen och försök igen.");
         else if (error === "not-allowed") speak("Mikrofonen är avstängd. Tryck på Hjälp så kommer personalen.");
+        else if (error === "installing") speak("Ett ögonblick, jag gör i ordning rösten.");
+        else if (error === "not-local") {
+          setMicAvailable(false);
+          speak("Röststyrning finns inte på den här plattan. Tryck på skärmen i stället.");
+        }
       },
       onEnd: () => setListen((l) => (l.kind === "listening" ? { kind: "idle" } : l)),
     });
   };
 
-  const showMic = commands !== undefined && micAvailable;
+  // Röstkommandona finns på svenska; på andra språk används tryck (och uppläsning).
+  const showMic = commands !== undefined && micAvailable && lang === "sv";
 
   return (
     <div className="screen">
@@ -134,17 +148,20 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
         <div className="topbar-place">
           <span className="logo" aria-hidden>🍽️</span>
           <div>
-            <div className="topbar-title">Måltider</div>
+            <div className="topbar-title">{t.appName}</div>
             {patient && (
               <div className="topbar-sub">
-                {patient.room} · {patient.bed}
+                {tm.word(patient.room)} · {tm.word(patient.bed)}
               </div>
             )}
           </div>
         </div>
-        <div className="topbar-actions">
+        <div className={`topbar-actions ${highlightTools ? "highlight" : ""}`}>
+          <button className="tool" onClick={() => setLangOpen(true)} aria-label={t.chooseLanguage}>
+            <span aria-hidden>🌐</span> {languages.find((l) => l.id === lang)?.name}
+          </button>
           <button className="tool" onClick={toggleSound} aria-pressed={soundOn}>
-            <span aria-hidden>{soundOn ? "🔊" : "🔈"}</span> {soundOn ? "Ljud på" : "Läs upp"}
+            <span aria-hidden>{soundOn ? "🔊" : "🔈"}</span> {soundOn ? t.soundOn : t.readAloud}
           </button>
           <button
             className="tool"
@@ -152,17 +169,17 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
             aria-pressed={textSize === "stor"}
           >
             <span aria-hidden className="tool-aa">Aa</span>
-            {textSize === "stor" ? "Mindre text" : "Större text"}
+            {textSize === "stor" ? t.smallerText : t.biggerText}
           </button>
           <button className="tool tool-help" onClick={() => setHelpOpen(true)}>
-            <span aria-hidden>🙋</span> Hjälp
+            <span aria-hidden>🙋</span> {t.help}
           </button>
         </div>
       </header>
 
       {step !== undefined && (
-        <ol className="progress" aria-label="Steg">
-          {STEPS.map((label, i) => {
+        <ol className="progress" aria-label={t.stepsLabel}>
+          {t.steps.map((label, i) => {
             const n = i + 1;
             const state = n < step ? "done" : n === step ? "current" : "todo";
             return (
@@ -205,11 +222,51 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
       )}
 
       {helpOpen && <HelpDialog onClose={() => setHelpOpen(false)} />}
+      {langOpen && <LanguageDialog onClose={() => setLangOpen(false)} />}
+    </div>
+  );
+}
+
+export function LanguageChoice({ onChosen }: { onChosen?: () => void }) {
+  const { lang, setLang } = useOrder();
+  return (
+    <div className="lang-choice" role="radiogroup" aria-label="Språk · Language · اللغة">
+      {languages.map((l) => (
+        <button
+          key={l.id}
+          role="radio"
+          aria-checked={lang === l.id}
+          lang={l.id}
+          dir={l.dir}
+          className={`lang-option ${lang === l.id ? "selected" : ""}`}
+          onClick={() => {
+            setLang(l.id);
+            onChosen?.();
+          }}
+        >
+          {l.name}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function LanguageDialog({ onClose }: { onClose: () => void }) {
+  const { t } = useT();
+  return (
+    <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="lang-title" onClick={onClose}>
+      <div className="dialog" onClick={(e) => e.stopPropagation()}>
+        <div className="dialog-icon" aria-hidden>🌐</div>
+        <h2 id="lang-title">{t.chooseLanguage}</h2>
+        <LanguageChoice onChosen={onClose} />
+      </div>
     </div>
   );
 }
 
 function HelpDialog({ onClose }: { onClose: () => void }) {
+  const { t } = useT();
+  const h = t.helpDialog;
   const [called, setCalled] = useState(false);
   return (
     <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="help-title" onClick={onClose}>
@@ -217,19 +274,19 @@ function HelpDialog({ onClose }: { onClose: () => void }) {
         {called ? (
           <>
             <div className="dialog-icon" aria-hidden>✅</div>
-            <h2 id="help-title">Personalen är meddelad</h2>
-            <p>Någon kommer till dig så snart de kan. Du behöver inte göra något mer.</p>
-            <button className="btn btn-primary btn-block" onClick={onClose}>Okej</button>
+            <h2 id="help-title">{h.calledTitle}</h2>
+            <p>{h.calledBody}</p>
+            <button className="btn btn-primary btn-block" onClick={onClose}>{h.ok}</button>
           </>
         ) : (
           <>
             <div className="dialog-icon" aria-hidden>🙋</div>
-            <h2 id="help-title">Vill du ha hjälp?</h2>
-            <p>Det är helt okej att be om hjälp. Vi kan skicka en signal till personalen på avdelningen.</p>
+            <h2 id="help-title">{h.title}</h2>
+            <p>{h.body}</p>
             <button className="btn btn-primary btn-block" onClick={() => setCalled(true)}>
-              Ja, be personalen komma
+              {h.yes}
             </button>
-            <button className="btn btn-ghost btn-block" onClick={onClose}>Nej tack, jag fortsätter själv</button>
+            <button className="btn btn-ghost btn-block" onClick={onClose}>{h.no}</button>
           </>
         )}
       </div>

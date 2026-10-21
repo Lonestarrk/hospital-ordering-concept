@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Screen, useAnnounce } from "@/components/Screen";
-import { useRequirePatient } from "@/components/OrderProvider";
+import { useRequirePatient, useT } from "@/components/OrderProvider";
 import { dishes, eatenOptions, reasonsDown, reasonsUp, type Eaten, type Rating } from "@/lib/data";
 import type { VoiceCommand } from "@/lib/voice";
 
@@ -20,6 +20,8 @@ function Feedback() {
   const params = useSearchParams();
   const { patient, meals, updateMeal } = useRequirePatient();
   const announce = useAnnounce();
+  const { t, tm } = useT();
+  const f = t.feedback;
   const [rating, setRating] = useState<Rating | undefined>();
   const [reasons, setReasons] = useState<string[]>([]);
   const [eaten, setEaten] = useState<Eaten | undefined>();
@@ -38,27 +40,26 @@ function Feedback() {
     if (r === rating) return;
     setRating(r);
     setReasons([]);
-    announce(r === "upp" ? "Tummen upp! Vad tyckte du om?" : "Tummen ner. Vad var inte bra?");
+    announce(r === "upp" ? f.ratedUp : f.ratedDown);
   };
 
   const toggleReason = (name: string) => {
     const on = reasons.includes(name);
     setReasons(on ? reasons.filter((r) => r !== name) : [...reasons, name]);
-    announce(on ? `${name}, borttaget.` : `${name}.`);
+    announce(on ? t.dish.removed(tm.reason(name)) : `${tm.reason(name)}.`);
   };
 
   const chooseEaten = (id: Eaten) => {
     setEaten(id);
-    announce(`Du åt ${eatenOptions.find((e) => e.id === id)?.name.toLowerCase()}.`);
+    const e = eatenOptions.find((x) => x.id === id)!;
+    announce(f.ate(tm.eaten(e.id, e.name).toLowerCase()));
   };
 
   const send = () => {
     if (!rating) return;
     updateMeal(meal.id, { rating, reasons, eaten });
     setSent(true);
-    announce(
-      `Tack ${patient.firstName}! Köket får ditt omdöme.${tellStaff ? " Vi säger också till personalen att maten var svår att tugga." : ""}`,
-    );
+    announce(f.thanksSpeak(patient.firstName, tellStaff));
   };
 
   const skip = () => {
@@ -78,15 +79,17 @@ function Feedback() {
         { phrases: ["hoppa över", "senare", "vet inte"], action: skip },
       ];
 
+  const dishName = tm.dish(dish).name;
+
   if (sent) {
     return (
       <Screen
-        speakText={`Tack ${patient.firstName}! Köket får ditt omdöme. Säg fortsätt eller tryck på knappen.`}
+        speakText={f.thanksSpeak(patient.firstName, tellStaff)}
         commands={commands}
         voiceHint="”fortsätt”"
         footer={
           <button className="btn btn-primary btn-large footer-end" onClick={() => router.push(next)}>
-            {next === "/meny" ? "Beställ dagens mat →" : "Fortsätt →"}
+            {next === "/meny" ? f.orderToday : t.continue}
           </button>
         }
       >
@@ -94,18 +97,17 @@ function Feedback() {
           <div className={`done-check ${rating === "ner" ? "done-check-neutral" : ""}`} aria-hidden>
             {rating === "upp" ? "👍" : "👎"}
           </div>
-          <h1>Tack {patient.firstName}!</h1>
-          <p className="lead">Köket får ditt omdöme om {dish.name.toLowerCase()}.</p>
+          <h1>{f.thanks(patient.firstName)}</h1>
+          <p className="lead">{f.kitchenGets(dishName)}</p>
           {tellStaff && (
             <div className="card care feedback-staff">
               <div className="care-icon" aria-hidden>💬</div>
               <p>
-                Vi säger till personalen att maten var svår att tugga. De kan se över om du behöver
-                annan mat – <strong>det är de som bestämmer</strong>, inget ändras automatiskt.
+                {f.staffNote[0]}<strong>{f.staffNote[1]}</strong>{f.staffNote[2]}
               </p>
             </div>
           )}
-          {rating === "upp" && <p className="muted">Nästa gång ser du 👍 vid rätten på menyn.</p>}
+          {rating === "upp" && <p className="muted">{f.nextTime}</p>}
         </div>
       </Screen>
     );
@@ -113,28 +115,28 @@ function Feedback() {
 
   return (
     <Screen
-      speakText={`Hej ${patient.firstName}! ${meal.label} var ${dish.name}. Hur smakade det? Säg tummen upp eller tummen ner – eller tryck på en tumme. Du kan också hoppa över.`}
+      speakText={f.speak(patient.firstName, tm.word(meal.label), dishName)}
       commands={commands}
       voiceHint="”tummen upp” eller ”tummen ner”"
       footer={
         <>
-          <button className="btn btn-ghost" onClick={skip}>Hoppa över</button>
+          <button className="btn btn-ghost" onClick={skip}>{f.skip}</button>
           <button className="btn btn-primary btn-large" onClick={send} disabled={!rating}>
-            Skicka ✓
+            {f.send}
           </button>
         </>
       }
     >
       <div className="feedback-head">
-        <img className="feedback-image" src={dish.image} alt={dish.imageAlt} />
+        <img className="feedback-image" src={dish.image} alt={tm.dish(dish).imageAlt} />
         <div>
-          <p className="eyebrow">{meal.label}</p>
-          <h1>Hur smakade det?</h1>
-          <p className="lead">{dish.name}</p>
+          <p className="eyebrow">{tm.word(meal.label)}</p>
+          <h1>{f.howWas}</h1>
+          <p className="lead">{dishName}</p>
         </div>
       </div>
 
-      <div className="thumbs" role="radiogroup" aria-label="Omdöme">
+      <div className="thumbs" role="radiogroup" aria-label={f.howWas}>
         <button
           role="radio"
           aria-checked={rating === "upp"}
@@ -142,7 +144,7 @@ function Feedback() {
           onClick={() => rate("upp")}
         >
           <span className="thumb-icon" aria-hidden>👍</span>
-          Gott
+          {f.good}
         </button>
         <button
           role="radio"
@@ -151,7 +153,7 @@ function Feedback() {
           onClick={() => rate("ner")}
         >
           <span className="thumb-icon" aria-hidden>👎</span>
-          Inte så gott
+          {f.notGood}
         </button>
       </div>
 
@@ -159,14 +161,14 @@ function Feedback() {
         <>
           <section className="section">
             <h2>
-              {rating === "upp" ? "Vad var bra?" : "Vad var inte bra?"} <span className="optional">(om du vill)</span>
+              {rating === "upp" ? f.whatGood : f.whatBad} <span className="optional">{t.optional}</span>
             </h2>
             <div className="chips">
               {reasonList.map(({ name }) => {
                 const on = reasons.includes(name);
                 return (
                   <button key={name} className={`chip ${on ? "selected" : ""}`} aria-pressed={on} onClick={() => toggleReason(name)}>
-                    {on ? "✓ " : "+ "}{name}
+                    {on ? "✓ " : "+ "}{tm.reason(name)}
                   </button>
                 );
               })}
@@ -174,8 +176,8 @@ function Feedback() {
           </section>
 
           <section className="section">
-            <h2>Hur mycket åt du? <span className="optional">(om du vill)</span></h2>
-            <div className="segmented segmented-4" role="radiogroup" aria-label="Hur mycket du åt">
+            <h2>{f.howMuch} <span className="optional">{t.optional}</span></h2>
+            <div className="segmented segmented-4" role="radiogroup" aria-label={f.howMuch}>
               {eatenOptions.map((e) => (
                 <button
                   key={e.id}
@@ -185,7 +187,7 @@ function Feedback() {
                   onClick={() => chooseEaten(e.id)}
                 >
                   <span className={`plate plate-${e.id}`} aria-hidden />
-                  <strong>{e.name}</strong>
+                  <strong>{tm.eaten(e.id, e.name)}</strong>
                 </button>
               ))}
             </div>

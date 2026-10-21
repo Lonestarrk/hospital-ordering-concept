@@ -2,16 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Screen } from "@/components/Screen";
-import { useOrder } from "@/components/OrderProvider";
+import { LanguageChoice, Screen } from "@/components/Screen";
+import { useOrder, useT } from "@/components/OrderProvider";
 import { checkPersonnummer, formatPersonnummer } from "@/lib/personnummer";
 import { DEMO_PERSONNUMMER, findPatient } from "@/lib/data";
-
-const SLOTS = "ÅÅÅÅMMDD-XXXX";
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useOrder();
+  const { t } = useT();
+  const l = t.login;
   const [digits, setDigits] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -27,12 +27,12 @@ export default function LoginPage() {
   const submit = () => {
     const check = checkPersonnummer(digits);
     if (!check.ok) {
-      setError(check.reason);
+      setError(l.errors[check.reason]);
       return;
     }
     const patient = findPatient(check.normalized);
     if (!patient) {
-      setError("Vi hittar inte numret på din avdelning. Kontrollera siffrorna eller tryck på Hjälp.");
+      setError(l.errors.notFound);
       return;
     }
     login(patient);
@@ -51,53 +51,51 @@ export default function LoginPage() {
   });
 
   const formatted = formatPersonnummer(digits);
-  const display = formatted + SLOTS.slice(formatted.length);
+  const display = formatted + l.slots.slice(formatted.length);
   const complete = digits.length === 12;
 
   return (
-    <Screen speakText="Hej och välkommen! Här beställer du din mat. Skriv ditt personnummer med siffrorna på skärmen. Först år, månad och dag, sedan de fyra sista siffrorna. Tryck sedan på Fortsätt.">
+    <Screen speakText={l.speak}>
       <div className="login">
         <section className="login-intro">
-          <p className="eyebrow">Hej och välkommen!</p>
-          <h1>Här beställer du din mat</h1>
-          <p className="lead">
-            Skriv ditt personnummer så vet vi vem du är – och vilken mat som passar dig.
-          </p>
+          <LanguageChoice />
+          <p className="eyebrow">{l.eyebrow}</p>
+          <h1>{l.title}</h1>
+          <p className="lead">{l.lead}</p>
           <ul className="reassure">
-            <li>Det tar ungefär två minuter</li>
-            <li>Du kan inte göra fel – allt går att ändra</li>
-            <li>Behöver du hjälp? Tryck på <strong>Hjälp</strong> uppe till höger</li>
+            {l.reassure.map((r) => <li key={r}>{r}</li>)}
+            <li>{l.reassureHelp[0]}<strong>{l.reassureHelp[1]}</strong>{l.reassureHelp[2]}</li>
           </ul>
         </section>
 
-        <section className="login-pad" aria-label="Skriv personnummer">
-          <label className="pnr-label" htmlFor="pnr">Ditt personnummer</label>
-          <output id="pnr" className={`pnr ${error ? "pnr-error" : ""}`} aria-live="polite">
+        <section className="login-pad" aria-label={l.pnrLabel}>
+          <label className="pnr-label" htmlFor="pnr">{l.pnrLabel}</label>
+          <output id="pnr" dir="ltr" className={`pnr ${error ? "pnr-error" : ""}`} aria-live="polite">
             <span className="pnr-typed">{formatted}</span>
             <span className="pnr-rest" aria-hidden>{display.slice(formatted.length)}</span>
           </output>
-          <p className="pnr-hint">År, månad, dag – och fyra sista siffrorna</p>
+          <p className="pnr-hint">{l.pnrHint}</p>
           {error && <p className="error" role="alert">{error}</p>}
 
-          <div className="keypad">
+          <div className="keypad" dir="ltr">
             {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((k) => (
               <button key={k} className="key" onClick={() => press(k)}>{k}</button>
             ))}
-            <button className="key key-muted" onClick={erase} aria-label="Radera en siffra">⌫ Radera</button>
+            <button className="key key-muted" onClick={erase} aria-label={l.eraseAria}>{l.erase}</button>
             <button className="key" onClick={() => press("0")}>0</button>
             <button
               className="key key-go"
               onClick={submit}
               disabled={!complete}
             >
-              Fortsätt →
+              {l.submit}
             </button>
           </div>
 
           <button className="demo-link" onClick={() => { setError(null); setDigits(DEMO_PERSONNUMMER); }}>
-            Demo: fyll i Ingrids personnummer
+            {l.demoFill}
           </button>
-          <a className="demo-link" href="/koket">Personal: kökets vy →</a>
+          <a className="demo-link" href="/koket">{l.staffLink}</a>
         </section>
       </div>
     </Screen>
