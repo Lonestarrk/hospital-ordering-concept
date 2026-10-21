@@ -761,19 +761,20 @@ img.summary-image {
 
 /* ---------- Stegindikator ---------- */
 
+/* Rutnät i stället för flex-gap, som saknas i äldre Safari på iPad. */
 .progress {
   list-style: none;
-  display: flex;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
   gap: 8px;
   margin: 0;
   padding: 0 24px 10px;
 }
 
 .progress-step {
-  flex: 1;
   display: flex;
   align-items: center;
-  gap: 10px;
   padding: 10px 14px;
   border-radius: 14px;
   background: var(--surface-2);
@@ -802,6 +803,7 @@ img.summary-image {
   color: var(--text);
   font-size: 0.9em;
   flex-shrink: 0;
+  margin-inline-end: 10px;
 }
 
 .progress-step.is-current .progress-dot {
