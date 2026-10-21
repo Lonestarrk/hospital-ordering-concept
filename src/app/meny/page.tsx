@@ -1,9 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Screen, useAnnounce } from "@/components/Screen";
 import { useRequirePatient, useT } from "@/components/OrderProvider";
-import { dishCategories, dishSuits, dishes, foodCategories, meal } from "@/lib/data";
+import { dishBlockers, dishCategories, dishSuits, dishes, foodCategories, meal } from "@/lib/data";
+import { useBlockerText } from "@/components/useBlockerText";
 import { speak, type VoiceCommand } from "@/lib/voice";
 
 const ORDINALS = [
@@ -14,7 +16,19 @@ const ORDINALS = [
 ];
 
 export default function MenuPage() {
+  return (
+    <Suspense>
+      <Menu />
+    </Suspense>
+  );
+}
+
+function Menu() {
   const router = useRouter();
+  const params = useSearchParams();
+  // Dolda rätter visas bara på begäran – läget står i adressen (?dolda=1).
+  const showHidden = params.has("dolda");
+  const blockerText = useBlockerText();
   const { patient, order, updateOrder, meals, taste } = useRequirePatient();
   const { t, tm } = useT();
   const m = t.menu;
@@ -58,6 +72,8 @@ export default function MenuPage() {
       phrases: d.voiceWords,
       action: () => speak(`${d.name} passar tyvärr inte din kost idag. Du kan välja ${suitable.map((x) => x.name).join(", eller ")}.`),
     })),
+    { phrases: ["visa dolda", "visa de andra", "visa alla"], action: () => router.replace("/meny?dolda=1") },
+    { phrases: ["dölj"], action: () => router.replace("/meny") },
     { phrases: ["tillbaka"], action: () => router.push("/valkommen") },
   ];
 
@@ -115,7 +131,44 @@ export default function MenuPage() {
         })}
       </div>
 
-      {hidden.length > 0 && <p className="muted center">{m.hidden(hidden.length)}</p>}
+      {hidden.length > 0 && (
+        <section className="hidden-dishes" aria-labelledby="hidden-title">
+          <p className="muted center">{m.hidden(hidden.length)}</p>
+          <button
+            className="taste-link"
+            aria-expanded={showHidden}
+            onClick={() => router.replace(showHidden ? "/meny" : "/meny?dolda=1")}
+          >
+            {showHidden ? m.hideHidden : `👁 ${m.showHidden(hidden.length)}`}
+          </button>
+
+          {showHidden && (
+            <>
+              <h2 id="hidden-title" className="hidden-title">{m.hiddenTitle}</h2>
+              <p className="muted">{m.hiddenLead}</p>
+              <ul className="dish-grid blocked-grid">
+                {hidden.map((dish) => {
+                  const text = tm.dish(dish);
+                  return (
+                    // Inte en knapp: dolda rätter går inte att välja.
+                    <li key={dish.id} className="dish blocked" aria-disabled="true">
+                      <img className="dish-image" src={dish.image} alt={text.imageAlt} />
+                      <div className="dish-body">
+                        <span className="dish-label dish-blocked">🚫 {m.notOrderable}</span>
+                        <h3>{text.name}</h3>
+                        <p>{text.description}</p>
+                        <ul className="blockers">
+                          {dishBlockers(dish, patient).map((b, i) => <li key={i}>{blockerText(b)}</li>)}
+                        </ul>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          )}
+        </section>
+      )}
 
       <button className="taste-link" onClick={() => router.push("/min-smak?sen=meny")}>
         {m.tasteLink}

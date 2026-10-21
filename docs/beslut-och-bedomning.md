@@ -6,7 +6,7 @@ Underlag för juryn och för teamets presentation. Varje del svarar på juryns e
 
 | Skyddsräcke | Hur prototypen uppfyller det | Var i koden |
 |---|---|---|
-| **Allergener och ordinerad kost ändras aldrig automatiskt.** Systemet föreslår, människan bestämmer. | Kost och allergier kommer från vården och visas bara. Menyn filtreras – rätter som inte passar går inte att välja, inte ens via direktlänk. "Svårt att tugga" blir en signal till personalen, inte en ändring. | `dishSuits` i `src/lib/data.ts`, `src/app/meny/[id]/page.tsx` |
+| **Allergener och ordinerad kost ändras aldrig automatiskt.** Systemet föreslår, människan bestämmer. | Kostavvikelser (allergier, specialkost, konsistens som timbal) kommer från vården och visas bara. Menyn med 20 rätter filtreras – Ingrid ser de 10 hon tål. De dolda kan visas med skälet, men går inte att beställa, inte ens via direktlänk. "Svårt att tugga" blir en signal till personalen, inte en ändring. | `dishSuits` i `src/lib/data.ts`, `src/app/meny/[id]/page.tsx` |
 | **Patientdata går aldrig okontrollerat till en AI-modell.** | Prototypen anropar ingen AI-tjänst. Taligenkänning används **bara** när den kan köras i plattan (`processLocally`) – annars döljs mikrofonen. Ingen röst på inloggningen. | `src/lib/voice.ts` |
 | **Patientskärmar fungerar för alla – syn, motorik, språk.** | Svenska, engelska och arabiska (höger-till-vänster). Uppläsning på valt språk, större text, tryckytor ≥ 56 px, ett beslut per skärm, enkelt språk, hjälpknapp på varje sida, röst där det går. Färger i diagram är testade för färgblindhet. | `src/lib/i18n.ts`, `src/components/Screen.tsx` |
 

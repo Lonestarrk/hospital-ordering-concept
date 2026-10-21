@@ -2,13 +2,26 @@
 // testpersonnummer från Skatteverket. I ett riktigt system kommer patient, kostordination
 // och allergier från vårdens system och kan bara ändras av vårdpersonal – aldrig av appen.
 
-export type DietTag = "diabetes" | "laktosfri" | "glutenfri" | "konsistensanpassad";
+/** Specialkoster som sjukhuset erbjuder. En rätt anger vilka den uppfyller. */
+export type DietTag = "diabetes" | "laktosfri" | "glutenfri" | "vegetarisk";
 
 export const dietLabels: Record<DietTag, string> = {
   diabetes: "Diabeteskost",
   laktosfri: "Laktosfri",
   glutenfri: "Glutenfri",
-  konsistensanpassad: "Lättuggad",
+  vegetarisk: "Vegetarisk",
+};
+
+/** Konsistens enligt sjukhusets konsistensanpassade kost. Patienten ordineras en nivå. */
+export type Consistency = "normal" | "hackad" | "grovpate" | "timbal" | "gele" | "flytande";
+
+export const consistencyLabels: Record<Consistency, string> = {
+  normal: "Normal",
+  hackad: "Hackad",
+  grovpate: "Grov paté",
+  timbal: "Timbal",
+  gele: "Gelé",
+  flytande: "Flytande",
 };
 
 export type Patient = {
@@ -20,6 +33,8 @@ export type Patient = {
   bed: string;
   diet: DietTag[];
   allergies: string[];
+  /** Ordinerad konsistens – rätter med annan konsistens kan inte beställas. */
+  consistency: Consistency;
   /** Sjuksköterskan som har patienten idag – får hjälp-signaler och uppföljningar. */
   nurse: string;
 };
@@ -34,6 +49,7 @@ const patients: Patient[] = [
     bed: "Säng B",
     diet: ["diabetes", "laktosfri"],
     allergies: ["Selleri"],
+    consistency: "normal",
     nurse: "Anna",
   },
 ];
@@ -58,6 +74,7 @@ export type Dish = {
   /** Kostordinationer som rätten passar för. */
   suits: DietTag[];
   allergens: string[];
+  consistency: Consistency;
 };
 
 export const meal = {
@@ -75,9 +92,10 @@ export const dishes: Dish[] = [
     image: "/mat/kalvspett.jpg",
     imageAlt: "Kalvspett med zucchini och paprika på potatismos med brun sås",
     label: "Dagens rätt",
-    voiceWords: ["kalv*", "spett*", "potatismos", "kött*"],
+    voiceWords: ["kalv*", "spett*", "potatismos"],
     suits: ["diabetes", "laktosfri"],
     allergens: [],
+    consistency: "normal",
   },
   {
     id: "lax",
@@ -85,19 +103,10 @@ export const dishes: Dish[] = [
     description: "Med kokt potatis, dillsås och smörkokta morötter.",
     image: "/mat/lax.jpg",
     imageAlt: "Stekt laxfilé med citronklyfta",
-    voiceWords: ["lax*", "fisk"],
+    voiceWords: ["lax*"],
     suits: ["diabetes", "laktosfri", "glutenfri"],
     allergens: ["Fisk"],
-  },
-  {
-    id: "kycklinggryta",
-    name: "Kycklinggryta med ris",
-    description: "Mild gryta med paprika och grönsaker.",
-    image: "/mat/kycklinggryta.jpg",
-    imageAlt: "Kyckling med ris och grönsaker på tallrik",
-    voiceWords: ["kyckling*", "gryta*", "ris"],
-    suits: ["diabetes", "laktosfri", "glutenfri"],
-    allergens: ["Selleri"],
+    consistency: "normal",
   },
   {
     id: "soppa",
@@ -106,9 +115,120 @@ export const dishes: Dish[] = [
     image: "/mat/soppa.jpg",
     imageAlt: "Grönsakssoppa i röd skål med bröd vid sidan",
     label: "Något lätt",
-    voiceWords: ["sopp*", "grönsak*"],
-    suits: ["diabetes", "laktosfri", "konsistensanpassad"],
+    voiceWords: ["grönsakssopp*", "grönsak*"],
+    suits: ["diabetes", "laktosfri"],
     allergens: ["Gluten"],
+    consistency: "normal",
+  },
+  {
+    id: "artsoppa",
+    name: "Ärtsoppa med fläsk",
+    description: "Klassisk gul ärtsoppa med rimmat fläsk och senap.",
+    image: "/mat/artsoppa.jpg",
+    imageAlt: "Ärtsoppa i vit tallrik med fläsk",
+    voiceWords: ["ärtsopp*", "ärt*"],
+    suits: ["diabetes", "laktosfri", "glutenfri"],
+    allergens: ["Senap"],
+    consistency: "normal",
+  },
+  {
+    id: "kycklingcurry",
+    name: "Kycklingcurry med ris",
+    description: "Mild curry med kyckling, grönsaker och kokosmjölk.",
+    image: "/mat/kycklingcurry.jpg",
+    imageAlt: "Kycklingcurry med ris i skål",
+    voiceWords: ["curry*", "kycklingcurry"],
+    suits: ["diabetes", "laktosfri", "glutenfri"],
+    allergens: [],
+    consistency: "normal",
+  },
+  {
+    id: "kalops",
+    name: "Kalops med kokt potatis",
+    description: "Långkokt högrev med morötter, kryddpeppar och inlagda rödbetor.",
+    image: "/mat/kalops.jpg",
+    imageAlt: "Köttgryta med morötter och potatis",
+    voiceWords: ["kalops*", "kött*"],
+    suits: ["diabetes", "laktosfri", "glutenfri"],
+    allergens: [],
+    consistency: "normal",
+  },
+  {
+    id: "sejfile",
+    name: "Stekt sejfilé",
+    description: "Med kokt potatis, citron och gröna ärtor.",
+    image: "/mat/sejfile.jpg",
+    imageAlt: "Stekt vit fiskfilé med citronskiva",
+    voiceWords: ["sej*", "fisk"],
+    suits: ["diabetes", "laktosfri", "glutenfri"],
+    allergens: ["Fisk"],
+    consistency: "normal",
+  },
+  {
+    id: "pannbiff",
+    name: "Pannbiff med kokt potatis",
+    description: "Hemlagad pannbiff med stekt lök, kokt potatis och sallad.",
+    image: "/mat/pannbiff.jpg",
+    imageAlt: "Pannbiff med kokt potatis och sallad på tallrik",
+    voiceWords: ["pannbiff*", "biff*"],
+    suits: ["diabetes", "laktosfri"],
+    allergens: ["Ägg"],
+    consistency: "normal",
+  },
+  {
+    id: "gulasch",
+    name: "Gulaschsoppa",
+    description: "Mustig soppa med nötkött, paprika och potatis.",
+    image: "/mat/gulasch.jpg",
+    imageAlt: "Gulaschsoppa i blå skål",
+    voiceWords: ["gulasch*"],
+    suits: ["diabetes", "laktosfri", "glutenfri"],
+    allergens: [],
+    consistency: "normal",
+  },
+  {
+    id: "bonchili",
+    name: "Vegetarisk bönchili",
+    description: "Bönor, tomat och grönsaker – lite kryddstark.",
+    image: "/mat/bonchili.jpg",
+    imageAlt: "Vegetarisk chili med bönor och basilika",
+    voiceWords: ["chili*", "bön*", "vegetari*"],
+    suits: ["diabetes", "laktosfri", "glutenfri", "vegetarisk"],
+    allergens: [],
+    consistency: "normal",
+  },
+  {
+    id: "kycklinggryta",
+    name: "Kycklinggryta med ris",
+    description: "Mild gryta med paprika och grönsaker.",
+    image: "/mat/kycklinggryta.jpg",
+    imageAlt: "Kyckling med ris och grönsaker på tallrik",
+    voiceWords: ["kycklinggryt*", "gryta*"],
+    suits: ["diabetes", "laktosfri", "glutenfri"],
+    allergens: ["Selleri"],
+    consistency: "normal",
+  },
+  {
+    id: "spaghetti",
+    name: "Spaghetti med köttfärssås",
+    description: "Klassisk köttfärssås med tomat, morot och selleri.",
+    image: "/mat/spaghetti.jpg",
+    imageAlt: "Spaghetti med tomatsås på tallrik",
+    voiceWords: ["spaghetti*", "köttfärs*", "pasta"],
+    suits: ["diabetes", "laktosfri"],
+    allergens: ["Gluten", "Selleri"],
+    consistency: "normal",
+  },
+  {
+    id: "ugnskyckling",
+    name: "Ugnsbakad kyckling med rotsaker",
+    description: "Kycklingklubba med ugnsrostade morötter, palsternacka och rotselleri.",
+    image: "/mat/ugnskyckling.jpg",
+    imageAlt: "Ugnsbakad kyckling med grönsaker i form",
+    voiceWords: ["ugnsbakad kyckling", "rotsak*"],
+    suits: ["diabetes", "laktosfri", "glutenfri"],
+    allergens: ["Selleri"],
+    consistency: "normal",
   },
   {
     id: "pannkakor",
@@ -119,6 +239,18 @@ export const dishes: Dish[] = [
     voiceWords: ["pannkak*"],
     suits: [],
     allergens: ["Ägg", "Mjölk", "Gluten"],
+    consistency: "normal",
+  },
+  {
+    id: "paneradfisk",
+    name: "Panerad fisk med remouladsås",
+    description: "Frasig fiskfilé med remouladsås och potatis.",
+    image: "/mat/paneradfisk.jpg",
+    imageAlt: "Panerade fiskbitar med sås",
+    voiceWords: ["panerad*", "remoulad*"],
+    suits: ["laktosfri"],
+    allergens: ["Fisk", "Ägg", "Gluten", "Senap"],
+    consistency: "normal",
   },
   {
     id: "fiskgratang",
@@ -129,18 +261,71 @@ export const dishes: Dish[] = [
     voiceWords: ["fiskgratäng*", "gratäng*"],
     suits: ["diabetes"],
     allergens: ["Fisk", "Mjölk"],
+    consistency: "normal",
+  },
+  {
+    id: "lasagne",
+    name: "Lasagne",
+    description: "Med köttfärs, tomatsås och ost.",
+    image: "/mat/lasagne.jpg",
+    imageAlt: "Lasagne på tallrik",
+    voiceWords: ["lasagne*"],
+    suits: ["diabetes"],
+    allergens: ["Gluten", "Mjölk"],
+    consistency: "normal",
+  },
+  {
+    id: "schnitzel",
+    name: "Kycklingschnitzel med potatismos",
+    description: "Panerad kycklingfilé med smörigt potatismos.",
+    image: "/mat/schnitzel.jpg",
+    imageAlt: "Panerad kycklingschnitzel på tallrik",
+    voiceWords: ["schnitzel*"],
+    suits: ["diabetes"],
+    allergens: ["Gluten", "Ägg", "Mjölk"],
+    consistency: "normal",
+  },
+  {
+    id: "timbal",
+    name: "Köttfärstimbal med potatispuré",
+    description: "Formad timbal av köttfärs med potatis- och morotspuré.",
+    image: "/mat/timbal.jpg",
+    imageAlt: "Slät potatispuré i skål",
+    voiceWords: ["timbal*"],
+    suits: ["diabetes", "laktosfri"],
+    allergens: ["Ägg"],
+    consistency: "timbal",
+  },
+  {
+    id: "naringssoppa",
+    name: "Näringsrik grönsakssoppa",
+    description: "Slät, energiberikad soppa att dricka.",
+    image: "/mat/naringssoppa.jpg",
+    imageAlt: "Slät grön soppa i djup tallrik",
+    voiceWords: ["näringssopp*"],
+    suits: ["diabetes", "laktosfri", "glutenfri"],
+    allergens: [],
+    consistency: "flytande",
   },
 ];
 
-/**
- * En rätt passar om den uppfyller alla patientens kostordinationer och inte innehåller
- * något hon är allergisk mot. Appen filtrerar bara – den ändrar aldrig ordinationen.
- */
-export function dishSuits(dish: Dish, patient: Pick<Patient, "diet" | "allergies">): boolean {
-  return (
-    patient.diet.every((tag) => dish.suits.includes(tag)) &&
-    !dish.allergens.some((a) => patient.allergies.includes(a))
-  );
+/** Varför en rätt inte passar patienten. Appen visar skälen men ändrar aldrig ordinationen. */
+export type Blocker =
+  | { kind: "allergen"; allergen: string }
+  | { kind: "diet"; tag: DietTag }
+  | { kind: "consistency"; consistency: Consistency };
+
+export function dishBlockers(dish: Dish, patient: Pick<Patient, "diet" | "allergies" | "consistency">): Blocker[] {
+  return [
+    ...dish.allergens.filter((a) => patient.allergies.includes(a)).map((allergen) => ({ kind: "allergen" as const, allergen })),
+    ...patient.diet.filter((tag) => !dish.suits.includes(tag)).map((tag) => ({ kind: "diet" as const, tag })),
+    ...(dish.consistency !== patient.consistency ? [{ kind: "consistency" as const, consistency: dish.consistency }] : []),
+  ];
+}
+
+/** En rätt kan beställas bara om den inte krockar med någon av patientens kostavvikelser. */
+export function dishSuits(dish: Dish, patient: Pick<Patient, "diet" | "allergies" | "consistency">): boolean {
+  return dishBlockers(dish, patient).length === 0;
 }
 
 export type Portion = "liten" | "lagom" | "stor";
@@ -161,11 +346,11 @@ export const extras: { name: string; voiceWords: string[] }[] = [
 export type Drink = { id: string; name: string; emoji: string; voiceWords: string[]; suits: DietTag[] };
 
 export const drinks: Drink[] = [
-  { id: "vatten", name: "Vatten", emoji: "💧", voiceWords: ["vatten"], suits: ["diabetes", "laktosfri", "glutenfri", "konsistensanpassad"] },
-  { id: "mjolk", name: "Laktosfri mjölk", emoji: "🥛", voiceWords: ["mjölk*"], suits: ["diabetes", "laktosfri", "glutenfri", "konsistensanpassad"] },
-  { id: "lingondricka", name: "Lingondricka utan socker", emoji: "🍹", voiceWords: ["lingon*", "dricka"], suits: ["diabetes", "laktosfri", "glutenfri", "konsistensanpassad"] },
-  { id: "kaffe", name: "Kaffe", emoji: "☕", voiceWords: ["kaffe"], suits: ["diabetes", "laktosfri", "glutenfri", "konsistensanpassad"] },
-  { id: "saft", name: "Saft", emoji: "🧃", voiceWords: ["saft*"], suits: ["laktosfri", "glutenfri", "konsistensanpassad"] },
+  { id: "vatten", name: "Vatten", emoji: "💧", voiceWords: ["vatten"], suits: ["diabetes", "laktosfri", "glutenfri", "vegetarisk"] },
+  { id: "mjolk", name: "Laktosfri mjölk", emoji: "🥛", voiceWords: ["mjölk*"], suits: ["diabetes", "laktosfri", "glutenfri", "vegetarisk"] },
+  { id: "lingondricka", name: "Lingondricka utan socker", emoji: "🍹", voiceWords: ["lingon*", "dricka"], suits: ["diabetes", "laktosfri", "glutenfri", "vegetarisk"] },
+  { id: "kaffe", name: "Kaffe", emoji: "☕", voiceWords: ["kaffe"], suits: ["diabetes", "laktosfri", "glutenfri", "vegetarisk"] },
+  { id: "saft", name: "Saft", emoji: "🧃", voiceWords: ["saft*"], suits: ["laktosfri", "glutenfri", "vegetarisk"] },
 ];
 
 export function drinkSuits(drink: Drink, diet: DietTag[]): boolean {
@@ -238,6 +423,20 @@ export const foodCategories: FoodCategory[] = [
 /** Vilka kategorier varje rätt på menyn hör till. */
 export const dishCategories: Record<string, string[]> = {
   kalvspett: ["husmanskost", "kott"],
+  artsoppa: ["husmanskost", "soppor"],
+  kycklingcurry: ["kyckling", "pasta", "kryddigt"],
+  kalops: ["husmanskost", "kott"],
+  sejfile: ["fisk", "husmanskost"],
+  pannbiff: ["husmanskost", "kott"],
+  gulasch: ["soppor", "kott", "kryddigt"],
+  bonchili: ["vegetariskt", "kryddigt"],
+  spaghetti: ["pasta", "kott"],
+  ugnskyckling: ["kyckling"],
+  paneradfisk: ["fisk"],
+  lasagne: ["pasta", "kott"],
+  schnitzel: ["kyckling"],
+  timbal: ["kott"],
+  naringssoppa: ["soppor"],
   lax: ["fisk"],
   kycklinggryta: ["kyckling", "pasta"],
   soppa: ["soppor", "vegetariskt"],

@@ -3,7 +3,8 @@
 import { useParams, useRouter } from "next/navigation";
 import { Screen, useAnnounce } from "@/components/Screen";
 import { useRequirePatient, useT } from "@/components/OrderProvider";
-import { dishSuits, dishes, extras, portions, type Portion } from "@/lib/data";
+import { dishBlockers, dishes, extras, portions, type Portion } from "@/lib/data";
+import { useBlockerText } from "@/components/useBlockerText";
 import type { VoiceCommand } from "@/lib/voice";
 
 export default function DishPage() {
@@ -13,9 +14,34 @@ export default function DishPage() {
   const announce = useAnnounce();
   const { t, tm } = useT();
   const k = t.dish;
+  const blockerText = useBlockerText();
   const dish = dishes.find((d) => d.id === id);
-  // Rätter som inte passar patientens kost/allergier går inte att välja, inte ens via direktlänk.
-  if (!patient || !dish || !dishSuits(dish, patient)) return null;
+  if (!patient || !dish) return null;
+
+  // Rätter som inte passar patientens kost går inte att beställa, inte ens via direktlänk.
+  const blockers = dishBlockers(dish, patient);
+  if (blockers.length > 0) {
+    const m = t.menu;
+    return (
+      <Screen
+        speakText={`${m.blockedTitle}. ${blockers.map(blockerText).join(". ")}. ${m.blockedLead}`}
+        footer={<button className="btn btn-primary btn-large" onClick={() => router.push("/meny")}>{m.backToMenu}</button>}
+      >
+        <div className="dish-hero">
+          <img className="dish-hero-image blocked-image" src={dish.image} alt={tm.dish(dish).imageAlt} />
+          <div>
+            <p className="eyebrow">🚫 {m.notOrderable}</p>
+            <h1>{tm.dish(dish).name}</h1>
+            <p className="lead">{m.blockedTitle}</p>
+            <ul className="blockers">
+              {blockers.map((b, i) => <li key={i}>{blockerText(b)}</li>)}
+            </ul>
+            <p className="muted">{m.blockedLead}</p>
+          </div>
+        </div>
+      </Screen>
+    );
+  }
 
   const toggleExtra = (extra: string) => {
     const on = order.extras.includes(extra);

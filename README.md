@@ -29,7 +29,7 @@ Logga in med Ingrids **syntetiska** personnummer **19480302-2328** (eller tryck 
 |---|---|---|
 | 1 | `/` | **Språkval** (svenska, English, العربية) och inloggning med personnummer på ett stort sifferblock. Numret kontrolleras (datum och kontrollsiffra) och felen förklaras i klartext. |
 | 2 | `/valkommen` | "Hej Ingrid! Stämmer det här?" – namn, rum, säng, kost och allergier. Har hon ett påbörjat val visas *Fortsätt där jag var*. |
-| 3 | `/meny` | **Foton på maten.** Bara rätter som passar hennes kost och allergier visas, och en rätt är föreslagen med skälet utskrivet. Det står hur många som är dolda och varför. |
+| 3 | `/meny` | **20 rätter med foton.** Bara de som passar hennes kostavvikelser visas: allergier, specialkost och konsistens. En rätt är föreslagen med skälet utskrivet. Under menyn står hur många som är dolda. *Visa dem* visar dem gråade med skälet ("Innehåller selleri", "Passar inte: laktosfri", "Konsistens: timbal"), men de går inte att beställa (`/meny?dolda=1`). |
 | 4 | `/meny/[id]` | Allergener, portionsstorlek ("Hur hungrig är du?") och önskemål som "Skuren i små bitar". |
 | 5 | `/dryck` | Dryck som passar kosten. |
 | 6 | `/sammanfattning` | "Stämmer det här?" – allt går att ändra. |
@@ -77,6 +77,22 @@ riktig lösning behöver anpassa tilltalet efter patienten.
 - **Röst.** Hon kan säga "tummen upp", "för kall", "jag åt allt" och "skicka".
 - **Demo.** På bekräftelsesidan finns länken *"Demo: maten har serverats"*, som hoppar
   fram i tiden så att man kan betygsätta det man just beställde.
+
+## Kostavvikelser och dolda rätter
+
+Patientens kostavvikelser kommer från vården (`src/lib/data.ts`):
+
+| Avvikelse | Ingrid | Andra nivåer i modellen |
+|---|---|---|
+| Allergier | Selleri | Fisk, ägg, mjölk, gluten, senap … |
+| Specialkost | Diabeteskost, laktosfri | Glutenfri, vegetarisk |
+| Konsistens | Normal | Hackad, grov paté, timbal, gelé, flytande |
+
+En rätt kan bara beställas om den inte krockar med någon avvikelse (`dishBlockers`). Av
+de 20 rätterna ser Ingrid 10. De andra 10 är dolda: 3 för selleri, 2 för att de inte är
+diabeteskost, 3 för att de inte är laktosfria och 2 för fel konsistens (timbal, flytande).
+Hon kan välja att visa dem, men de går inte att beställa, inte ens via en direktlänk. Appen
+visar skälet och att bara personalen kan ändra kosten.
 
 ## Min smak – det Ingrid tycker om
 
@@ -151,6 +167,20 @@ Fotona i `public/mat/` kommer från [Pexels](https://www.pexels.com/license/) oc
 
 | Rätt | Källa |
 |---|---|
+| Ärtsoppa med fläsk | https://www.pexels.com/photo/7190222/ |
+| Kycklingcurry med ris | https://www.pexels.com/photo/674574/ |
+| Kalops | https://www.pexels.com/photo/1618952/ |
+| Stekt sejfilé | https://www.pexels.com/photo/15146204/ |
+| Pannbiff | https://www.pexels.com/photo/4210799/ |
+| Gulaschsoppa | https://www.pexels.com/photo/8024112/ |
+| Vegetarisk bönchili | https://www.pexels.com/photo/5713756/ |
+| Spaghetti med köttfärssås | https://www.pexels.com/photo/31637793/ |
+| Ugnsbakad kyckling med rotsaker (beskuren) | https://www.pexels.com/photo/6210764/ |
+| Panerad fisk | https://www.pexels.com/photo/11513615/ |
+| Lasagne | https://www.pexels.com/photo/13823542/ |
+| Kycklingschnitzel | https://www.pexels.com/photo/16696798/ |
+| Köttfärstimbal (bild: potatispuré) | https://www.pexels.com/photo/30635680/ |
+| Näringsrik grönsakssoppa | https://www.pexels.com/photo/8738014/ |
 | Kalvspett med potatismos | https://www.pexels.com/photo/2739250/ |
 | Ugnsbakad lax | https://www.pexels.com/photo/2374946/ |
 | Kycklinggryta med ris | https://www.pexels.com/photo/21822134/ |
@@ -175,4 +205,5 @@ Vill ni byta en bild? Lägg en ny fil i `public/mat/` och ändra `image` i `src/
 | ![Tack för omdömet](docs/skarmbilder/10-omdome-tack.png) | ![Menyn minns](docs/skarmbilder/11-meny-minns.png) |
 | ![Min smak](docs/skarmbilder/12-min-smak.png) | ![Menyn efter smak](docs/skarmbilder/13-meny-smak.png) |
 | ![Avbryt med ångra](docs/skarmbilder/18-avbryt.png) | ![Fel med en handling](docs/skarmbilder/20-fel-med-handling.png) |
+| ![Dolda rätter med skäl](docs/skarmbilder/21-dolda-ratter.png) | |
 | ![Fortsätt där du var](docs/skarmbilder/16-fortsatt.png) | ![Arabiska](docs/skarmbilder/17-arabiska.png) |
