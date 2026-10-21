@@ -426,15 +426,11 @@ button:focus-visible {
 }
 
 .order-image {
-  width: 96px;
-  height: auto;
+  width: 80px;
+  height: 80px;
   flex: none;
-  align-self: center;
   border-radius: 14px;
-}
-
-.order-ghost-icon {
-  height: 72px;
+  object-fit: cover;
 }
 
 .order-body {
@@ -1119,8 +1115,7 @@ button:focus-visible {
   background: var(--surface);
   box-shadow: var(--shadow);
   overflow: hidden;
-  /* Raden blir så hög som bilden (eller texten), så att hela bilden syns. */
-  min-height: 120px;
+  min-height: var(--dish-size);
 }
 
 .dish.selected {
@@ -1131,13 +1126,22 @@ button:focus-visible {
   transform: scale(0.99);
 }
 
-/* Hela bilden syns och fyller sin ruta: bredden är fast, höjden följer bildens form. */
+/*
+ * Kvadratisk bildruta som bilden fyller, så att alla rader blir lika höga. Storleken räknas
+ * från skärmhöjden så att minst fyra rätter syns samtidigt på surfplattan.
+ */
+.dish-grid {
+  --dish-size: 150px; /* Äldre Safari (före iOS 15.4) saknar dvh. */
+  --dish-size: clamp(112px, calc((100dvh - 110px) / 4 - 20px), 180px);
+}
+
 .dish-image {
   display: block;
-  width: 240px;
-  height: auto;
+  width: var(--dish-size);
+  height: var(--dish-size);
   flex-shrink: 0;
-  align-self: flex-start;
+  align-self: center;
+  object-fit: cover;
   background: var(--surface-2);
 }
 
@@ -1371,11 +1375,6 @@ html[data-text-size="stor"] .dish-body p {
   object-fit: cover;
 }
 
-img.summary-image {
-  height: auto;
-  object-fit: fill;
-}
-
 .summary-text {
   flex: 1;
   display: flex;
@@ -1587,9 +1586,10 @@ img.summary-image {
 }
 
 .done-receipt-image {
-  width: 72px;
-  height: auto;
+  width: 56px;
+  height: 56px;
   border-radius: 10px;
+  object-fit: cover;
 }
 
 .done-receipt-text {
@@ -2129,8 +2129,7 @@ img.summary-image {
 
 /* Mobil: lägre rader, smalare bild och ingen beskrivning – den finns på rättens sida. */
 @media (max-width: 560px) {
-  .dish { min-height: 0; }
-  .dish-image { width: 38%; }
+  .dish-grid { --dish-size: 112px; }
   .dish-body { padding: 10px 14px; }
   .dish-body h2 { font-size: 1em; }
   .dish-body p { display: none; }
