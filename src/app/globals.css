@@ -147,6 +147,8 @@ button:focus-visible {
 
 .topbar-sub {
   grid-area: sub;
+  /* Direkt under namnet, även när knapparna bredvid gör raden högre. */
+  align-self: start;
   color: var(--text-muted);
   font-size: 0.8em;
 }
