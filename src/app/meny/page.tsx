@@ -156,6 +156,7 @@ function Menu() {
                 </div>
                 <h2>{text.name}</h2>
                 <p>{text.description}</p>
+                <span className="dish-ok">{m.suits}</span>
               </div>
             </button>
           );

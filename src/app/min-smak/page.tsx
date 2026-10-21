@@ -4,7 +4,6 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Screen, useAnnounce } from "@/components/Screen";
 import { useRequirePatient, useT } from "@/components/OrderProvider";
-import { Icon } from "@/components/Icon";
 import { foodCategories, type TasteProfile } from "@/lib/data";
 import { CUSTOM_PREFIX, catalog, cuisines, popularPicks, searchCatalog } from "@/lib/foodCatalog";
 import type { VoiceCommand } from "@/lib/voice";
@@ -279,7 +278,7 @@ function Taste() {
                     aria-label={k.like(cname.toLowerCase())}
                     onClick={() => vote(c.id, "gillar")}
                   >
-                    <Icon name="thumbUp" size={26} />
+                    👍
                   </button>
                   <button
                     className={`taste-vote down ${v === "ogillar" ? "selected" : ""}`}
@@ -287,7 +286,7 @@ function Taste() {
                     aria-label={k.dislike(cname.toLowerCase())}
                     onClick={() => vote(c.id, "ogillar")}
                   >
-                    <Icon name="thumbDown" size={26} />
+                    👎
                   </button>
                 </div>
               </div>

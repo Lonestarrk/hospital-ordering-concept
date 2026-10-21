@@ -1268,6 +1268,12 @@ html[data-text-size="stor"] .dish-body p {
   color: var(--text-muted);
 }
 
+.dish-ok {
+  margin-top: auto;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.8em;
+}
 
 /* Den valda rätten: en liten bild till vänster om namnet, så att portion och önskemål syns direkt. */
 .dish-hero {
@@ -1701,12 +1707,10 @@ html[data-text-size="stor"] .dish-body p {
 }
 
 .thumb-icon {
+  font-size: 80px;
   line-height: 1;
   transition: transform 0.2s;
 }
-
-.thumb-up .thumb-icon { color: var(--primary); }
-.thumb-down .thumb-icon { color: var(--accent); }
 
 .feedback-pick {
   margin: -16px 0 24px;
@@ -1792,15 +1796,14 @@ html[data-text-size="stor"] .dish-body p {
   border-radius: 16px;
   border: 2px solid var(--border);
   background: var(--surface);
-  display: grid;
-  place-items: center;
+  font-size: 26px;
+  filter: grayscale(1);
+  opacity: 0.6;
 }
 
-/* Tummarna syns i färg från början och fylls när de är valda. */
-.taste-vote.up { color: var(--primary); }
-.taste-vote.down { color: var(--accent); }
-.taste-vote.up.selected { border-color: var(--primary); background: var(--primary); color: #fff; }
-.taste-vote.down.selected { border-color: var(--accent); background: var(--accent); color: #fff; }
+.taste-vote.selected { filter: none; opacity: 1; }
+.taste-vote.up.selected { border-color: var(--primary); background: var(--primary-soft); }
+.taste-vote.down.selected { border-color: var(--accent); background: #fbe9e5; }
 
 .dish-taste {
   background: #fdf1ec;
@@ -2189,16 +2192,6 @@ html[data-text-size="stor"] .dish-body p {
   .dish-body h2 { font-size: 1em; }
   .summary { padding: 12px 18px; }
   .summary-row { gap: 20px; }
-}
-
-/* ---------- Ikoner ---------- */
-
-.icon {
-  flex: none;
-}
-
-.diet-info {
-  display: inline-flex;
 }
 
 /* Stegen som en rad med text – visas bara på mobil (nedan). */

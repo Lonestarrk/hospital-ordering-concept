@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Screen, useAnnounce } from "@/components/Screen";
 import { useRequirePatient, useT, type Order } from "@/components/OrderProvider";
-import { Icon } from "@/components/Icon";
 import { Countdown, useSlotText } from "@/components/Countdown";
 import { useNow } from "@/components/useNow";
 import { dishes, occasions, SNACK_MINUTES, type OccasionId } from "@/lib/data";
@@ -181,11 +180,11 @@ export default function OccasionPage() {
                   )}
                   {past && meal && !meal.rating && !meal.skipped && (
                     <button className="btn btn-primary order-action" onClick={() => router.push(`/omdome?id=${meal.id}`)}>
-                      <Icon name="thumbUp" /> <Icon name="thumbDown" /> {m.rate}
+                      👍 👎 {m.rate}
                     </button>
                   )}
                   {past && meal?.rating && (
-                    <span className="order-rated"><Icon name={meal.rating === "upp" ? "thumbUp" : "thumbDown"} size={18} /> {m.rated}</span>
+                    <span className="order-rated">{meal.rating === "upp" ? "👍" : "👎"} {m.rated}</span>
                   )}
                   {/* Låstiden som en list längs kortets underkant, till höger om bilden. */}
                   {!past && slot.deadline && !open && <p className="order-bar order-status">{m.locked}</p>}

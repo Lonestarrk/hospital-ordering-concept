@@ -9,7 +9,6 @@ import { demoClockActive, hhmm } from "@/lib/clock";
 import { useNow } from "./useNow";
 import { OccasionBar } from "./OccasionBar";
 import { InstallButton } from "./Install";
-import { Icon } from "./Icon";
 import {
   chime,
   listenOnce,
@@ -185,16 +184,16 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
         <div className="topbar-actions">
           {canCancel && (
             <button className="tool tool-cancel" onClick={stop}>
-              <Icon name="close" />
+              <span aria-hidden>✕</span>
               <span className="tool-label">{t.cancel.replace(/^✕\s*/, "")}</span>
             </button>
           )}
           <button className="tool tool-lang" onClick={() => setLangOpen(true)} aria-label={t.chooseLanguage}>
-            <Icon name="globe" />
+            <span aria-hidden>🌐</span>
             <span className="tool-label">{languages.find((l) => l.id === lang)?.name}</span>
           </button>
           <button className="tool" onClick={toggleSound} aria-pressed={soundOn}>
-            <Icon name={soundOn ? "soundOn" : "sound"} />
+            <span aria-hidden>{soundOn ? "🔊" : "🔈"}</span>
             <span className="tool-label">{soundOn ? t.soundOn : t.readAloud}</span>
           </button>
           <button
@@ -257,7 +256,7 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
                 onClick={startListening}
                 aria-label={listen.kind === "listening" ? "Sluta lyssna" : "Prata – säg vad du vill"}
               >
-                <Icon name="mic" size={32} />
+                <span aria-hidden>🎤</span>
                 <span className="mic-label">{listen.kind === "listening" ? "Lyssnar…" : "Prata"}</span>
               </button>
             </div>
@@ -328,7 +327,7 @@ function DietBar({ patient, onAbout }: { patient: Patient; onAbout: () => void }
       {items.map((item) => (
         <span key={item} className="diet-item">✓ {item}</span>
       ))}
-      <span className="diet-info"><Icon name="info" size={18} /></span>
+      <span className="diet-info" aria-hidden>ⓘ</span>
     </button>
   );
 }
