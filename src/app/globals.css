@@ -1158,24 +1158,44 @@ html[data-text-size="stor"] .dish-body p {
   font-size: 0.8em;
 }
 
+/* Den valda rätten: en liten bild till vänster om namnet, så att portion och önskemål syns direkt. */
 .dish-hero {
   display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 28px;
+  grid-template-columns: 168px minmax(0, 1fr);
+  gap: 24px;
   align-items: center;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
+/* Hela bilden syns: den skalas ner till ramen i stället för att beskäras. */
 .dish-hero-image {
   width: 100%;
-  height: 220px;
-  border-radius: var(--radius);
-  object-fit: cover;
-  background: var(--surface-2);
+  height: auto;
+  max-height: 168px;
+  object-fit: contain;
+  border-radius: 14px;
+}
+
+.dish-hero h1 {
+  font-size: 1.6em;
+}
+
+.dish-hero .lead {
+  font-size: 1em;
 }
 
 .section {
-  margin-bottom: 32px;
+  margin-bottom: 24px;
+}
+
+/* Bred liggande skärm: portion och önskemål bredvid varandra, så att båda syns utan att scrolla. */
+@media (min-width: 1000px) {
+  .dish-choices {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px;
+    align-items: start;
+  }
 }
 
 .section h2 {
@@ -1199,9 +1219,9 @@ html[data-text-size="stor"] .dish-body p {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 18px 12px;
-  min-height: 140px;
+  gap: 4px;
+  padding: 12px;
+  min-height: 108px;
   border-radius: var(--radius);
   border: 3px solid var(--border);
   background: var(--surface);
@@ -1224,9 +1244,10 @@ html[data-text-size="stor"] .dish-body p {
   margin: 4px 0;
 }
 
-.portion-liten { width: 22px; height: 22px; }
-.portion-lagom { width: 32px; height: 32px; }
-.portion-stor { width: 42px; height: 42px; }
+/* Prickarna står i en lika hög ruta, så att texten hamnar på samma höjd i alla tre. */
+.portion-liten { width: 22px; height: 22px; margin: 10px 0; }
+.portion-lagom { width: 32px; height: 32px; margin: 5px 0; }
+.portion-stor { width: 42px; height: 42px; margin: 0; }
 
 /* ---------- Dryck ---------- */
 
@@ -1809,9 +1830,13 @@ html[data-text-size="stor"] .dish-body p {
 @media (max-width: 860px) {
   .login,
   .dish-grid,
-  .dish-hero,
   .feedback-head {
     grid-template-columns: 1fr;
+  }
+  .dish-hero {
+    grid-template-columns: 112px minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
   }
   .login {
     gap: 24px;

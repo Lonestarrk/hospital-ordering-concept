@@ -103,6 +103,7 @@ export default function DishPage() {
         </div>
       </div>
 
+      <div className="dish-choices">
       <section className="section">
         <h2>{k.hungry}</h2>
         <div className="segmented" role="radiogroup" aria-label={k.hungry}>
@@ -143,6 +144,7 @@ export default function DishPage() {
         </div>
       </section>
       )}
+      </div>
     </Screen>
   );
 }
