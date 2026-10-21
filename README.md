@@ -49,7 +49,7 @@ Code 128 och QR) på en telefon. Streckkoderna skapas med `npm run armband`.
 | Steg | Sida | Vad händer |
 |---|---|---|
 | 1 | `/` | **Språkval** (svenska, English, العربية) och inloggning med **armbandet**: NFC mot plattan eller streckkoden framför kameran. Varje fel har en handling: *Försök igen* eller hänvisning till larmknappen. Har hon ett påbörjat val fortsätter hon direkt där hon var. |
-| 2–3 | `/tillfalle` | **"Hej Ingrid!" och hennes beställningar** i tidsordning: nästa måltid överst, och måltider som har passerat gråade. En serverad måltid utan omdöme har knappen *Hur smakade det?*, och en beställning som inte är låst kan ändras. Under listan **väljer hon måltid:** frukost (08:00), lunch (12:00), fika (14:30), middag (17:30) eller **tilltugg** när som helst. Varje kort har en **nedräkning** till låstiden, två timmar före servering. Har tiden passerat står det "Stängt för idag – beställ till imorgon", och beställningen gäller nästa dag. |
+| 2–3 | `/tillfalle` | **Hennes beställningar** i tidsordning: nästa måltid överst, och måltider som har passerat gråade. En serverad måltid utan omdöme har knappen *Hur smakade det?*, och en beställning som inte är låst kan ändras. **Måltid väljer hon i raden överst** (se nedan). Har låstiden passerat gäller beställningen nästa dag. |
 | 4 | `/meny` | **Rätter för vald måltid**, med nedräkning. Lunch och middag har 20 rätter. Bara de som passar hennes kostavvikelser visas: allergier, specialkost och konsistens. En rätt är föreslagen med skälet utskrivet. Under menyn står hur många som är dolda. *Visa dem* visar dem gråade med skälet ("Innehåller selleri", "Passar inte: laktosfri", "Konsistens: timbal"), men de går inte att beställa (`/meny?dolda=1`). |
 | 5 | `/meny/[id]` | Allergener, portionsstorlek ("Hur hungrig är du?") och önskemål som "Skuren i små bitar". |
 | 6 | `/dryck` | Dryck som passar kosten. |
@@ -58,7 +58,12 @@ Code 128 och QR) på en telefon. Streckkoderna skapas med `npm run armband`.
 | – | `/omdome` | **Omdöme i efterhand:** 👍 eller 👎, valfria skäl och "Hur mycket åt du?". |
 | – | `/min-smak` | **Min smak:** 👍 eller 👎 på olika sorters mat och ❤️ på önskerätter. |
 
-**Sidhuvudet** visar på varje sida patientens namn, rum och säng, och raden **Din kost**:
+**Sidhuvudet** visar på varje sida patientens namn, rum och säng. Under det finns
+**måltidsraden**: frukost (08:00), lunch (12:00), fika (14:30), middag (17:30) och
+**tilltugg** när som helst. Varje knapp visar när måltiden serveras, en **nedräkning** när
+det är mindre än tre timmar kvar till låstiden (två timmar före servering), "imorgon" när
+dagens tid har passerat och "✓ Beställt" när den redan är beställd. Måltiden hon håller på
+att beställa är markerad. Sedan kommer den smala raden **Din kost**:
 diabeteskost, laktosfri och utan selleri. Bakom *Om din kost* står att personalen har
 registrerat kosten, att hon bara ser mat som passar och att bara personalen kan ändra den.
 

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Screen, useAnnounce } from "@/components/Screen";
 import { useRequirePatient, useT, type Order } from "@/components/OrderProvider";
-import { Countdown, useSlotText } from "@/components/Countdown";
+import { useSlotText } from "@/components/Countdown";
 import { useNow } from "@/components/useNow";
 import { dishes, occasions, SNACK_MINUTES, type OccasionId } from "@/lib/data";
 import { hhmm, isOpen, nextSlot, slotFor } from "@/lib/clock";
@@ -24,12 +24,7 @@ export default function OccasionPage() {
   const o = t.occasionPage;
   const m = t.myOrders;
 
-  const cards = occasions.map((occasion) => {
-    const slot = nextSlot(occasion.id, reference);
-    const ordered = placedOrders.find((x) => x.occasion === occasion.id && x.date === slot.date && slot.deadline);
-    const orderedDish = dishes.find((d) => d.id === ordered?.dishId);
-    return { occasion, slot, orderedDish };
-  });
+  const cards = occasions.map((occasion) => ({ occasion, slot: nextSlot(occasion.id, reference) }));
 
   const choose = (id: OccasionId) => {
     const slot = nextSlot(id, reference);
@@ -72,14 +67,13 @@ export default function OccasionPage() {
   return (
     <Screen
       step={1}
-      speakText={`${m.hello(patient.firstName)} ${ordersText} ${o.speak(patient.firstName, items)}`}
+      speakText={`${ordersText} ${o.speak(patient.firstName, items)}`}
       commands={commands}
       voiceHint="”lunch” eller ”fika”"
-      heading={<h1>{m.hello(patient.firstName)}</h1>}
     >
 
       <section className="section my-orders" aria-labelledby="my-orders-title">
-        <h2 id="my-orders-title">{m.title}</h2>
+        <h1 id="my-orders-title" className="my-orders-title">{m.title}</h1>
         {rows.length === 0 ? (
           <p className="muted">{m.none}</p>
         ) : (
@@ -120,31 +114,7 @@ export default function OccasionPage() {
         )}
       </section>
 
-      <section className="section" aria-labelledby="order-more-title">
-        <h2 id="order-more-title">{o.title(patient.firstName)}</h2>
-        <p className="lead">{o.lead}</p>
-        <div className="occasion-grid">
-          {cards.map(({ occasion, slot, orderedDish }) => (
-            <button key={occasion.id} className={`occasion ${orderedDish ? "is-ordered" : ""}`} onClick={() => choose(occasion.id)}>
-              <img className="occasion-image" src={occasion.image} alt="" />
-              <div className="occasion-body">
-                <h3>
-                  <span aria-hidden>{occasion.emoji}</span> {t.occasions[occasion.id]}
-                </h3>
-                <p className="occasion-when">
-                  {!slot.deadline
-                    ? o.snack(SNACK_MINUTES)
-                    : slot.day === 0
-                      ? o.served(when(slot, reference))
-                      : o.closedToday(hhmm(slot.servedAt))}
-                </p>
-                {slot.deadline && <Countdown slot={slot} />}
-                {orderedDish && <p className="occasion-ordered">{o.ordered(tm.dish(orderedDish).name)}</p>}
-              </div>
-            </button>
-          ))}
-        </div>
-      </section>
+      <p className="lead occasion-hint">{o.lead}</p>
     </Screen>
   );
 }
