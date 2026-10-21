@@ -1,20 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Screen } from "@/components/Screen";
 import { useRequirePatient, useT } from "@/components/OrderProvider";
 import { dietLabels, dishSuits, dishes } from "@/lib/data";
 import { pathAfterIntro } from "@/lib/flow";
 import { speak, type VoiceCommand } from "@/lib/voice";
 
-/** Introduktion första gången: tre korta steg, går alltid att hoppa över. */
 export default function IntroPage() {
+  return (
+    <Suspense>
+      <Intro />
+    </Suspense>
+  );
+}
+
+/** Introduktion första gången: tre korta steg, går alltid att hoppa över. Steget står i adressen. */
+function Intro() {
   const router = useRouter();
+  const params = useSearchParams();
   const { patient, meals, markOnboarded, soundOn } = useRequirePatient();
   const { t, tm, speechLang } = useT();
   const i = t.intro;
-  const [step, setStep] = useState(0);
+  const step = Math.min(Math.max(Number(params.get("steg") ?? 1) - 1, 0), i.steps.length - 1);
+  const setStep = (n: number) => router.replace(`/intro?steg=${n + 1}`);
 
   // Läs upp varje nytt steg i ljudläge (första steget läses av Screen).
   useEffect(() => {

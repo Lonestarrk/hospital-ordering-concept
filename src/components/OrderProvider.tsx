@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { emptyTaste, servedHistory, type Patient, type Portion, type ServedMeal, type TasteProfile } from "@/lib/data";
+import { emptyTaste, findPatient, servedHistory, type Patient, type Portion, type ServedMeal, type TasteProfile } from "@/lib/data";
 import { dictionaries, languages, terminology, type Lang } from "@/lib/i18n";
 
 export type Order = {
@@ -57,6 +57,8 @@ type OrderContextValue = State & {
   /** Påbörjat val från förra gången (finns tills hon fortsätter eller börjar om). */
   draft: Draft | undefined;
   resumeDraft: () => string | undefined;
+  /** Ångra "Avbryt": logga in samma patient igen och fortsätt där hon var. */
+  undoStop: (personnummer: string) => string | undefined;
   discardDraft: () => void;
 };
 
@@ -206,6 +208,17 @@ export function OrderProvider({ children }: { children: ReactNode }) {
         return { ...s, order: draft.order, drafts };
       });
       return draft.path;
+    },
+    undoStop: (personnummer) => {
+      const patient = findPatient(personnummer);
+      if (!patient) return undefined;
+      const draft = state.drafts[personnummer];
+      setState((s) => {
+        const drafts = { ...s.drafts };
+        delete drafts[personnummer];
+        return { ...s, patient, order: draft?.order ?? emptyOrder, drafts };
+      });
+      return draft?.path ?? "/valkommen";
     },
     discardDraft: () =>
       setState((s) => {

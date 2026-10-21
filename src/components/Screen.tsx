@@ -50,13 +50,13 @@ export function useAnnounce() {
 }
 
 export function Screen({ speakText, step, commands, voiceHint, highlightTools, children, footer }: ScreenProps) {
-  const { patient, textSize, toggleTextSize, soundOn, setSoundOn, lang, order } = useOrder();
+  const { patient, textSize, toggleTextSize, soundOn, setSoundOn, lang, order, logout } = useOrder();
+  const router = useRouter();
   const pathname = usePathname();
   const { t, tm, speechLang } = useT();
   const say = (text: string) => speak(text, speechLang);
   const [helpOpen, setHelpOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
-  const [cancelOpen, setCancelOpen] = useState(false);
   // Avbryt finns efter inloggningen, men inte när beställningen redan är skickad.
   const canCancel = !!patient && !order.placed && pathname !== "/klart";
   const [listen, setListen] = useState<ListenState>({ kind: "idle" });
@@ -75,6 +75,26 @@ export function Screen({ speakText, step, commands, voiceHint, highlightTools, c
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Avbryt sker direkt (det går att ångra): valet sparas och inloggningen erbjuder "Ångra".
+  const stop = () => {
+    if (patient) {
+      try {
+        sessionStorage.setItem(STOPPED_KEY, JSON.stringify({ personnummer: patient.personnummer, at: Date.now() }));
+      } catch {
+        // Utan lagring visas bara inloggningen – valet är ändå sparat till nästa inloggning.
+      }
+    }
+    logout();
+    router.replace("/");
+  };
+
+  // Andra delar av sidan (t.ex. inloggningens felmeddelande) kan kalla på hjälp.
+  useEffect(() => {
+    const open = () => setHelpOpen(true);
+    window.addEventListener("ingrid-help", open);
+    return () => window.removeEventListener("ingrid-help", open);
+  }, []);
+
   const toggleSound = () => {
     if (soundOn) {
       stopSpeaking();
@@ -87,13 +107,13 @@ export function Screen({ speakText, step, commands, voiceHint, highlightTools, c
 
   const globalCommands: VoiceCommand[] = [
     ...(canCancel
-      ? [{ phrases: ["avbryt", "sluta", "inte nu", "ångrar mig"], action: () => setCancelOpen(true) }]
+      ? [{ phrases: ["avbryt", "sluta", "inte nu", "ångrar mig"], action: () => stop() }]
       : []),
     {
       phrases: ["hjälp", "personal*", "sköterska*"],
       action: () => {
         setHelpOpen(true);
-        say(t.helpDialog.speak);
+        if (patient) say(t.helpDialog.speak(patient.nurse));
       },
     },
     { phrases: ["läs upp", "läs menyn", "upprepa", "igen", "vad sa du"], action: () => speak(speakText) },
@@ -164,7 +184,7 @@ export function Screen({ speakText, step, commands, voiceHint, highlightTools, c
             )}
           </div>
           {canCancel && (
-            <button className="tool tool-cancel" onClick={() => setCancelOpen(true)}>
+            <button className="tool tool-cancel" onClick={stop}>
               {t.cancel}
             </button>
           )}
@@ -236,7 +256,6 @@ export function Screen({ speakText, step, commands, voiceHint, highlightTools, c
 
       {helpOpen && <HelpDialog onClose={() => setHelpOpen(false)} />}
       {langOpen && <LanguageDialog onClose={() => setLangOpen(false)} />}
-      {cancelOpen && <CancelDialog onClose={() => setCancelOpen(false)} />}
     </div>
   );
 }
@@ -265,36 +284,9 @@ export function LanguageChoice({ onChosen }: { onChosen?: () => void }) {
   );
 }
 
+/** Sätts när patienten avbryter, så att inloggningen kan erbjuda "Ångra" en kort stund. */
 export const STOPPED_KEY = "ingrid-stopped";
-
-/** Avsluta utan att beställa. Påbörjade val sparas så att hon kan fortsätta senare. */
-function CancelDialog({ onClose }: { onClose: () => void }) {
-  const { t } = useT();
-  const { order, logout } = useOrder();
-  const router = useRouter();
-  const c = t.cancelDialog;
-  const stop = () => {
-    // Inloggningssidan läser flaggan och visar "Du har avslutat. Inget är beställt."
-    try {
-      sessionStorage.setItem(STOPPED_KEY, "1");
-    } catch {
-      // Utan lagring visas bara inloggningen – inget går förlorat.
-    }
-    logout();
-    router.replace("/");
-  };
-  return (
-    <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="cancel-title" onClick={onClose}>
-      <div className="dialog" onClick={(e) => e.stopPropagation()}>
-        <div className="dialog-icon" aria-hidden>🕊️</div>
-        <h2 id="cancel-title">{c.title}</h2>
-        <p>{order.dishId ? c.bodySaved : c.bodyEmpty}</p>
-        <button className="btn btn-primary btn-block" onClick={onClose}>{c.no}</button>
-        <button className="btn btn-ghost btn-block" onClick={stop}>{c.yes}</button>
-      </div>
-    </div>
-  );
-}
+export const UNDO_STOP_MS = 2 * 60 * 1000;
 
 function LanguageDialog({ onClose }: { onClose: () => void }) {
   const { t } = useT();
@@ -309,31 +301,23 @@ function LanguageDialog({ onClose }: { onClose: () => void }) {
   );
 }
 
+/**
+ * Hjälp skickas direkt till en namngiven person (det går att ångra), med vad som händer
+ * om ingen kommer – ingen "Vill du verkligen?"-fråga först.
+ */
 function HelpDialog({ onClose }: { onClose: () => void }) {
   const { t } = useT();
+  const { patient } = useOrder();
   const h = t.helpDialog;
-  const [called, setCalled] = useState(false);
   return (
     <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="help-title" onClick={onClose}>
       <div className="dialog" onClick={(e) => e.stopPropagation()}>
-        {called ? (
-          <>
-            <div className="dialog-icon" aria-hidden>✅</div>
-            <h2 id="help-title">{h.calledTitle}</h2>
-            <p>{h.calledBody}</p>
-            <button className="btn btn-primary btn-block" onClick={onClose}>{h.ok}</button>
-          </>
-        ) : (
-          <>
-            <div className="dialog-icon" aria-hidden>🙋</div>
-            <h2 id="help-title">{h.title}</h2>
-            <p>{h.body}</p>
-            <button className="btn btn-primary btn-block" onClick={() => setCalled(true)}>
-              {h.yes}
-            </button>
-            <button className="btn btn-ghost btn-block" onClick={onClose}>{h.no}</button>
-          </>
-        )}
+        <div className="dialog-icon" aria-hidden>🙋</div>
+        <h2 id="help-title">{patient ? h.title(patient.nurse) : h.genericTitle}</h2>
+        <p>{patient ? h.body(patient.nurse) : h.genericBody}</p>
+        <p className="muted">{h.escalation}</p>
+        <button className="btn btn-primary btn-block" onClick={onClose}>{h.ok}</button>
+        <button className="btn btn-ghost btn-block" onClick={onClose}>{h.undo}</button>
       </div>
     </div>
   );

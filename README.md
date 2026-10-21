@@ -42,9 +42,14 @@ Hjälpmedel på varje sida: **Språk**, **Läs upp / Ljud på**, **Större text*
 **Hjälp**, som kallar på personalen.
 
 **Ångrat sig?** Knappen **✕ Avbryt** uppe till vänster finns på alla sidor efter
-inloggningen, utom på bekräftelsen där beställningen redan är skickad. Dialogen
-förklarar att inget är beställt och att valet sparas. Inloggningssidan bekräftar sedan:
-"Du har avslutat. Inget är beställt." Med rösten räcker det att säga "avbryt".
+inloggningen, utom på bekräftelsen där beställningen redan är skickad. Avbryt sker
+direkt, utan "Är du säker?". Inloggningen visar: "Du har avslutat. Inget är beställt.
+Det du hade valt är sparat." och knappen **Ångra – fortsätt där jag var**, som gäller i
+2 minuter. Med rösten räcker det att säga "avbryt".
+
+**Hjälp** skickas direkt till Anna, Ingrids sjuksköterska idag, med en ångra-knapp. Det
+står vad som händer om ingen kommer: efter 5 minuter går signalen till hela avdelningen.
+Om Ingrid åt lite eller hade svårt att tugga får Anna veta det på samma sätt.
 
 **Avbruten mitt i?** Plattan loggar ut efter 10 minuter utan aktivitet så att ingen annan
 ser patientens uppgifter, men valet sparas. Vid nästa inloggning kan hon fortsätta exakt
@@ -169,5 +174,6 @@ Vill ni byta en bild? Lägg en ny fil i `public/mat/` och ändra `image` i `src/
 | ![Röstkommando](docs/skarmbilder/8-rost.png) | ![Omdöme](docs/skarmbilder/9-omdome.png) |
 | ![Tack för omdömet](docs/skarmbilder/10-omdome-tack.png) | ![Menyn minns](docs/skarmbilder/11-meny-minns.png) |
 | ![Min smak](docs/skarmbilder/12-min-smak.png) | ![Menyn efter smak](docs/skarmbilder/13-meny-smak.png) |
-| ![Introduktion](docs/skarmbilder/15-intro.png) | ![Avbryt](docs/skarmbilder/18-avbryt.png) |
+| ![Introduktion](docs/skarmbilder/15-intro.png) | ![Avbryt med ångra](docs/skarmbilder/18-avbryt.png) |
+| ![Hjälp till Anna](docs/skarmbilder/19-hjalp.png) | ![Fel med en handling](docs/skarmbilder/20-fel-med-handling.png) |
 | ![Fortsätt där du var](docs/skarmbilder/16-fortsatt.png) | ![Arabiska](docs/skarmbilder/17-arabiska.png) |

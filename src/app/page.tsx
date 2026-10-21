@@ -2,32 +2,46 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LanguageChoice, Screen, STOPPED_KEY } from "@/components/Screen";
+import { LanguageChoice, Screen, STOPPED_KEY, UNDO_STOP_MS } from "@/components/Screen";
 import { useOrder, useT } from "@/components/OrderProvider";
-import { checkPersonnummer, formatPersonnummer } from "@/lib/personnummer";
+import { checkPersonnummer, formatPersonnummer, type PersonnummerError } from "@/lib/personnummer";
 import { DEMO_PERSONNUMMER, findPatient } from "@/lib/data";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login } = useOrder();
+  const { login, undoStop, drafts } = useOrder();
   const { t } = useT();
   const l = t.login;
   const [digits, setDigits] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  // Visas när patienten har avbrutit utan att beställa.
-  const [stopped, setStopped] = useState(false);
+  const [error, setError] = useState<PersonnummerError | "notFound" | null>(null);
+  // Personnumret för den som nyss tryckte på Avbryt – då erbjuds "Ångra" en kort stund.
+  const [stopped, setStopped] = useState<string | null>(null);
   useEffect(() => {
     try {
-      setStopped(sessionStorage.getItem(STOPPED_KEY) === "1");
+      const raw = sessionStorage.getItem(STOPPED_KEY);
       sessionStorage.removeItem(STOPPED_KEY);
+      const flag = raw ? (JSON.parse(raw) as { personnummer: string; at: number }) : null;
+      if (flag && Date.now() - flag.at < UNDO_STOP_MS) setStopped(flag.personnummer);
     } catch {
       // Ingen lagring – visa ingen notis.
     }
   }, []);
 
+  const undo = () => {
+    if (!stopped) return;
+    router.push(undoStop(stopped) ?? "/valkommen");
+  };
+
+  // Varje fel har en handling som löser det.
+  const errorAction: Partial<Record<PersonnummerError | "notFound", () => void>> = {
+    date: () => { setDigits(""); setError(null); },
+    checksum: () => { setDigits((d) => d.slice(0, 8)); setError(null); },
+    notFound: () => window.dispatchEvent(new Event("ingrid-help")),
+  };
+
   const press = (key: string) => {
     setError(null);
-    setStopped(false);
+    setStopped(null);
     setDigits((d) => (d.length < 12 ? d + key : d));
   };
   const erase = () => {
@@ -38,12 +52,12 @@ export default function LoginPage() {
   const submit = () => {
     const check = checkPersonnummer(digits);
     if (!check.ok) {
-      setError(l.errors[check.reason]);
+      setError(check.reason);
       return;
     }
     const patient = findPatient(check.normalized);
     if (!patient) {
-      setError(l.errors.notFound);
+      setError("notFound");
       return;
     }
     login(patient);
@@ -70,7 +84,12 @@ export default function LoginPage() {
       <div className="login">
         <section className="login-intro">
           <LanguageChoice />
-          {stopped && <p className="notice" role="status">✓ {t.cancelDialog.done}</p>}
+          {stopped && (
+            <div className="notice" role="status">
+              <p>✓ {t.stopped.done}{drafts[stopped] ? ` ${t.stopped.saved}` : ""}</p>
+              <button className="btn btn-small" onClick={undo}>{t.stopped.undo}</button>
+            </div>
+          )}
           <p className="eyebrow">{l.eyebrow}</p>
           <h1>{l.title}</h1>
           <p className="lead">{l.lead}</p>
@@ -87,7 +106,16 @@ export default function LoginPage() {
             <span className="pnr-rest" aria-hidden>{display.slice(formatted.length)}</span>
           </output>
           <p className="pnr-hint">{l.pnrHint}</p>
-          {error && <p className="error" role="alert">{error}</p>}
+          {error && (
+            <div className="error" role="alert">
+              <p>{l.errors[error]}</p>
+              {errorAction[error] && (
+                <button className="btn btn-small error-action" onClick={errorAction[error]}>
+                  {l.errorActions[error as keyof typeof l.errorActions]}
+                </button>
+              )}
+            </div>
+          )}
 
           <div className="keypad" dir="ltr">
             {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((k) => (

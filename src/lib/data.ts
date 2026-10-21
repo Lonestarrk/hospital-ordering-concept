@@ -20,6 +20,8 @@ export type Patient = {
   bed: string;
   diet: DietTag[];
   allergies: string[];
+  /** Sjuksköterskan som har patienten idag – får hjälp-signaler och uppföljningar. */
+  nurse: string;
 };
 
 const patients: Patient[] = [
@@ -32,6 +34,7 @@ const patients: Patient[] = [
     bed: "Säng B",
     diet: ["diabetes", "laktosfri"],
     allergies: ["Selleri"],
+    nurse: "Anna",
   },
 ];
 

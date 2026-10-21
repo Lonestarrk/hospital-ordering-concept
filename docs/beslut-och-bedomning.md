@@ -17,39 +17,70 @@ Underlag för juryn och för teamets presentation. Varje del svarar på juryns e
 
 | Vem ansvarar | För vad | Uppgiften de slipper |
 |---|---|---|
-| **Dietisten** | Att patienten får rätt kost | Att stämma av varje beställning mot ordinationen – systemet visar bara det som passar. |
-| **Sjuksköterskan / undersköterskan** | Att patienten äter och får näring | Att gå runt med pappersmenyn och skriva upp beställningar. De får signaler om någon äter lite eller har svårt att tugga. |
+| **Dietisten** | Att patienten får rätt kost | Att stämma av varje beställning mot ordinationen. Systemet visar bara det som passar, och ingen skriver om en kost. |
+| **Sjuksköterskan (Anna)** | Att patienten äter och får näring | Att gå runt med pappersmenyn och skriva upp beställningar. Hon får bara de undantag hon ska agera på (se princip 3). |
 
 ### 2. Systemet gör jobbet, människan fattar besluten
-*Testfråga: När användaren öppnar skärmen – ser de ett färdigt förslag eller ett tomt formulär?*
+*Testfråga: När användaren öppnar skärmen – ser hon ett färdigt förslag eller ett tomt formulär?*
 
-- **Ingrid:** menyn är redan filtrerad efter hennes kost, sorterad efter hennes smak, och en rätt är föreslagen med skälet utskrivet ("Eftersom du gav den tummen upp förra gången"). Portionen är förvald. Hon väljer.
-- **Personalen:** ser bara undantagen (hjälp-signal, svårt att tugga).
+Ett färdigt förslag. Menyn är redan filtrerad efter kost och allergier och sorterad efter
+Ingrids smak. En rätt är föreslagen med skälet utskrivet ("Eftersom du gav den tummen upp
+förra gången"), och portionen är förvald. Ingrid väljer.
 
-### 3. *(Sidan med princip 3 saknas i underlaget vi har – fyll i när ni har texten.)*
+### 3. Varje problem är en handling, aldrig en varning
+*Testfråga: För varje signal – vem får den, vilken enda handling löser den, och vad händer om den ignoreras?*
+
+| Signal | Vem får den | Handlingen | Om ingen agerar |
+|---|---|---|---|
+| Ingrid trycker på **Hjälp** | Anna, hennes sjuksköterska idag | Gå till Ingrid | Efter 5 minuter går signalen till alla på avdelningen |
+| Ingrid **åt lite** eller **inget** | Anna | Titta till Ingrid och erbjuda något extra, t.ex. näringsdryck | Före kl 15 går det vidare till avdelningens dietist |
+| Maten var **svår att tugga** | Anna | Bedöma, tillsammans med dietisten, om kosten ska ändras | Före kl 15 går det vidare till dietisten |
+| **Fel i personnumret** | Ingrid | En knapp: *Rätta de fyra sista siffrorna* / *Börja om* | Inget – hon kan inte gå vidare med fel nummer |
+| **Numret hittas inte** | Ingrid → Anna | En knapp: *Be personalen om hjälp* (skickar signalen) | Som Hjälp ovan |
+
+Inga röda märken eller varningar som Ingrid måste tolka själv. Allergin visas som det som
+redan är gjort ("✓ Utan selleri"), inte som en ⚠-varning.
 
 ### 4. Verifiering är arbete – räkna den
-*Hur många saker måste personalen godkänna per patient?*
+*Testfråga: Hur många saker måste en sjuksköterska godkänna per patient och dag, och ser hon varför?*
 
-- **Noll** för en vanlig beställning. Kosten är redan ordinerad, och appen kan inte erbjuda något som inte passar.
-- Patienten själv bekräftar **en** gång: "Stämmer det här?" – med bild och möjlighet att ändra. Inga extra "Är du säker?"-dialoger.
-- Personalen agerar bara på undantag: hjälp-signal och "svårt att tugga".
+- **Noll godkännanden** för vanliga beställningar. Kosten är redan ordinerad, och appen kan inte erbjuda något som inte passar.
+- Anna agerar bara på undantagen i tabellen ovan, och varje undantag talar om varför det kom till henne.
+- **Det som går att ångra sker direkt, med en ångra-knapp. Inga bekräftelsedialoger:**
+  - **Avbryt:** Ingrid loggas ut direkt. Inloggningen visar "Du har avslutat. Inget är beställt. Det du hade valt är sparat." med knappen **Ångra – fortsätt där jag var**, som gäller i 2 minuter.
+  - **Hjälp:** signalen skickas direkt till Anna, med **Ångra – jag klarar mig själv**.
+  - **Beställningen:** kan ändras fram till kl 10:00 via *Ändra beställningen*.
+- **Det som inte går att ångra** (en ändrad kostordination) föreslås bara, och en människa beslutar.
+- **Inga siffror som låtsas vara exakta:** "ca kl 12:00", "ungefär två minuter".
 
 ### 5. Tappa aldrig sammanhanget
-*Om användaren blir avbruten i 20 minuter – kommer hon tillbaka till samma ställe?*
+*Testfråga: Om användaren blir avbruten i 20 minuter – kommer hon tillbaka till exakt samma läge?*
 
-- Ja. Plattan loggar ut efter 10 minuters inaktivitet (så att ingen annan ser hennes uppgifter) men **sparar valet**. Vid nästa inloggning: "Välkommen tillbaka! Du hade börjat välja Ugnsbakad lax" → *Fortsätt där jag var* tar henne till exakt samma sida.
-- Ångrar hon sig trycker hon på **✕ Avbryt**. Dialogen säger att inget är beställt och att valet sparas – det är information, inte en extra "Är du säker?". Nästa gång kan hon fortsätta där hon var.
-- En omladdning av sidan tappar ingenting. Stegindikatorn visar alltid var hon är, och "Tillbaka" behåller hennes val.
+- **Ja.** Plattan loggar ut efter 10 minuter utan aktivitet, för att skydda hennes uppgifter, men valet sparas. Vid nästa inloggning: "Välkommen tillbaka! Du hade börjat välja Ugnsbakad lax" → *Fortsätt där jag var* tar henne till exakt samma sida.
+- **Varje skärm och läge har en egen adress:**
+  - `/meny/lax` för rätten
+  - `/intro?steg=2` för introduktionens steg
+  - `/omdome?id=…&skickat=1` för tack-sidan efter omdömet
+  - `/min-smak?skickat=1` för tack-sidan efter "Min smak"
+
+  En omladdning tappar ingenting.
+- Inga dialoger i dialoger.
 
 ### 6. Mät utfallet, inte leveransen
-*Vilken siffra ändras för kunden om det här fungerar – och syns den inom en månad?*
+*Testfråga: Vilken siffra ändras för kunden om det här fungerar – och syns den inom en månad?*
 
-| Utfall | Var det syns |
+| Utfall för kunden | Hur det mäts |
 |---|---|
-| **Andel måltider där patienten åt minst hälften** (näringsintag) | Ingrid svarar "Hur mycket åt du?" efter måltiden |
-| **Andel tummen upp** | Omdömet efter varje måltid |
-| **Andel beställningar utan hjälp från personalen** | *Nästa steg: räkna hjälp-signaler per beställning* |
+| **Patienterna äter mer** | Andel måltider där patienten åt minst hälften, från *Hur mycket åt du?* efter varje måltid |
+| **Ingen skriver om en kost** | Antal kostordinationer som skrivs in manuellt i beställningen. Målet är noll, eftersom appen läser ordinationen direkt. |
+| **Patienterna klarar sig själva** | Andel beställningar utan hjälp-signal |
+
+### "En chattruta ovanpå ett formulär är inte AI-native"
+
+Vi har ingen chattruta och inget formulär. Systemet gör jobbet innan Ingrid ser skärmen: det
+filtrerar efter kost och allergier, föreslår med skäl, minns vad hon gillar och för vidare
+problem till rätt person. Allt räknas fram i appen, så ingen patientdata skickas till en
+AI-modell.
 
 ## Cagans fyra risker (30 p)
 

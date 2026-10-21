@@ -30,23 +30,20 @@ const sv = {
   list: (items: string[]) => items.join(", "),
   and: (items: string[]) => (items.length > 1 ? `${items.slice(0, -1).join(", ")} och ${items.at(-1)}` : items[0] ?? ""),
   cancel: "✕ Avbryt",
-  cancelDialog: {
-    title: "Vill du sluta för nu?",
-    bodySaved: "Du har inte beställt något. Det du har valt sparas, så du kan fortsätta senare.",
-    bodyEmpty: "Du har inte beställt något. Du kan komma tillbaka när du vill.",
-    yes: "Ja, sluta för nu",
-    no: "Nej, fortsätt välja",
+  stopped: {
     done: "Du har avslutat. Inget är beställt.",
+    saved: "Det du hade valt är sparat.",
+    undo: "Ångra – fortsätt där jag var",
   },
   helpDialog: {
-    title: "Vill du ha hjälp?",
-    body: "Det är helt okej att be om hjälp. Vi kan skicka en signal till personalen på avdelningen.",
-    yes: "Ja, be personalen komma",
-    no: "Nej tack, jag fortsätter själv",
-    calledTitle: "Personalen är meddelad",
-    calledBody: "Någon kommer till dig så snart de kan. Du behöver inte göra något mer.",
+    title: (nurse: string) => `${nurse} har fått din signal`,
+    body: (nurse: string) => `${nurse}, din sjuksköterska idag, kommer till dig så snart hon kan.`,
+    escalation: "Kommer ingen inom 5 minuter går signalen till alla på avdelningen.",
+    genericTitle: "Personalen har fått din signal",
+    genericBody: "Någon kommer till dig så snart de kan.",
     ok: "Okej",
-    speak: "Vill du att personalen kommer? Tryck på den gröna knappen.",
+    undo: "Ångra – jag klarar mig själv",
+    speak: (nurse: string) => `${nurse} har fått din signal och kommer så snart hon kan.`,
   },
   login: {
     speak:
@@ -69,6 +66,7 @@ const sv = {
       checksum: "Numret stämmer inte riktigt. Kontrollera de fyra sista siffrorna.",
       notFound: "Vi hittar inte numret på din avdelning. Kontrollera siffrorna eller tryck på Hjälp.",
     },
+    errorActions: { date: "Börja om", checksum: "Rätta de fyra sista siffrorna", notFound: "Be personalen om hjälp" },
   },
   welcome: {
     speak: (p: { name: string; full: string; place: string; diets: string; allergies: string }) =>
@@ -80,7 +78,7 @@ const sv = {
     careTitle: "Vi har koll på din kost",
     careBody:
       "Vårdpersonalen har registrerat din kost och dina allergier. Du ser bara mat som passar dig – så du kan välja fritt utan att oroa dig.",
-    allergy: "Allergi",
+    allergyFree: (a: string) => `Utan ${a}`,
     careNote: ["Stämmer något inte? Tryck på ", "Hjälp", ". Bara personalen kan ändra din kost och dina allergier."],
     today: (meal: string, time: string) => `Idag beställer du ${meal} som serveras kl ${time}.`,
     no: "Nej, det är inte jag",
@@ -192,10 +190,15 @@ const sv = {
     ratedDown: "Tummen ner. Vad var inte bra?",
     ate: (x: string) => `Du åt ${x}.`,
     thanks: (name: string) => `Tack ${name}!`,
-    thanksSpeak: (name: string, staff: boolean) =>
-      `Tack ${name}! Köket får ditt omdöme.${staff ? " Vi säger också till personalen att maten var svår att tugga." : ""}`,
+    thanksSpeak: (name: string, nurse?: string) =>
+      `Tack ${name}! Köket får ditt omdöme.${nurse ? ` ${nurse} får också veta, och hon tittar till dig.` : ""}`,
     kitchenGets: (dish: string) => `Köket får ditt omdöme om ${dish}.`,
-    staffNote: ["Vi säger till personalen att maten var svår att tugga. De kan se över om du behöver annan mat – ", "det är de som bestämmer", ", inget ändras automatiskt."],
+    tellNurse: {
+      title: (nurse: string) => `${nurse} får veta`,
+      chew: "att maten var svår att tugga. Hon ser över om du behöver annan mat – det är hon och dietisten som bestämmer, inget ändras automatiskt.",
+      ate: "att du åt lite. Hon kommer förbi och kan erbjuda något extra, till exempel en näringsdryck.",
+      escalation: "Har ingen hunnit titta på det före kl 15 går det vidare till avdelningens dietist.",
+    },
     nextTime: "Nästa gång ser du 👍 vid rätten på menyn.",
     orderToday: "Beställ dagens mat →",
   },
@@ -245,23 +248,20 @@ const en: Dict = {
   list: (items) => items.join(", "),
   and: (items) => (items.length > 1 ? `${items.slice(0, -1).join(", ")} and ${items.at(-1)}` : items[0] ?? ""),
   cancel: "✕ Cancel",
-  cancelDialog: {
-    title: "Do you want to stop for now?",
-    bodySaved: "You haven't ordered anything. What you've chosen is saved, so you can continue later.",
-    bodyEmpty: "You haven't ordered anything. You can come back whenever you like.",
-    yes: "Yes, stop for now",
-    no: "No, keep choosing",
+  stopped: {
     done: "You have stopped. Nothing has been ordered.",
+    saved: "What you had chosen is saved.",
+    undo: "Undo – continue where I was",
   },
   helpDialog: {
-    title: "Would you like some help?",
-    body: "It's perfectly fine to ask for help. We can send a signal to the staff on the ward.",
-    yes: "Yes, ask the staff to come",
-    no: "No thanks, I'll carry on",
-    calledTitle: "The staff have been told",
-    calledBody: "Someone will come to you as soon as they can. You don't need to do anything else.",
+    title: (nurse) => `${nurse} has received your call`,
+    body: (nurse) => `${nurse}, your nurse today, will come to you as soon as she can.`,
+    escalation: "If nobody comes within 5 minutes, the call goes to everyone on the ward.",
+    genericTitle: "The staff have received your call",
+    genericBody: "Someone will come to you as soon as they can.",
     ok: "OK",
-    speak: "Would you like the staff to come? Press the green button.",
+    undo: "Undo – I'm fine on my own",
+    speak: (nurse) => `${nurse} has received your call and will come as soon as she can.`,
   },
   login: {
     speak:
@@ -284,6 +284,7 @@ const en: Dict = {
       checksum: "The number isn't quite right. Check the last four digits.",
       notFound: "We can't find this number on your ward. Check the digits or press Help.",
     },
+    errorActions: { date: "Start again", checksum: "Fix the last four digits", notFound: "Ask the staff for help" },
   },
   welcome: {
     speak: (p) =>
@@ -295,7 +296,7 @@ const en: Dict = {
     careTitle: "We keep track of your diet",
     careBody:
       "The care staff have registered your diet and allergies. You will only see food that suits you – so you can choose freely without worrying.",
-    allergy: "Allergy",
+    allergyFree: (a) => `No ${a}`,
     careNote: ["Something not right? Press ", "Help", ". Only the staff can change your diet and allergies."],
     today: (meal, time) => `Today you are ordering ${meal}, served at ${time}.`,
     no: "No, that's not me",
@@ -406,10 +407,15 @@ const en: Dict = {
     ratedDown: "Thumbs down. What wasn't good?",
     ate: (x) => `You ate ${x}.`,
     thanks: (name) => `Thank you ${name}!`,
-    thanksSpeak: (name, staff) =>
-      `Thank you ${name}! The kitchen will get your feedback.${staff ? " We will also tell the staff that the food was hard to chew." : ""}`,
+    thanksSpeak: (name, nurse) =>
+      `Thank you ${name}! The kitchen will get your feedback.${nurse ? ` ${nurse} will also be told and will come and see you.` : ""}`,
     kitchenGets: (dish) => `The kitchen will get your feedback on ${dish}.`,
-    staffNote: ["We will tell the staff that the food was hard to chew. They can check whether you need different food – ", "they make that decision", ", nothing changes automatically."],
+    tellNurse: {
+      title: (nurse) => `${nurse} will be told`,
+      chew: "that the food was hard to chew. She will check whether you need different food – she and the dietitian decide, nothing changes automatically.",
+      ate: "that you ate little. She will come by and can offer something extra, such as a nutrition drink.",
+      escalation: "If nobody has looked at it by 15:00, it goes to the ward's dietitian.",
+    },
     nextTime: "Next time you'll see 👍 next to the dish on the menu.",
     orderToday: "Order today's food →",
   },
@@ -457,23 +463,20 @@ const ar: Dict = {
   list: (items) => items.join("، "),
   and: (items) => (items.length > 1 ? `${items.slice(0, -1).join("، ")} و${items.at(-1)}` : items[0] ?? ""),
   cancel: "✕ إلغاء",
-  cancelDialog: {
-    title: "هل تريدين التوقف الآن؟",
-    bodySaved: "لم تطلبي شيئاً. ما اخترتِه محفوظ، ويمكنك المتابعة لاحقاً.",
-    bodyEmpty: "لم تطلبي شيئاً. يمكنك العودة متى شئتِ.",
-    yes: "نعم، توقفي الآن",
-    no: "لا، تابعي الاختيار",
+  stopped: {
     done: "لقد توقفتِ. لم يُطلب أي شيء.",
+    saved: "ما اخترتِه محفوظ.",
+    undo: "تراجع – تابعي من حيث توقفتِ",
   },
   helpDialog: {
-    title: "هل تحتاجين إلى مساعدة؟",
-    body: "لا بأس أبداً في طلب المساعدة. يمكننا إرسال إشارة إلى طاقم القسم.",
-    yes: "نعم، اطلب حضور الطاقم",
-    no: "لا شكراً، سأتابع بنفسي",
-    calledTitle: "تم إبلاغ الطاقم",
-    calledBody: "سيأتي إليكِ أحدهم في أقرب وقت ممكن. لا تحتاجين إلى فعل أي شيء آخر.",
+    title: (nurse) => `وصلت إشارتك إلى ${nurse}`,
+    body: (nurse) => `${nurse}، ممرضتك اليوم، ستأتي إليكِ في أقرب وقت ممكن.`,
+    escalation: "إذا لم يأتِ أحد خلال 5 دقائق، تُرسل الإشارة إلى جميع العاملين في القسم.",
+    genericTitle: "وصلت إشارتك إلى الطاقم",
+    genericBody: "سيأتي إليكِ أحدهم في أقرب وقت ممكن.",
     ok: "حسناً",
-    speak: "هل تريدين حضور الطاقم؟ اضغطي على الزر الأخضر.",
+    undo: "تراجع – سأتدبر أمري",
+    speak: (nurse) => `وصلت إشارتك إلى ${nurse} وستأتي في أقرب وقت ممكن.`,
   },
   login: {
     speak:
@@ -496,6 +499,7 @@ const ar: Dict = {
       checksum: "الرقم غير صحيح تماماً. تحققي من الأرقام الأربعة الأخيرة.",
       notFound: "لم نجد هذا الرقم في قسمك. تحققي من الأرقام أو اضغطي على مساعدة.",
     },
+    errorActions: { date: "ابدئي من جديد", checksum: "صحّحي الأرقام الأربعة الأخيرة", notFound: "اطلبي المساعدة من الطاقم" },
   },
   welcome: {
     speak: (p) =>
@@ -507,7 +511,7 @@ const ar: Dict = {
     careTitle: "نحن نتابع نظامك الغذائي",
     careBody:
       "سجّل الطاقم الطبي نظامك الغذائي وحساسيتك. سترين فقط الطعام المناسب لكِ – فيمكنك الاختيار بحرية دون قلق.",
-    allergy: "حساسية",
+    allergyFree: (a) => `بدون ${a}`,
     careNote: ["هناك شيء غير صحيح؟ اضغطي على ", "مساعدة", ". الطاقم فقط يمكنه تغيير نظامك الغذائي وحساسيتك."],
     today: (meal, time) => `اليوم تطلبين ${meal} الذي يُقدَّم الساعة ${time}.`,
     no: "لا، هذه ليست أنا",
@@ -618,10 +622,15 @@ const ar: Dict = {
     ratedDown: "عدم إعجاب. ما الذي لم يكن جيداً؟",
     ate: (x) => `أكلتِ ${x}.`,
     thanks: (name) => `شكراً ${name}!`,
-    thanksSpeak: (name, staff) =>
-      `شكراً ${name}! سيصل رأيك إلى المطبخ.${staff ? " وسنخبر الطاقم أيضاً أن الطعام كان صعب المضغ." : ""}`,
+    thanksSpeak: (name, nurse) =>
+      `شكراً ${name}! سيصل رأيك إلى المطبخ.${nurse ? ` وسيتم إبلاغ ${nurse} أيضاً وستأتي لرؤيتك.` : ""}`,
     kitchenGets: (dish) => `سيصل رأيك في ${dish} إلى المطبخ.`,
-    staffNote: ["سنخبر الطاقم أن الطعام كان صعب المضغ. يمكنهم النظر فيما إذا كنتِ تحتاجين طعاماً مختلفاً – ", "القرار لهم", "، ولا يتغير شيء تلقائياً."],
+    tellNurse: {
+      title: (nurse) => `سيتم إبلاغ ${nurse}`,
+      chew: "أن الطعام كان صعب المضغ. ستنظر فيما إذا كنتِ تحتاجين طعاماً مختلفاً – القرار لها وللأخصائية الغذائية، ولا يتغير شيء تلقائياً.",
+      ate: "أنكِ أكلتِ قليلاً. ستمرّ عليكِ ويمكنها أن تقدم لكِ شيئاً إضافياً، مثل مشروب مغذٍّ.",
+      escalation: "إذا لم ينظر أحد في الأمر قبل الساعة 15:00، يُحال إلى أخصائية التغذية في القسم.",
+    },
     nextTime: "في المرة القادمة سترين 👍 بجانب الطبق في القائمة.",
     orderToday: "اطلبي طعام اليوم ←",
   },

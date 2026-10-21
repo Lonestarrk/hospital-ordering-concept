@@ -97,7 +97,7 @@ export default function WelcomePage() {
                 <div className="chips">
                   {diets.map((d) => <span key={d} className="chip chip-static">✓ {d}</span>)}
                   {allergies.map((a) => (
-                    <span key={a} className="chip chip-static chip-allergy">⚠ {w.allergy}: {a}</span>
+                    <span key={a} className="chip chip-static">✓ {w.allergyFree(a.toLowerCase())}</span>
                   ))}
                 </div>
                 <p className="care-note">

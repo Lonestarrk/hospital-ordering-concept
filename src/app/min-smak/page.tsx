@@ -27,11 +27,12 @@ function Taste() {
   const { t, tm } = useT();
   const k = t.taste;
   const [draft, setDraft] = useState<TasteProfile | null>(null);
-  const [sent, setSent] = useState(false);
   if (!patient) return null;
 
   const profile = draft ?? taste;
   const next = params.get("sen") === "meny" ? "/meny" : "/klart";
+  // Tack-läget har en egen adress.
+  const sent = params.has("skickat");
 
   const voteOf = (id: string): Vote =>
     profile.likes.includes(id) ? "gillar" : profile.dislikes.includes(id) ? "ogillar" : undefined;
@@ -57,7 +58,7 @@ function Taste() {
 
   const send = () => {
     setTaste(profile);
-    setSent(true);
+    router.replace(`/min-smak?${next === "/meny" ? "sen=meny&" : ""}skickat=1`);
     announce(k.thanksSpeak(patient.firstName));
   };
 

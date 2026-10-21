@@ -25,7 +25,6 @@ function Feedback() {
   const [rating, setRating] = useState<Rating | undefined>();
   const [reasons, setReasons] = useState<string[]>([]);
   const [eaten, setEaten] = useState<Eaten | undefined>();
-  const [sent, setSent] = useState(false);
 
   const meal = meals.find((m) => m.id === params.get("id")) ?? meals.find((m) => !m.rating && !m.skipped);
   const dish = dishes.find((d) => d.id === meal?.dishId);
@@ -33,8 +32,14 @@ function Feedback() {
   const next = params.get("sen") === "klart" ? "/klart" : "/meny";
   if (!patient || !meal || !dish) return null;
 
+  // Tack-läget har en egen adress (&skickat=1) och visar det som sparats på måltiden.
+  const sent = params.has("skickat") && !!meal.rating;
+  const shown = sent ? { rating: meal.rating, reasons: meal.reasons, eaten: meal.eaten } : { rating, reasons, eaten };
   const reasonList = rating === "upp" ? reasonsUp : reasonsDown;
-  const tellStaff = reasonsDown.some((r) => r.tellStaff && reasons.includes(r.name));
+  // Problem som sjuksköterskan ska agera på – en namngiven person, en handling.
+  const hardToChew = reasonsDown.some((r) => r.tellStaff && shown.reasons.includes(r.name));
+  const ateLittle = shown.eaten === "lite" || shown.eaten === "inget";
+  const tellNurse = hardToChew || ateLittle;
 
   const rate = (r: Rating) => {
     if (r === rating) return;
@@ -58,8 +63,9 @@ function Feedback() {
   const send = () => {
     if (!rating) return;
     updateMeal(meal.id, { rating, reasons, eaten });
-    setSent(true);
-    announce(f.thanksSpeak(patient.firstName, tellStaff));
+    router.replace(`/omdome?id=${meal.id}${next === "/klart" ? "&sen=klart" : ""}&skickat=1`);
+    const willTell = reasonsDown.some((r) => r.tellStaff && reasons.includes(r.name)) || eaten === "lite" || eaten === "inget";
+    announce(f.thanksSpeak(patient.firstName, willTell ? patient.nurse : undefined));
   };
 
   const skip = () => {
@@ -84,7 +90,7 @@ function Feedback() {
   if (sent) {
     return (
       <Screen
-        speakText={f.thanksSpeak(patient.firstName, tellStaff)}
+        speakText={f.thanksSpeak(patient.firstName, tellNurse ? patient.nurse : undefined)}
         commands={commands}
         voiceHint="”fortsätt”"
         footer={
@@ -94,20 +100,23 @@ function Feedback() {
         }
       >
         <div className="done">
-          <div className={`done-check ${rating === "ner" ? "done-check-neutral" : ""}`} aria-hidden>
-            {rating === "upp" ? "👍" : "👎"}
+          <div className={`done-check ${shown.rating === "ner" ? "done-check-neutral" : ""}`} aria-hidden>
+            {shown.rating === "upp" ? "👍" : "👎"}
           </div>
           <h1>{f.thanks(patient.firstName)}</h1>
           <p className="lead">{f.kitchenGets(dishName)}</p>
-          {tellStaff && (
+          {tellNurse && (
             <div className="card care feedback-staff">
-              <div className="care-icon" aria-hidden>💬</div>
-              <p>
-                {f.staffNote[0]}<strong>{f.staffNote[1]}</strong>{f.staffNote[2]}
-              </p>
+              <div className="care-icon" aria-hidden>👩‍⚕️</div>
+              <div>
+                <h2>{f.tellNurse.title(patient.nurse)}</h2>
+                {hardToChew && <p>… {f.tellNurse.chew}</p>}
+                {ateLittle && <p>… {f.tellNurse.ate}</p>}
+                <p className="care-note">{f.tellNurse.escalation}</p>
+              </div>
             </div>
           )}
-          {rating === "upp" && <p className="muted">{f.nextTime}</p>}
+          {shown.rating === "upp" && <p className="muted">{f.nextTime}</p>}
         </div>
       </Screen>
     );
