@@ -103,7 +103,7 @@ button:focus-visible {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: 8px 16px;
   padding: 16px 24px;
   flex-wrap: wrap;
 }
@@ -138,6 +138,9 @@ button:focus-visible {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  /* Ryms de inte bredvid namnet hamnar de till höger på raden under. */
+  margin-inline-start: auto;
+  justify-content: flex-end;
 }
 
 /* ---------- Måltidsraden under sidhuvudet ---------- */
@@ -146,7 +149,7 @@ button:focus-visible {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 8px;
-  margin: 0 24px 10px;
+  margin: 0 24px 16px;
 }
 
 .occasion-tab {
@@ -197,13 +200,19 @@ button:focus-visible {
 
 /* ---------- Kosten i sidhuvudet ---------- */
 
+.topbar-name-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
 .topbar-diet {
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 4px 8px;
   min-height: 44px;
-  margin-top: 4px;
   padding: 4px 12px;
   border-radius: 999px;
   border: 2px solid transparent;
@@ -551,7 +560,7 @@ button:focus-visible {
   display: flex;
   gap: 8px;
   margin: 0;
-  padding: 4px 24px 16px;
+  padding: 0 24px 10px;
 }
 
 .progress-step {
@@ -1661,9 +1670,9 @@ button:focus-visible {
 
 .demo-clock {
   position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 4px;
+  /* I hörnet så att den inte skymmer sidhuvudet. */
+  left: 8px;
+  bottom: 8px;
   z-index: 5;
   padding: 4px 10px;
   border-radius: 999px;

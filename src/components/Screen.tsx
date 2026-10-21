@@ -170,11 +170,13 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
           <div>
             {patient ? (
               <>
-                <div className="topbar-title">{patient.firstName} {patient.lastName}</div>
+                <div className="topbar-name-row">
+                  <div className="topbar-title">{patient.firstName} {patient.lastName}</div>
+                  <DietBar patient={patient} onAbout={() => setDietOpen(true)} />
+                </div>
                 <div className="topbar-sub">
                   {tm.word(patient.room)} · {tm.word(patient.bed)} · {t.appName}
                 </div>
-                <DietBar patient={patient} onAbout={() => setDietOpen(true)} />
               </>
             ) : (
               <div className="topbar-title">{t.appName}</div>
@@ -204,8 +206,6 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
         </div>
       </header>
 
-      {patient && <OccasionBar />}
-
       {step !== undefined && (
         <ol className="progress" aria-label={t.stepsLabel}>
           {t.steps.map((label, i) => {
@@ -220,6 +220,9 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
           })}
         </ol>
       )}
+
+      {patient && <OccasionBar />}
+
 
       <main className="content">{children}</main>
 
