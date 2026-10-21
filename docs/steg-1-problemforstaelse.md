@@ -34,8 +34,9 @@ eller infektion.
 - Att det känns som att någon bryr sig om vad *hon* gillar.
 
 ### Vad kan göra det *svårt*?
-- **Inloggningen** – BankID kräver telefon, kod, att växla mellan enheter. Risken är
-  störst att hon ger upp *innan* hon ens ser maten.
+- **Inloggningen** – BankID kräver telefon, kod och att växla mellan enheter. Risken är
+  störst att hon ger upp *innan* hon ens ser maten. **Beslut:** vi loggar in med
+  personnummer på ett stort sifferblock direkt på plattan i stället för med BankID.
 - Små knappar, mycket text, okända ord ("allergen", "konsistens", "dagens alt. 2").
 - Osäkerhet om vad hon får äta – rädsla att välja "fel" för sin diagnos.
 - Ingen återkoppling – "gick beställningen iväg? När kommer den? Kan jag ändra?"
@@ -100,7 +101,6 @@ Ingrid säger *"Det här var faktiskt riktigt trevligt!"* när:
 
 ## Öppna frågor att validera
 - Hur gammal/tekniskt van är "Ingrid" i uppgiftsbeskrivningen?
-- Har hon egen telefon med BankID tillgänglig vid sängen? Vad gör den som inte har det?
 - Delas surfplattan mellan patienter eller är den personlig?
 - Vem känner till hennes kostordination – och hur når den systemet?
 - Får anhöriga hjälpa till (på plats eller på distans)?
