@@ -6,6 +6,7 @@ import { Screen, useAnnounce } from "@/components/Screen";
 import { useRequirePatient, useT } from "@/components/OrderProvider";
 import { dishBlockers, dishCategories, dishSuits, dishes, foodCategories } from "@/lib/data";
 import { slotFor } from "@/lib/clock";
+import { cuisines, menuDishCuisine, menuDishFavorite } from "@/lib/foodCatalog";
 import { Countdown, useSlotText } from "@/components/Countdown";
 import { useNow } from "@/components/useNow";
 import { useBlockerText } from "@/components/useBlockerText";
@@ -33,7 +34,7 @@ function Menu() {
   const showHidden = params.has("dolda");
   const blockerText = useBlockerText();
   const { patient, order, updateOrder, meals, taste } = useRequirePatient();
-  const { t, tm } = useT();
+  const { t, tm, lang } = useT();
   const m = t.menu;
   const announce = useAnnounce();
   const reference = useNow();
@@ -52,11 +53,21 @@ function Menu() {
   const likedCategory = (dishId: string) =>
     foodCategories.find((c) => (dishCategories[dishId] ?? []).includes(c.id) && taste.likes.includes(c.id));
   // Rätter som matchar Ingrids smak visas först, sådant hon inte gillar sist – inget döljs.
+  // Favoriträtter och kök hon gillar ("Min smak") lyfts också fram.
+  const isFavorite = (dishId: string) => !!menuDishFavorite[dishId] && taste.favorites.includes(menuDishFavorite[dishId]);
+  const likedCuisine = (dishId: string) => {
+    const id = menuDishCuisine[dishId];
+    const c = id && taste.cuisines.includes(id) ? cuisines.find((x) => x.id === id) : undefined;
+    return c && (lang === "sv" ? c.sv : lang === "en" ? c.en : c.ar);
+  };
   const score = (dishId: string) =>
     (dishCategories[dishId] ?? []).reduce(
       (sum, c) => sum + (taste.likes.includes(c) ? 1 : 0) - (taste.dislikes.includes(c) ? 1 : 0),
       0,
-    ) + (lastRating(dishId) === "upp" ? 2 : lastRating(dishId) === "ner" ? -2 : 0);
+    ) +
+    (lastRating(dishId) === "upp" ? 2 : lastRating(dishId) === "ner" ? -2 : 0) +
+    (isFavorite(dishId) ? 2 : 0) +
+    (likedCuisine(dishId) ? 1 : 0);
 
   const suitable = forOccasion.filter((d) => dishSuits(d, patient)).sort((a, b) => score(b.id) - score(a.id));
   const hidden = forOccasion.filter((d) => !suitable.includes(d));
@@ -65,9 +76,13 @@ function Menu() {
   const top = suitable[0];
   const topReason =
     top && score(top.id) > 0
-      ? lastRating(top.id) === "upp"
-        ? m.whyLiked
-        : likedCategory(top.id) && m.whyCategory(tm.category(likedCategory(top.id)!.id, likedCategory(top.id)!.name).toLowerCase())
+      ? isFavorite(top.id)
+        ? m.whyFavorite
+        : lastRating(top.id) === "upp"
+          ? m.whyLiked
+          : likedCategory(top.id)
+            ? m.whyCategory(tm.category(likedCategory(top.id)!.id, likedCategory(top.id)!.name).toLowerCase())
+            : likedCuisine(top.id) && m.whyCategory(likedCuisine(top.id)!.toLowerCase())
       : undefined;
 
   const choose = (id: string) => {
@@ -131,8 +146,12 @@ function Menu() {
                   {text.label && <span className="dish-label">{text.label}</span>}
                   {lastRating(dish.id) === "upp" && <span className="dish-label dish-liked">{m.liked}</span>}
                   {lastRating(dish.id) === "ner" && <span className="dish-label dish-disliked">{m.disliked}</span>}
+                  {isFavorite(dish.id) && <span className="dish-label dish-taste">{m.favoriteBadge}</span>}
                   {liked && (
                     <span className="dish-label dish-taste">{m.tasteBadge(tm.category(liked.id, liked.name).toLowerCase())}</span>
+                  )}
+                  {!liked && likedCuisine(dish.id) && (
+                    <span className="dish-label dish-taste">{m.cuisineBadge(likedCuisine(dish.id)!)}</span>
                   )}
                 </div>
                 <h2>{text.name}</h2>

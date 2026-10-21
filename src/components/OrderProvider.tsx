@@ -203,7 +203,8 @@ export function OrderProvider({ children }: { children: ReactNode }) {
         const meals = (s.history[id] ?? []).map((m) => (m.id === mealId ? { ...m, ...patch } : m));
         return { ...s, history: { ...s.history, [id]: meals } };
       }),
-    taste: (pnr && state.tastes[pnr]) || emptyTaste,
+    // Äldre sparade profiler saknar t.ex. cuisines – fyll på med tomma listor.
+    taste: { ...emptyTaste, ...(pnr ? state.tastes[pnr] : undefined) },
     hasTaste: !!pnr && !!state.tastes[pnr],
     setTaste: (taste) =>
       setState((s) => (s.patient ? { ...s, tastes: { ...s.tastes, [s.patient.personnummer]: taste } } : s)),

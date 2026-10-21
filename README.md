@@ -113,15 +113,19 @@ visar skälet och att bara personalen kan ändra kosten.
 
 ## Min smak – det Ingrid tycker om
 
-**Ingrid (`/min-smak`).** Hon når sidan från bekräftelsen ("Vad tycker du om för mat?")
-eller från länken under menyn.
-- 👍 eller 👎 på sorters mat: husmanskost, fisk, kyckling, kött, vegetariskt, soppor,
-  kryddig mat, pasta och ris, efterrätter.
-- ❤️ på önskerätter som köttbullar, pannbiff, kåldolmar och ärtsoppa.
-- Med rösten kan hon säga till exempel "jag gillar fisk", "jag tycker inte om kryddig
-  mat" eller "köttbullar". Appen hör skillnad på "gillar" och "gillar inte".
-- **Hennes meny anpassas direkt.** Rätter som matchar det hon gillar hamnar först och
-  märks "❤️ Du gillar fisk". Sådant hon ogillar hamnar sist men döljs inte.
+Ingrid når sidan `/min-smak` från bekräftelsen eller från länken under menyn.
+
+- **Favoriträtter med fritext och autocomplete.** Hon skriver i ett sökfält och får förslag ur ett hundratal rätter (`src/lib/foodCatalog.ts`):
+  - svensk husman, till exempel korv stroganoff, flygande Jakob, Janssons frestelse och kåldolmar
+  - rätter från hela världen, till exempel pad thai, butter chicken, sushi, pho, falafel och paella
+
+  Hon kan söka på kök, så att "thai" eller "indisk" visar de rätterna. Söket fungerar på svenska och engelska och bryr sig inte om accenter. Finns rätten inte i listan kan hon välja **Lägg till ”…”** som egen önskan. Snabbval visar vanliga favoriter, och valda rätter visas som ❤️-chips som går att ta bort.
+- **Mat från världen** med 18 kök, flera samtidigt: svensk husman, thailändsk, indisk, italiensk, kinesisk, japansk, vietnamesisk, koreansk, mexikansk, libanesisk, turkisk, persisk, grekisk, spansk, fransk, amerikansk, östeuropeisk samt nord- och östafrikansk.
+- **Sorters mat** med 👍 eller 👎, som tidigare.
+- **Rösten** fungerar också, till exempel "korv stroganoff", "thai" eller "jag tycker inte om kryddig mat".
+- **Menyn anpassas.** Favoriträtter som finns på menyn märks "❤️ Din favorit" och hamnar först, med förslaget *"Eftersom det är en av dina favoriträtter"*. Rätter från kök hon gillar märks till exempel "❤️ Indisk – din smak".
+
+På arabiska visas rätternas engelska namn. Köken är översatta.
 
 Svaren från omdömen och "Min smak" sparas med svenska nycklar och utan att något skickas
 till en AI-tjänst. Hur sjukhuset sedan använder dem för menyplaneringen ligger utanför

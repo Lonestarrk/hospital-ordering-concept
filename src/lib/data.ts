@@ -683,24 +683,10 @@ export const dishCategories: Record<string, string[]> = {
   fiskgratang: ["fisk", "husmanskost"],
 };
 
-export type WishDish = { id: string; name: string; emoji: string; voiceWords: string[] };
+/**
+ * Smakprofil. likes/dislikes är sorters mat, cuisines är kök från världen (lib/foodCatalog.ts)
+ * och favorites är rätter ur katalogen – eller egna önskningar med prefixet "egen:".
+ */
+export type TasteProfile = { likes: string[]; dislikes: string[]; cuisines: string[]; favorites: string[] };
 
-/** Klassiska rätter som patienten kan önska sig – underlag för framtida menyer. */
-export const wishDishes: WishDish[] = [
-  { id: "kottbullar", name: "Köttbullar med potatismos", emoji: "🍽️", voiceWords: ["köttbull*"] },
-  { id: "pannbiff", name: "Pannbiff med lök", emoji: "🧅", voiceWords: ["pannbiff*"] },
-  { id: "kaldolmar", name: "Kåldolmar", emoji: "🥬", voiceWords: ["kåldolm*"] },
-  { id: "artsoppa", name: "Ärtsoppa", emoji: "🫛", voiceWords: ["ärtsopp*", "ärter"] },
-  { id: "pytt", name: "Pytt i panna", emoji: "🍳", voiceWords: ["pytt*"] },
-  { id: "raggmunk", name: "Raggmunk med fläsk", emoji: "🥔", voiceWords: ["raggmunk*"] },
-  { id: "kalops", name: "Kalops", emoji: "🍲", voiceWords: ["kalops*"] },
-  { id: "makaroner", name: "Stuvade makaroner", emoji: "🧀", voiceWords: ["makaron*"] },
-  { id: "fiskbullar", name: "Fiskbullar i hummersås", emoji: "🐠", voiceWords: ["fiskbull*"] },
-  { id: "laxpudding", name: "Laxpudding", emoji: "🐟", voiceWords: ["laxpudding*"] },
-  { id: "ugnspannkaka", name: "Ugnspannkaka", emoji: "🥞", voiceWords: ["ugnspannkak*"] },
-  { id: "kroppkakor", name: "Kroppkakor", emoji: "🥟", voiceWords: ["kroppkak*"] },
-];
-
-export type TasteProfile = { likes: string[]; dislikes: string[]; favorites: string[] };
-
-export const emptyTaste: TasteProfile = { likes: [], dislikes: [], favorites: [] };
+export const emptyTaste: TasteProfile = { likes: [], dislikes: [], cuisines: [], favorites: [] };

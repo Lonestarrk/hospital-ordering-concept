@@ -407,6 +407,7 @@ button:focus-visible {
   font-size: 0.9em;
   display: inline-flex;
   align-items: center;
+  gap: 6px;
 }
 
 .chip.selected {
@@ -1072,30 +1073,6 @@ button:focus-visible {
 .taste-vote.up.selected { border-color: var(--primary); background: var(--primary-soft); }
 .taste-vote.down.selected { border-color: var(--accent); background: #fbe9e5; }
 
-.wish-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.wish {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 72px;
-  padding: 10px 16px;
-  border-radius: 18px;
-  border: 2px solid var(--border);
-  background: var(--surface);
-  text-align: start;
-  font-weight: 600;
-}
-
-.wish.selected { border-color: var(--accent); background: #fdf1ec; }
-.wish-emoji { font-size: 28px; }
-.wish-name { flex: 1; }
-.wish-heart { font-size: 26px; }
-
 .dish-taste {
   background: #fdf1ec;
   color: #8a2f1d;
@@ -1275,7 +1252,7 @@ button:focus-visible {
   .login {
     gap: 24px;
   }
-  .taste-grid, .wish-grid { grid-template-columns: 1fr 1fr; }
+  .taste-grid { grid-template-columns: 1fr 1fr; }
   .progress-step {
     justify-content: center;
     padding: 8px;
@@ -1290,7 +1267,7 @@ button:focus-visible {
   .tool { padding: 0 12px; }
   .segmented { grid-template-columns: 1fr; }
   .segmented-4 { grid-template-columns: 1fr 1fr; }
-  .taste-grid, .wish-grid { grid-template-columns: 1fr; }
+  .taste-grid { grid-template-columns: 1fr; }
   .thumb { min-height: 140px; }
   .segment { min-height: 0; }
   .footer { flex-wrap: wrap; }
@@ -1399,4 +1376,93 @@ button:focus-visible {
 
 @media (max-width: 860px) {
   .occasion-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- Sök favoriträtter ---------- */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.combo {
+  position: relative;
+  margin-top: 12px;
+  max-width: 640px;
+}
+
+.combo-input {
+  width: 100%;
+  min-height: 64px;
+  padding: 0 20px;
+  border-radius: 16px;
+  border: 3px solid var(--primary);
+  background: var(--surface);
+  font: inherit;
+  font-size: 1.1em;
+  color: var(--text);
+}
+
+.combo-input:focus-visible {
+  outline: 4px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.combo-list {
+  position: absolute;
+  z-index: 6;
+  inset-inline: 0;
+  top: calc(100% + 6px);
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--surface);
+  border-radius: 16px;
+  box-shadow: var(--shadow), 0 12px 32px rgba(31, 42, 36, 0.18);
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.combo-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 0 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.combo-option.active,
+.combo-option:hover {
+  background: var(--primary-soft);
+}
+
+.combo-option.custom {
+  color: var(--primary-strong);
+}
+
+.combo-hint {
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.85em;
+}
+
+.combo-none {
+  margin-top: 8px;
+}
+
+.fav-chips {
+  list-style: none;
+  padding: 0;
+}
+
+.popular-label {
+  margin-top: 16px;
 }
