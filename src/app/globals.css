@@ -1286,14 +1286,15 @@ html[data-text-size="stor"] .dish-body p {
 .summary {
   display: grid;
   gap: 8px;
-  padding: 12px 24px;
+  padding: 16px 28px;
 }
 
+/* Luft mellan bilden och texten, så att de inte känns ihopklistrade. */
 .summary-row {
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 14px 0;
+  gap: 28px;
+  padding: 16px 0;
 }
 
 .summary-row + .summary-row {
@@ -2071,4 +2072,6 @@ html[data-text-size="stor"] .dish-body p {
   .dish-body { padding: 10px 14px; }
   .dish-body h2 { font-size: 1em; }
   .dish-body p { display: none; }
+  .summary { padding: 12px 18px; }
+  .summary-row { gap: 20px; }
 }
