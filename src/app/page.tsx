@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Screen, STOPPED_KEY, STOPPED_NOTICE_MS, useAnnounce } from "@/components/Screen";
 import { InstallBanner } from "@/components/Install";
+import { VideoDialog } from "@/components/VideoDialog";
 import { useOrder, useT } from "@/components/OrderProvider";
 import {
   cameraSupported,
@@ -39,6 +40,7 @@ export default function LoginPage() {
   const demoImageRef = useRef<HTMLImageElement>(null);
   const stopCamera = useRef<() => void>(() => {});
   const photoRef = useRef<HTMLInputElement>(null);
+  const [videoOpen, setVideoOpen] = useState(false);
   // Bekräftelse direkt efter Avbryt. Ingen "Ångra" – plattan kan redan vara hos nästa patient.
   const [stopped, setStopped] = useState(false);
   // Efter "Hej Ingrid!" tonas inloggningen ut innan nästa sida visas.
@@ -256,7 +258,11 @@ export default function LoginPage() {
             </button>
           </div>
         </section>
+
+        {/* Produktfilmen – öppnas i ett fönster som kan visas i helskärm. */}
+        <button className="video-link" onClick={() => setVideoOpen(true)}>{l.video}</button>
       </div>
+      {videoOpen && <VideoDialog onClose={() => setVideoOpen(false)} />}
     </Screen>
   );
 }

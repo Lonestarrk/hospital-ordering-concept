@@ -804,8 +804,9 @@ button:focus-visible {
 .content {
   flex: 1;
   padding: 8px 24px 32px;
-  /* Varje ny sida tonas in mjukt i stället för att dyka upp direkt. */
-  animation: page-in 0.3s ease-out both;
+  /* Varje ny sida tonas in mjukt i stället för att dyka upp direkt. Ingen fill-mode: en kvarstående
+     transform skulle göra innehållet till ram för dialogerna, så att de inte täcker sidhuvudet. */
+  animation: page-in 0.3s ease-out;
 }
 
 @keyframes page-in {
@@ -2268,6 +2269,72 @@ html[data-text-size="stor"] .dish-body p {
   text-align: center;
   display: grid;
   gap: 12px;
+}
+
+/* Produktfilmen: ett brett fönster med videon, och en knapp för helskärm. */
+.video-link {
+  display: block;
+  margin: 20px auto 0;
+  min-height: 48px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--primary-strong);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.video-dialog {
+  width: 100%;
+  max-width: 960px;
+  padding: 20px;
+  border-radius: 24px;
+  background: var(--surface);
+}
+
+.video-dialog-head,
+.video-dialog-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.video-dialog-head {
+  margin-bottom: 12px;
+}
+
+.video-dialog-head h2 {
+  margin: 0;
+  margin-inline-end: 12px;
+  font-size: 1.2em;
+}
+
+.video-dialog-foot {
+  margin-top: 12px;
+}
+
+/* .btn-small skriver annars över den gröna bakgrunden. */
+.video-dialog-foot .btn-primary {
+  flex: none;
+  background: var(--primary);
+  color: #fff;
+}
+
+.video-dialog-foot p {
+  margin: 0;
+  margin-inline-end: 12px;
+  font-size: 0.8em;
+}
+
+.video-dialog-player {
+  display: block;
+  width: 100%;
+  max-height: calc(100vh - 220px);
+  border-radius: 12px;
+  background: #000;
 }
 
 .dialog-icon {
