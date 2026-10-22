@@ -436,14 +436,10 @@ export const eatenOptions: { id: Eaten; name: string; voiceWords: string[] }[] =
   { id: "inget", name: "Inget", voiceWords: ["inget", "ingenting"] },
 ];
 
-/** Syntetisk historik: måltider Ingrid redan har fått serverade. */
-export const servedHistory: Record<string, ServedMeal[]> = {
-  "194803022328": [
-    { id: "middag-igar", dishId: "kalvspett", label: "Gårdagens middag", reasons: [] },
-  ],
-};
+/** Syntetisk historik: måltider patienten redan har fått serverade (tom i demon). */
+export const servedHistory: Record<string, ServedMeal[]> = {};
 
-/** Beställningar som redan finns när demon startar (dagar räknas från idag: -1 = igår). */
+/** Beställningar som redan finns när demon startar (dagar räknas från idag: -1 = igår). Tom: översikten visar bara dagens och morgondagens. */
 export type SeedOrder = {
   occasion: OccasionId;
   day: number;
@@ -454,9 +450,5 @@ export type SeedOrder = {
   mealId?: string;
 };
 
-export const orderHistory: Record<string, SeedOrder[]> = {
-  "194803022328": [
-    { occasion: "middag", day: -1, dishId: "kalvspett", portion: "lagom", drinkId: "lingondricka", mealId: "middag-igar" },
-  ],
-};
+export const orderHistory: Record<string, SeedOrder[]> = {};
 
