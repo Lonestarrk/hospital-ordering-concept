@@ -33,7 +33,7 @@ function Taste() {
   if (!patient) return null;
 
   const profile = draft ?? taste;
-  const next = params.get("sen") === "meny" ? "/meny" : "/klart";
+  const next = params.get("sen") === "meny" ? "/meny" : "/tillfalle";
   // Tack-läget har en egen adress.
   const sent = params.has("skickat");
 

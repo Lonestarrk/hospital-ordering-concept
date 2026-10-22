@@ -1533,156 +1533,77 @@ html[data-text-size="stor"] .dish-body p {
   to { transform: scale(1); opacity: 1; }
 }
 
-/* ---------- Klart: splash, vägval och kvitto ---------- */
-
-/*
- * Tackrutan: först stor med "Tack Ingrid!". Efter ett par sekunder tonar tacktexten ut,
- * och bocken och bilden krymper till samma höjd som raden om när maten kommer.
- * Kvar blir en rad som står kvar överst på sidan.
- */
-@keyframes done-thanks-out {
-  0%, 60% { opacity: 1; max-height: 2.5em; }
-  85% { opacity: 0; max-height: 2.5em; }
-  100% { opacity: 0; max-height: 0; }
-}
-
-@keyframes done-check-shrink {
-  0%, 85% { width: 64px; height: 64px; }
-  100% { width: 36px; height: 36px; }
-}
-
-@keyframes done-image-shrink {
-  0%, 85% { width: 112px; }
-  100% { width: 54px; }
-}
-
-@keyframes done-splash-shrink {
-  0%, 85% { padding-block: 14px; }
-  100% { padding-block: 8px; }
-}
-
-.done-splash {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 4px 16px;
-  margin-bottom: 20px;
-  padding: 14px 20px;
-  border-radius: var(--radius);
-  background: var(--primary);
-  color: #fff;
-  box-shadow: var(--shadow);
-  animation: done-splash-shrink 3s ease-in-out forwards;
-}
-
-.done-splash-check {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: #fff;
-  color: var(--primary);
-  display: grid;
-  place-items: center;
-  animation: pop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1), done-check-shrink 3s ease-in-out forwards;
-}
-
-.done-splash-check svg {
-  width: 52%;
-  height: 52%;
-}
-
-.done-splash h1 {
-  font-size: 1.4em;
-  line-height: 1.15;
-  overflow: hidden;
-  animation: done-thanks-out 3s ease-in-out forwards;
-}
-
-.done-splash p {
-  font-size: 1.1em;
-  font-weight: 700;
-}
-
-.done-splash-image {
-  width: 112px;
-  height: auto;
-  border-radius: 12px;
-  animation: done-image-shrink 3s ease-in-out forwards;
-}
-
-/* Utan animationer byter rutan till den lilla raden direkt efter 3 sekunder. */
-@media (prefers-reduced-motion: reduce) {
-  .done-splash,
-  .done-splash-check,
-  .done-splash h1,
-  .done-splash-image { animation-timing-function: steps(1, end); }
-}
-
-.done-what-now {
-  margin-bottom: 12px;
-  font-size: 1.3em;
-}
-
-.done-choices {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-}
-
-.done-choice {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 4px;
-  min-height: 120px;
-  padding: 18px 22px;
-  border-radius: 20px;
-  border: 3px solid var(--primary);
-  background: var(--surface);
-  color: var(--primary);
-  box-shadow: var(--shadow);
-  font: inherit;
-  text-align: start;
-}
-
-.done-choice.is-primary {
-  background: var(--primary);
-  color: #fff;
-}
-
-.done-choice svg {
-  width: 32px;
-  height: 32px;
-}
-
-.done-choice-title {
-  font-size: 1.25em;
-  font-weight: 800;
-  color: var(--text);
-}
-
-.done-choice-body {
-  font-size: 0.85em;
-  color: var(--text-muted);
-}
-
-.done-choice.is-primary .done-choice-title {
-  color: #fff;
-}
-
-.done-choice.is-primary .done-choice-body {
-  color: var(--primary-soft);
-}
-
-/* Beställningskortet på klart-sidan – samma kort som på Dina beställningar. */
-.done-order {
-  margin-top: 24px;
-}
-
 .order-drink {
   color: var(--text-muted);
   font-size: 0.9em;
+}
+
+/* Nyss lagd beställning: en bekräftelse överst, och kortet glider in och lyser upp två gånger. */
+.order-placed {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  animation: placed-in 0.45s cubic-bezier(0.2, 1.2, 0.4, 1);
+}
+
+.order-placed p {
+  margin: 0;
+}
+
+.order-placed-check {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  margin-inline-end: 12px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--primary);
+  font-size: 20px;
+  animation: pop 0.5s 0.2s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.order-row.is-new {
+  border-color: var(--primary);
+  animation: order-new-in 0.6s 0.15s cubic-bezier(0.2, 1.1, 0.4, 1) both, order-new-glow 1.2s 0.8s ease-in-out 2;
+}
+
+.badge-new {
+  display: inline-block;
+  margin-inline-end: 8px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.8em;
+  font-weight: 700;
+}
+
+@keyframes placed-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes order-new-in {
+  from { opacity: 0; transform: translateY(-16px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes order-new-glow {
+  0%, 100% { box-shadow: var(--shadow); }
+  50% { box-shadow: 0 0 0 6px rgba(47, 107, 79, 0.28), var(--shadow); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .order-placed,
+  .order-placed-check,
+  .order-row.is-new { animation: none; }
 }
 
 /* Vad tycker du om för mat? – en egen rad med pil, som en länk vidare. */
@@ -1750,14 +1671,6 @@ html[data-text-size="stor"] .dish-body p {
   .done-ask::after { animation: none; opacity: 0; }
 }
 
-.done-overview {
-  margin-top: 16px;
-}
-
-.done-overview .done-taste-icon {
-  background: var(--primary-soft);
-}
-
 .done-taste-text {
   flex: 1;
   min-width: 0;
@@ -1778,13 +1691,6 @@ html[data-text-size="stor"] .dish-body p {
 
 [dir="rtl"] .done-taste-arrow {
   transform: scaleX(-1);
-}
-
-@media (max-width: 700px) {
-  .done-splash { grid-template-columns: auto minmax(0, 1fr); }
-  .done-splash-image { display: none; }
-  .done-choices { grid-template-columns: 1fr; }
-  .done-choice { min-height: 96px; }
 }
 
 /* ---------- Omdöme ---------- */
@@ -2513,7 +2419,6 @@ html[data-text-size="stor"] .dish-body p {
 .drink,
 .dish,
 .thumb,
-.done-choice,
 .order-row button,
 .taste-vote,
 .lang-option,
@@ -2527,7 +2432,6 @@ html[data-text-size="stor"] .dish-body p {
 .segment:active,
 .drink:active,
 .thumb:active,
-.done-choice:active,
 .order-row button:active,
 .taste-vote:active,
 .lang-option:active,
@@ -2543,12 +2447,12 @@ html[data-text-size="stor"] .dish-body p {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .btn, .tool, .chip, .segment, .drink, .dish, .thumb, .done-choice,
+  .btn, .tool, .chip, .segment, .drink, .dish, .thumb,
   .order-row button, .taste-vote, .lang-option, .topbar-diet {
     transition: none;
   }
   .btn:active:not(:disabled), .tool:active, .chip:active, .segment:active, .drink:active,
-  .thumb:active, .done-choice:active, .order-row button:active,
+  .thumb:active, .order-row button:active,
   .taste-vote:active, .lang-option:active, .topbar-diet:active, .dish:active {
     transform: none;
   }

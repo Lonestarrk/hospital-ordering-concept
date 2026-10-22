@@ -44,7 +44,8 @@ export default function SummaryPage() {
     if (!open) return;
     placeOrder();
     announce();
-    router.push("/klart");
+    // Tillbaka till Dina beställningar, där den nya beställningen glider in och markeras.
+    router.push(`/tillfalle?ny=${occasion}-${order.date}`);
   };
 
   const dishName = tm.dish(dish).name;

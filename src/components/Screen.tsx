@@ -54,7 +54,9 @@ export function Screen({ speakText, commands, voiceHint, children, footer }: Scr
   const [langOpen, setLangOpen] = useState(false);
   const [dietOpen, setDietOpen] = useState(false);
   // Avbryt finns efter inloggningen, men inte när beställningen redan är skickad.
-  const canCancel = !!patient && !order.placed && pathname !== "/klart";
+  // Avbryt medan hon beställer; på Dina beställningar heter samma knapp Logga ut. Båda loggar ut helt.
+  const onOverview = pathname === "/tillfalle";
+  const canCancel = !!patient && (onOverview || !order.placed);
   const [demoClock, setDemoClock] = useState(false);
   const clock = useNow();
   useEffect(() => setDemoClock(demoClockActive()), []);
@@ -90,7 +92,7 @@ export function Screen({ speakText, commands, voiceHint, children, footer }: Scr
 
   const globalCommands: VoiceCommand[] = [
     ...(canCancel
-      ? [{ phrases: ["avbryt", "sluta", "inte nu", "ångrar mig"], action: () => stop() }]
+      ? [{ phrases: ["avbryt", "sluta", "inte nu", "ångrar mig", "logga ut", "klar", "hej då"], action: () => stop() }]
       : []),
     { phrases: ["läs upp", "läs menyn", "upprepa", "igen", "vad sa du"], action: () => speak(speakText) },
     { phrases: ["större text", "större"], action: () => textSize === "normal" && toggleTextSize() },
@@ -144,7 +146,7 @@ export function Screen({ speakText, commands, voiceHint, children, footer }: Scr
           {canCancel && (
             <button className="tool tool-cancel" onClick={stop}>
               <span aria-hidden>✕</span>
-              <span className="tool-label">{t.cancel.replace(/^✕\s*/, "")}</span>
+              <span className="tool-label">{onOverview ? t.done.logout : t.cancel.replace(/^✕\s*/, "")}</span>
             </button>
           )}
         </div>

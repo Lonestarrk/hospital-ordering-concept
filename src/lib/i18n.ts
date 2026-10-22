@@ -112,6 +112,7 @@ const sv = {
     title: "Dina beställningar",
     none: "Du har inte beställt något ännu.",
     next: "Nästa",
+    isNew: "Ny",
     arrives: (when: string) => `Kommer ${when}`,
     was: (when: string) => `Serverades ${when}`,
     changeUntil: (time: string) => `till kl ${time}`,
@@ -205,19 +206,11 @@ const sv = {
   done: {
     speak: (name: string, what: string, when: string) =>
       `Tack ${name}! Din beställning är skickad till köket. ${what} kommer till ditt rum ${when}. Smaklig måltid!`,
-    yourFood: "Din mat",
-    thanks: (name: string) => `Tack ${name}!`,
-    more: "Beställ något mer",
+    ordered: (meal: string, when: string) => `Beställt! ${meal} kommer till ditt rum ${when}.`,
     tasteTitle: "Vad tycker du om för mat?",
     tasteBody: "Dina svar hjälper köket att göra menyerna mer som patienterna vill ha dem.",
     demoServed: "Demo: maten har serverats – ge tummen upp eller ner",
-    arrivesWhen: (when: string) => `Maten kommer till ditt rum ${when}`,
-    whatNow: "Vad vill du göra nu?",
-    moreBody: "Lunch eller middag, idag eller imorgon",
-    finishTitle: "Klar för nu",
-    finishBody: "Plattan loggar ut. Maten kommer ändå.",
-    overview: "Se dina beställningar",
-    overviewBody: "Allt du har beställt – och vad du kan ändra eller avbeställa.",
+    logout: "Logga ut",
   },
   feedback: {
     speak: (name: string, label: string, dish: string) =>
@@ -383,6 +376,7 @@ const en: Dict = {
     title: "Your orders",
     none: "You have not ordered anything yet.",
     next: "Next",
+    isNew: "New",
     arrives: (when) => `Arrives ${when}`,
     was: (when) => `Served ${when}`,
     changeUntil: (time) => `until ${time}`,
@@ -474,19 +468,11 @@ const en: Dict = {
   done: {
     speak: (name, what, when) =>
       `Thank you ${name}! Your order has been sent to the kitchen. ${what} will arrive in your room ${when}. Enjoy your meal!`,
-    yourFood: "Your food",
-    thanks: (name) => `Thank you ${name}!`,
-    more: "Order something else",
+    ordered: (meal, when) => `Ordered! ${meal} will arrive in your room ${when}.`,
     tasteTitle: "What food do you like?",
     tasteBody: "Your answers help the kitchen make future menus more like what patients want.",
     demoServed: "Demo: the food has been served – give a thumbs up or down",
-    arrivesWhen: (when) => `Your food will arrive in your room ${when}`,
-    whatNow: "What would you like to do now?",
-    moreBody: "Lunch or dinner, today or tomorrow",
-    finishTitle: "Done for now",
-    finishBody: "The tablet logs out. Your food will still arrive.",
-    overview: "See your orders",
-    overviewBody: "Everything you have ordered – and what you can change or cancel.",
+    logout: "Log out",
   },
   feedback: {
     speak: (name, label, dish) =>
@@ -650,6 +636,7 @@ const ar: Dict = {
     title: "طلباتك",
     none: "لم تطلبي شيئاً بعد.",
     next: "التالي",
+    isNew: "جديد",
     arrives: (when) => `يصل ${when}`,
     was: (when) => `قُدِّم ${when}`,
     changeUntil: (time) => `حتى الساعة ${time}`,
@@ -741,19 +728,11 @@ const ar: Dict = {
   done: {
     speak: (name, what, when) =>
       `شكراً ${name}! أُرسل طلبك إلى المطبخ. سيصل ${what} إلى غرفتك ${when}. بالهناء والشفاء!`,
-    yourFood: "طعامك",
-    thanks: (name) => `شكراً ${name}!`,
-    more: "اطلبي شيئاً آخر",
+    ordered: (meal, when) => `تم الطلب! يصل ${meal} إلى غرفتك ${when}.`,
     tasteTitle: "ما الطعام الذي تحبينه؟",
     tasteBody: "تساعد إجاباتك المطبخ على جعل القوائم القادمة أقرب إلى ما يريده المرضى.",
     demoServed: "عرض تجريبي: قُدِّم الطعام – أعطي إعجاباً أو عدم إعجاب",
-    arrivesWhen: (when) => `يصل طعامك إلى غرفتك ${when}`,
-    whatNow: "ماذا تريدين أن تفعلي الآن؟",
-    moreBody: "الغداء أو العشاء، اليوم أو غداً",
-    finishTitle: "انتهيت الآن",
-    finishBody: "يسجّل الجهاز الخروج. وسيصل طعامك على أي حال.",
-    overview: "عرض طلباتك",
-    overviewBody: "كل ما طلبتِه – وما يمكنك تغييره أو إلغاؤه.",
+    logout: "تسجيل الخروج",
   },
   feedback: {
     speak: (name, label, dish) =>
