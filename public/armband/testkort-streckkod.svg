@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1700" viewBox="0 0 1200 1700">
+  <rect width="1200" height="1700" fill="#fbf7f2"/>
+  <text x="80" y="110" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="56" font-weight="800" fill="#1f2a24">Testkort – logga in med streckkod</text>
+  <text x="80" y="160" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="28" fill="#5b6660">Min måltid · syntetisk testpatient, inga riktiga uppgifter</text>
+
+  <rect x="60" y="210" width="1080" height="860" rx="36" fill="#fff" stroke="#2f6b4f" stroke-width="4"/>
+  <text x="110" y="290" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="40" font-weight="800" fill="#1f2a24">Ingrid Andersson</text>
+  <text x="110" y="336" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="28" fill="#1f2a24">19480302-2328 · Rum 4, Säng B</text>
+  <text x="110" y="378" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="24" fill="#2f6b4f" font-weight="700">Ska ge: Hej Ingrid! → Dina beställningar</text>
+  <rect x="110" y="410" width="980" height="300" rx="16" fill="#fff"/>
+  <g transform="translate(110 417.08333333333337) scale(1.856060606060606)">
+<path stroke="#000000" stroke-width="6" d="M33 154L33 0M90 154L90 0M123 154L123 0M132 154L132 0M189 154L189 0M231 154L231 0M288 154L288 0M315 154L315 0M330 154L330 0M342 154L342 0M354 154L354 0M375 154L375 0M411 154L411 0M453 154L453 0M462 154L462 0M495 154L495 0" />
+<path stroke="#000000" stroke-width="3" d="M40.50 154L40.50 0M49.50 154L49.50 0M97.50 154L97.50 0M145.50 154L145.50 0M178.50 154L178.50 0M196.50 154L196.50 0M241.50 154L241.50 0M295.50 154L295.50 0M304.50 154L304.50 0M418.50 154L418.50 0M427.50 154L427.50 0M436.50 154L436.50 0M487.50 154L487.50 0" />
+<path stroke="#000000" stroke-width="9" d="M67.50 154L67.50 0M79.50 154L79.50 0M106.50 154L106.50 0M154.50 154L154.50 0M166.50 154L166.50 0M205.50 154L205.50 0M250.50 154L250.50 0M265.50 154L265.50 0M277.50 154L277.50 0M364.50 154L364.50 0M385.50 154L385.50 0M397.50 154L397.50 0M478.50 154L478.50 0" />
+<path stroke="#000000" stroke-width="12" d="M219 154L219 0" />
+</g>
+  <text x="600" y="745" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="24" fill="#5b6660" text-anchor="middle">Code 128 · PNR:194803022328</text>
+  <g transform="translate(470 775) scale(1.4130434782608696)">
+<path d="M8 176L64 176L64 120L8 120ZM80 176L88 176L88 168L80 168ZM96 176L104 176L104 168L120 168L120 160L104 160L104 144L96 144L96 136L104 136L104 120L96 120L96 128L88 128L88 168L96 168ZM120 176L128 176L128 168L120 168ZM136 176L144 176L144 168L136 168ZM168 176L176 176L176 152L168 152L168 160L160 160L160 168L168 168ZM16 168L16 128L56 128L56 168ZM72 168L80 168L80 152L72 152ZM24 160L48 160L48 136L24 136ZM120 160L128 160L128 152L120 152ZM152 160L160 160L160 152L152 152ZM112 152L120 152L120 144L112 144ZM128 152L136 152L136 144L144 144L144 136L120 136L120 144L128 144ZM144 152L152 152L152 144L144 144ZM160 152L168 152L168 144L160 144ZM72 144L80 144L80 136L72 136ZM104 144L112 144L112 136L104 136ZM168 144L176 144L176 120L168 120L168 112L176 112L176 96L168 96L168 104L160 104L160 96L168 96L168 80L176 80L176 72L136 72L136 80L144 80L144 96L152 96L152 104L136 104L136 112L160 112L160 136L168 136ZM144 136L152 136L152 128L144 128ZM72 128L80 128L80 96L64 96L64 104L56 104L56 96L64 96L64 88L56 88L56 80L48 80L48 96L40 96L40 104L48 104L48 112L72 112ZM88 120L96 120L96 112L112 112L112 104L96 104L96 96L88 96ZM112 120L128 120L128 96L120 96L120 112L112 112ZM16 112L24 112L24 104L32 104L32 96L24 96L24 80L32 80L32 72L16 72L16 80L8 80L8 88L16 88L16 96L8 96L8 104L16 104ZM32 112L40 112L40 104L32 104ZM32 88L40 88L40 80L32 80ZM72 88L88 88L88 80L72 80ZM96 88L120 88L120 80L96 80ZM128 88L136 88L136 80L128 80ZM40 80L48 80L48 72L40 72ZM56 80L72 80L72 72L56 72ZM88 80L96 80L96 72L88 72ZM120 80L128 80L128 72L120 72ZM72 72L80 72L80 56L72 56ZM96 72L112 72L112 48L104 48L104 64L96 64ZM8 64L64 64L64 8L8 8ZM88 64L96 64L96 56L88 56ZM120 64L176 64L176 8L120 8ZM16 56L16 16L56 16L56 56ZM128 56L128 16L168 16L168 56ZM24 48L48 48L48 24L24 24ZM72 48L96 48L96 40L88 40L88 32L80 32L80 24L88 24L88 16L80 16L80 8L72 8ZM136 48L160 48L160 24L136 24ZM104 40L112 40L112 8L88 8L88 16L96 16L96 24L104 24Z" fill-rule="evenodd" />
+</g>
+  <text x="600" y="1060" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="22" fill="#5b6660" text-anchor="middle">QR-kod · samma innehåll</text>
+
+  <text x="80" y="1150" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="34" font-weight="800" fill="#1f2a24">Felfall</text>
+  <rect x="60" y="1175" width="530" height="300" rx="28" fill="#fff" stroke="#e4dccf" stroke-width="3"/>
+  <text x="90" y="1225" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="26" font-weight="700" fill="#1f2a24">Okänd patient</text>
+  <text x="90" y="1260" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="20" fill="#5b6660">Ska ge: armbandet hör inte till avdelningen</text>
+  <g transform="translate(90 1316.7234848484848) scale(0.8901515151515151)">
+<path stroke="#000000" stroke-width="6" d="M33 86L33 0M90 86L90 0M123 86L123 0M132 86L132 0M189 86L189 0M231 86L231 0M264 86L264 0M273 86L273 0M285 86L285 0M297 86L297 0M309 86L309 0M318 86L318 0M330 86L330 0M342 86L342 0M351 86L351 0M411 86L411 0M420 86L420 0M450 86L450 0M462 86L462 0M495 86L495 0" />
+<path stroke="#000000" stroke-width="3" d="M40.50 86L40.50 0M49.50 86L49.50 0M97.50 86L97.50 0M145.50 86L145.50 0M178.50 86L178.50 0M196.50 86L196.50 0M241.50 86L241.50 0M361.50 86L361.50 0M442.50 86L442.50 0M487.50 86L487.50 0" />
+<path stroke="#000000" stroke-width="9" d="M67.50 86L67.50 0M79.50 86L79.50 0M106.50 86L106.50 0M154.50 86L154.50 0M166.50 86L166.50 0M205.50 86L205.50 0M250.50 86L250.50 0M370.50 86L370.50 0M430.50 86L430.50 0M478.50 86L478.50 0" />
+<path stroke="#000000" stroke-width="12" d="M219 86L219 0M384 86L384 0M399 86L399 0" />
+</g>
+  <text x="325" y="1455" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="18" fill="#5b6660" text-anchor="middle">PNR:190001019991</text>
+  <rect x="610" y="1175" width="530" height="300" rx="28" fill="#fff" stroke="#e4dccf" stroke-width="3"/>
+  <text x="640" y="1225" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="26" font-weight="700" fill="#1f2a24">Inte ett armband</text>
+  <text x="640" y="1260" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="20" fill="#5b6660">Ska ge: koden gick inte att läsa</text>
+  <g transform="translate(640 1303.9646464646464) scale(1.1868686868686869)">
+<path stroke="#000000" stroke-width="6" d="M33 86L33 0M66 86L66 0M111 86L111 0M138 86L138 0M174 86L174 0M222 86L222 0M231 86L231 0M264 86L264 0M297 86L297 0M309 86L309 0M318 86L318 0M330 86L330 0M363 86L363 0" />
+<path stroke="#000000" stroke-width="3" d="M40.50 86L40.50 0M49.50 86L49.50 0M79.50 86L79.50 0M85.50 86L85.50 0M97.50 86L97.50 0M118.50 86L118.50 0M130.50 86L130.50 0M163.50 86L163.50 0M196.50 86L196.50 0M256.50 86L256.50 0M274.50 86L274.50 0M355.50 86L355.50 0" />
+<path stroke="#000000" stroke-width="9" d="M148.50 86L148.50 0M184.50 86L184.50 0M208.50 86L208.50 0M244.50 86L244.50 0M283.50 86L283.50 0M346.50 86L346.50 0" />
+</g>
+  <text x="875" y="1455" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="18" fill="#5b6660" text-anchor="middle">HEJ-123</text>
+
+  <text x="80" y="1550" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="26" fill="#1f2a24">Så testar du: tryck på ”Visa streckkoden för kameran” på startsidan</text>
+  <text x="80" y="1590" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="26" fill="#1f2a24">och håll koden 15–30 cm framför kameran. Visa den på en telefon</text>
+  <text x="80" y="1630" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="26" fill="#1f2a24">med full ljusstyrka, eller skriv ut kortet.</text>
+</svg>
