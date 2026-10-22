@@ -1,7 +1,7 @@
 // Tider för måltider: när de serveras, när beställningen låses och hur lång tid som är kvar.
 // För demo kan klockan ställas med ?klocka=HH:MM i adressen (sparas för fliken).
 
-import { LOCK_HOURS, SNACK_MINUTES, occasions, type OccasionId } from "./data";
+import { LOCK_HOURS, occasions, type OccasionId } from "./data";
 
 const OFFSET_KEY = "ingrid-clock-offset";
 
@@ -58,8 +58,8 @@ export type Slot = {
   /** 0 = idag, 1 = imorgon. */
   day: number;
   servedAt: Date;
-  /** Sista tid att beställa eller ändra. Saknas för tilltugg. */
-  deadline?: Date;
+  /** Sista tid att beställa eller ändra. */
+  deadline: Date;
 };
 
 function at(date: string, time: string): Date {
@@ -72,9 +72,6 @@ function at(date: string, time: string): Date {
 export function slotFor(occasion: OccasionId, date: string, reference = now()): Slot {
   const o = occasions.find((x) => x.id === occasion)!;
   const day = Math.round((at(date, "12:00").getTime() - at(dateKey(reference), "12:00").getTime()) / 86_400_000);
-  if (!o.servedAt) {
-    return { occasion, date, day, servedAt: new Date(reference.getTime() + SNACK_MINUTES * 60_000) };
-  }
   const servedAt = at(date, o.servedAt);
   return { occasion, date, day, servedAt, deadline: new Date(servedAt.getTime() - LOCK_HOURS * 3_600_000) };
 }
@@ -82,7 +79,7 @@ export function slotFor(occasion: OccasionId, date: string, reference = now()): 
 /** Nästa tidpunkt som fortfarande går att beställa: idag om låstiden inte har passerat, annars imorgon. */
 export function nextSlot(occasion: OccasionId, reference = now()): Slot {
   const today = slotFor(occasion, dateKey(reference), reference);
-  if (!today.deadline || reference < today.deadline) return today;
+  if (reference < today.deadline) return today;
   const tomorrow = new Date(reference);
   tomorrow.setDate(tomorrow.getDate() + 1);
   return slotFor(occasion, dateKey(tomorrow), reference);
@@ -90,11 +87,10 @@ export function nextSlot(occasion: OccasionId, reference = now()): Slot {
 
 /** Är beställningen fortfarande öppen? */
 export function isOpen(slot: Slot, reference = now()): boolean {
-  return !slot.deadline || reference < slot.deadline;
+  return reference < slot.deadline;
 }
 
 /** Minuter kvar till låstiden (avrundat nedåt). */
 export function minutesLeft(slot: Slot, reference = now()): number {
-  if (!slot.deadline) return Infinity;
   return Math.max(0, Math.floor((slot.deadline.getTime() - reference.getTime()) / 60_000));
 }

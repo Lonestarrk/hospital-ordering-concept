@@ -121,9 +121,9 @@ function Menu() {
     >
       <div className="page-head">
         <p className="eyebrow">{m.eyebrow(mealName, when(slot, reference))}</p>
-        <h1>{occasion === "tilltugg" ? m.titleSnack(patient.firstName) : m.title(patient.firstName, mealName.toLowerCase())}</h1>
+        <h1>{m.title(patient.firstName, mealName.toLowerCase())}</h1>
         <p className="lead">{m.lead}</p>
-        {slot.deadline && <Countdown slot={slot} />}
+        <Countdown slot={slot} />
       </div>
 
       <div className="dish-grid">

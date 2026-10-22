@@ -33,18 +33,16 @@ export function OccasionBar() {
     <nav className="occasion-bar" aria-label={o.barLabel}>
       {occasions.map((occasion) => {
         const slot = nextSlot(occasion.id, reference);
-        const ordered = !!slot.deadline && placedOrders.some((x) => x.occasion === occasion.id && x.date === slot.date);
+        const ordered = placedOrders.some((x) => x.occasion === occasion.id && x.date === slot.date);
         const mins = minutesLeft(slot, reference);
-        const urgent = !!slot.deadline && slot.day === 0 && mins <= 30;
+        const urgent = slot.day === 0 && mins <= 30;
         const status = ordered
           ? o.barOrdered
-          : !slot.deadline
-            ? o.barAnytime
-            : slot.day > 0
-              ? o.barTomorrow(hhmm(slot.servedAt))
-              : mins <= 3 * 60
-                ? o.barLeft(Math.floor(mins / 60), mins % 60)
-                : o.barToday(hhmm(slot.servedAt));
+          : slot.day > 0
+            ? o.barTomorrow(hhmm(slot.servedAt))
+            : mins <= 3 * 60
+              ? o.barLeft(Math.floor(mins / 60), mins % 60)
+              : o.barToday(hhmm(slot.servedAt));
         return (
           <button
             key={occasion.id}

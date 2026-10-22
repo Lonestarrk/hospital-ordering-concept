@@ -85,7 +85,7 @@ export default function SummaryPage() {
         <h1>{u.title}</h1>
         <p className="lead">{u.lead(mealName, when(slot, reference), where)}</p>
         <p className="muted">{u.hint}</p>
-        {open && slot.deadline && <Countdown slot={slot} />}
+        {open && <Countdown slot={slot} />}
       </div>
 
       {!open && (
@@ -121,7 +121,7 @@ export default function SummaryPage() {
         </div>
       </div>
 
-      <p className="muted center">{slot.deadline ? u.allSuits(hhmm(slot.deadline)) : u.allSuitsSnack}</p>
+      <p className="muted center">{u.allSuits(hhmm(slot.deadline))}</p>
     </Screen>
   );
 }

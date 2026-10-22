@@ -306,7 +306,7 @@ button:focus-visible {
 
 .occasion-bar {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin: 0 24px 16px;
 }
@@ -2218,8 +2218,7 @@ html[data-text-size="stor"] .dish-body p {
   :root { --base: 17px; }
   html[data-text-size="stor"] { --base: 21px; }
   .topbar, .content, .footer, .progress { padding-inline: 16px; }
-  .occasion-bar { margin-inline: 16px; display: flex; overflow-x: auto; }
-  .occasion-tab { flex: 0 0 auto; min-width: 116px; }
+  .occasion-bar { margin-inline: 16px; }
   .progress { overflow-x: auto; }
   .tool { padding: 0 12px; }
   .segmented { grid-template-columns: 1fr; }

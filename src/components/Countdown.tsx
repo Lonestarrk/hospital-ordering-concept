@@ -2,7 +2,6 @@
 
 import { useT } from "./OrderProvider";
 import { useNow } from "./useNow";
-import { SNACK_MINUTES } from "@/lib/data";
 import { dateKey, hhmm, minutesLeft, type Slot } from "@/lib/clock";
 
 /** Texter för när en måltid serveras och hur länge man kan beställa den. */
@@ -26,11 +25,10 @@ export function useSlotText() {
   return {
     /** "idag kl 12:00", "imorgon kl 08:00" eller "igår kl 17:30". */
     at: relative,
-    /** "idag kl 12:00", "imorgon kl 08:00" eller "om ca 30 minuter". */
-    when: (slot: Slot, reference: Date) => (slot.deadline ? relative(slot.servedAt, reference) : t.when.snack(SNACK_MINUTES)),
+    /** "idag kl 12:00" eller "imorgon kl 12:00". */
+    when: (slot: Slot, reference: Date) => relative(slot.servedAt, reference),
     /** Nedräkning till låstiden, eller sista tid om det är långt kvar. */
     countdown: (slot: Slot, reference: Date) => {
-      if (!slot.deadline) return t.countdown.anytime;
       const mins = minutesLeft(slot, reference);
       return mins > 6 * 60 ? t.countdown.until(relative(slot.deadline, reference)) : t.countdown.left(Math.floor(mins / 60), mins % 60);
     },
@@ -41,7 +39,7 @@ export function useSlotText() {
 export function Countdown({ slot }: { slot: Slot }) {
   const reference = useNow();
   const { countdown } = useSlotText();
-  const urgent = !!slot.deadline && minutesLeft(slot, reference) <= 30;
+  const urgent = minutesLeft(slot, reference) <= 30;
   return (
     <p className={`countdown ${urgent ? "urgent" : ""}`} role="timer" aria-live="off">
       {countdown(slot, reference)}

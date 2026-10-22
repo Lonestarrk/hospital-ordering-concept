@@ -6,7 +6,7 @@ import { Screen, useAnnounce } from "@/components/Screen";
 import { useRequirePatient, useT, type Order } from "@/components/OrderProvider";
 import { Countdown, useSlotText } from "@/components/Countdown";
 import { useNow } from "@/components/useNow";
-import { dishes, occasions, SNACK_MINUTES, type OccasionId } from "@/lib/data";
+import { dishes, occasions, type OccasionId } from "@/lib/data";
 import { hhmm, isOpen, minutesLeft, nextSlot, slotFor } from "@/lib/clock";
 import type { VoiceCommand } from "@/lib/voice";
 
@@ -37,10 +37,7 @@ export default function OccasionPage() {
   };
 
   // Beställningarna i tidsordning: kommande först (nästa överst), sedan de som har passerat.
-  const servedAt = (order: Order) => {
-    const slot = slotFor(order.occasion!, order.date!, reference);
-    return slot.deadline ? slot.servedAt : new Date((order.placedAt ?? reference.getTime()) + SNACK_MINUTES * 60_000);
-  };
+  const servedAt = (order: Order) => slotFor(order.occasion!, order.date!, reference).servedAt;
   const rows = placedOrders
     .filter((x) => x.occasion && x.date && x.dishId)
     .map((order) => {
@@ -69,14 +66,13 @@ export default function OccasionPage() {
     announce(m.restored(mealName(cancelled)));
     setCancelled(null);
   };
-  // Måltider går att avbeställa till låstiden, tilltugg tills de har kommit.
+  // Måltider går att avbeställa fram till låstiden.
   const cancellable = (r: { past: boolean; slot: ReturnType<typeof slotFor> }) => !r.past && isOpen(r.slot, reference);
 
   const upcoming = rows.filter((r) => !r.past).sort((a, b) => a.time.getTime() - b.time.getTime());
   const past = rows.filter((r) => r.past).sort((a, b) => b.time.getTime() - a.time.getTime());
   // Skuggor: kommande måltider som inte är beställda än, insorterade i tidsordning.
   const ghosts = cards
-    .filter(({ slot }) => slot.deadline)
     .filter(({ occasion, slot }) => !placedOrders.some((x) => x.occasion === occasion.id && x.date === slot.date))
     .map(({ occasion, slot }) => ({ ghost: true as const, occasion, slot, time: slot.servedAt }));
   const nextKey = upcoming[0] && `${upcoming[0].order.occasion}-${upcoming[0].order.date}`;
@@ -94,7 +90,7 @@ export default function OccasionPage() {
   ];
 
   const items = cards
-    .map(({ occasion, slot }) => `${t.occasions[occasion.id]}: ${slot.deadline ? when(slot, reference) : t.when.snack(SNACK_MINUTES)}.`)
+    .map(({ occasion, slot }) => `${t.occasions[occasion.id]}: ${when(slot, reference)}.`)
     .join(" ");
   const ordersText = upcoming.length
     ? m.speak(upcoming.map((r) => `${t.occasions[r.order.occasion!]} ${at(r.time, reference)}, ${tm.dish(r.dish).name}.`).join(" "))
@@ -106,7 +102,7 @@ export default function OccasionPage() {
       step={1}
       speakText={`${ordersText}${ghostText} ${o.speak(patient.firstName, items)}`}
       commands={commands}
-      voiceHint="”lunch”, ”fika” eller ”avbeställ lunch”"
+      voiceHint="”lunch”, ”middag” eller ”avbeställ lunch”"
     >
 
       <section className="section my-orders" aria-labelledby="my-orders-title">
@@ -146,7 +142,7 @@ export default function OccasionPage() {
                 );
               }
               const { order, slot, time, past, dish, meal } = entry;
-              const open = !past && isOpen(slot, reference) && !!slot.deadline;
+              const open = !past && isOpen(slot, reference);
               const canCancel = cancellable({ past, slot });
               const isNext = `${order.occasion}-${order.date}` === nextKey;
               return (
@@ -164,7 +160,7 @@ export default function OccasionPage() {
                       {open && (
                         <button className="btn btn-ghost order-action order-change" onClick={() => choose(order.occasion!)}>
                           <span>{t.summary.change}</span>
-                          <span className="order-change-until">{m.changeUntil(hhmm(slot.deadline!))}</span>
+                          <span className="order-change-until">{m.changeUntil(hhmm(slot.deadline))}</span>
                         </button>
                       )}
                       {canCancel && (
@@ -187,7 +183,7 @@ export default function OccasionPage() {
                     <span className="order-rated">{meal.rating === "upp" ? "👍" : "👎"} {m.rated}</span>
                   )}
                   {/* Låstiden som en list längs kortets underkant, till höger om bilden. */}
-                  {!past && slot.deadline && !open && <p className="order-bar order-status">{m.locked}</p>}
+                  {!past && !open && <p className="order-bar order-status">{m.locked}</p>}
                   {open && (() => {
                     const mins = minutesLeft(slot, reference);
                     return (

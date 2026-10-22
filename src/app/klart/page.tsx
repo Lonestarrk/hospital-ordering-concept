@@ -19,7 +19,7 @@ export default function DonePage() {
   if (!patient) return null;
   const slot = order.occasion && order.date ? slotFor(order.occasion, order.date, reference) : undefined;
   // Ändra går bara fram till låstiden.
-  const canChange = !!slot && isOpen(slot, reference) && !!slot.deadline;
+  const canChange = !!slot && isOpen(slot, reference);
 
   const dish = dishes.find((d) => d.id === order.dishId);
   const drink = drinks.find((d) => d.id === order.drinkId);
@@ -114,7 +114,7 @@ export default function DonePage() {
           <p className="order-dish">{what}</p>
           {drink && <p className="order-drink">{tm.drink(drink.id, drink.name)}</p>}
         </div>
-        {canChange && slot?.deadline && (
+        {canChange && slot && (
           <div className="order-actions">
             <button className="btn btn-ghost order-action order-change" onClick={change}>
               <span>{t.summary.change}</span>
@@ -122,12 +122,12 @@ export default function DonePage() {
             </button>
           </div>
         )}
-        {canChange && slot?.deadline ? (
+        {canChange ? (
           <p className={`order-bar order-lock ${mins <= 30 ? "urgent" : ""}`} role="timer" aria-live="off">
             {t.myOrders.locksIn(Math.floor(mins / 60), mins % 60)}
           </p>
         ) : (
-          slot?.deadline && <p className="order-bar order-status">{t.myOrders.locked}</p>
+          slot && <p className="order-bar order-status">{t.myOrders.locked}</p>
         )}
       </div>
 

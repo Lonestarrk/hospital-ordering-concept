@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { dateKey, initDemoClock, now } from "@/lib/clock";
-import { emptyTaste, findPatient, orderHistory, servedHistory, type OccasionId, type Patient, type Portion, type ServedMeal, type TasteProfile } from "@/lib/data";
+import { emptyTaste, findPatient, occasions, orderHistory, servedHistory, type OccasionId, type Patient, type Portion, type ServedMeal, type TasteProfile } from "@/lib/data";
 import { dictionaries, languages, terminology, type Lang } from "@/lib/i18n";
 
 export type Order = {
@@ -15,7 +15,7 @@ export type Order = {
   extras: string[];
   drinkId?: string;
   placed: boolean;
-  /** När beställningen skickades (ms). Tilltugg kommer en stund efter det. */
+  /** När beställningen skickades (ms). */
   placedAt?: number;
   /** Den serverade måltiden, när den har kommit – så att den kan få omdöme. */
   mealId?: string;
@@ -122,6 +122,17 @@ function keep(s: State): Partial<State> {
   };
 }
 
+/**
+ * Sparat läge från en äldre version kan innehålla måltider som inte finns längre (frukost, fika,
+ * tilltugg). De tas bort, så att sidorna bara möter måltider som finns.
+ */
+function withKnownOccasions(s: State): State {
+  const known = (o: Order) => !o.occasion || occasions.some((x) => x.id === o.occasion);
+  const orders = Object.fromEntries(Object.entries(s.orders).map(([id, list]) => [id, list.filter(known)]));
+  const drafts = Object.fromEntries(Object.entries(s.drafts).filter(([, d]) => known(d.order)));
+  return { ...s, order: known(s.order) ? s.order : emptyOrder, orders, drafts };
+}
+
 export function OrderProvider({ children }: { children: ReactNode }) {
   // Demoklockan ställs innan sidorna räknar tid, så att nedräkningar stämmer direkt efter en omladdning.
   const [state, setState] = useState<State>(() => {
@@ -136,7 +147,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const saved = sessionStorage.getItem(STORAGE_KEY);
-      if (saved) setState({ ...initialState, ...JSON.parse(saved) });
+      if (saved) setState(withKnownOccasions({ ...initialState, ...JSON.parse(saved) }));
     } catch {
       // Ingen lagring tillgänglig – börja om från början.
     }
