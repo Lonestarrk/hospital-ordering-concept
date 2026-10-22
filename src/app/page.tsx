@@ -39,6 +39,9 @@ export default function LoginPage() {
   const stopCamera = useRef<() => void>(() => {});
   // Bekräftelse direkt efter Avbryt. Ingen "Ångra" – plattan kan redan vara hos nästa patient.
   const [stopped, setStopped] = useState(false);
+  // Efter "Hej Ingrid!" tonas inloggningen ut innan nästa sida visas.
+  const [leaving, setLeaving] = useState(false);
+  useEffect(() => router.prefetch("/tillfalle"), [router]);
   useEffect(() => {
     try {
       const at = Number(sessionStorage.getItem(STOPPED_KEY));
@@ -51,6 +54,7 @@ export default function LoginPage() {
 
   // Inloggningen sker bara med armbandet – från plattans NFC-läsare, en inkopplad läsare eller demoknappen.
   const handleTag = (text: string) => {
+    if (phase.kind === "hello") return;
     setStopped(false);
     const pnr = personnummerFromTag(text);
     if (!pnr) return setPhase({ kind: "error", error: "unreadable" });
@@ -58,7 +62,8 @@ export default function LoginPage() {
     if (!patient) return setPhase({ kind: "error", error: "notFound" });
     setPhase({ kind: "hello", name: patient.firstName });
     announce(l.hello(patient.firstName));
-    setTimeout(() => router.push(login(patient)), 900);
+    setTimeout(() => setLeaving(true), 900);
+    setTimeout(() => router.push(login(patient)), 1150);
   };
   const handleTagRef = useRef(handleTag);
   handleTagRef.current = handleTag;
@@ -156,7 +161,7 @@ export default function LoginPage() {
 
   return (
     <Screen speakText={l.speak}>
-      <div className="login">
+      <div className={`login ${leaving ? "is-leaving" : ""}`}>
         {/* Bara inloggningen: språk, uppläsning och textstorlek finns i menyn uppe i hörnet. */}
         <InstallBanner />
         {stopped && (

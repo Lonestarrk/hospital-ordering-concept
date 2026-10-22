@@ -44,9 +44,12 @@ export function useAnnounce() {
 }
 
 export function Screen({ speakText, commands, voiceHint, children, footer }: ScreenProps) {
-  const { patient, textSize, toggleTextSize, soundOn, setSoundOn, order, signOut } = useOrder();
+  const { patient: loggedIn, textSize, toggleTextSize, soundOn, setSoundOn, order, signOut } = useOrder();
   const router = useRouter();
   const pathname = usePathname();
+  // Inloggningssidan visar aldrig patientens sidhuvud – inte ens i ögonblicket mellan att armbandet
+  // lästs och att nästa sida visas.
+  const patient = pathname === "/" ? null : loggedIn;
   const { t, tm, speechLang } = useT();
   const say = (text: string) => speak(text, speechLang);
   const [langOpen, setLangOpen] = useState(false);
