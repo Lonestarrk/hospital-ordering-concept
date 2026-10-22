@@ -1346,13 +1346,6 @@ html[data-text-size="stor"] .dish-body p {
   color: var(--text-muted);
 }
 
-.dish-ok {
-  margin-top: auto;
-  color: var(--primary);
-  font-weight: 700;
-  font-size: 0.8em;
-}
-
 /* Den valda rätten: en liten bild till vänster om namnet, så att portion och önskemål syns direkt. */
 .dish-hero {
   display: grid;
