@@ -49,6 +49,7 @@ export default function DonePage() {
   const commands: VoiceCommand[] = [
     ...(canChange ? [{ phrases: ["ändra*", "ångra"], action: change }] : []),
     { phrases: ["mer", "något mer", "beställ mer", "en till"], action: more },
+    { phrases: ["beställningar", "översikt", "visa", "vad har jag beställt"], action: more },
     { phrases: ["smak*", "tycker om", "gillar", "önska*"], action: () => router.push("/min-smak") },
     { phrases: ["klar", "tack", "färdig*", "logga ut", "hej då"], action: done },
   ];
@@ -91,6 +92,16 @@ export default function DonePage() {
         </button>
       </div>
 
+      {/* Till översikten – se allt som är beställt, utan att logga ut. */}
+      <button className="done-taste done-overview" onClick={more}>
+        <span className="done-taste-icon" aria-hidden>📋</span>
+        <span className="done-taste-text">
+          <strong>{o.overview}</strong>
+          <span>{o.overviewBody}</span>
+        </span>
+        <span className="done-taste-arrow" aria-hidden>›</span>
+      </button>
+
       {/* Beställningen som samma kort som på Dina beställningar: bilden i full höjd, låstiden längst ner. */}
       <div className="order-row is-next done-order">
         {dish && <span className="order-image"><img src={dish.image} alt="" /></span>}
@@ -121,7 +132,7 @@ export default function DonePage() {
       </div>
 
       {!hasTaste && (
-        <button className="done-taste" onClick={() => router.push("/min-smak")}>
+        <button className="done-taste done-ask" onClick={() => router.push("/min-smak")}>
           <span className="done-taste-icon" aria-hidden>❤️</span>
           <span className="done-taste-text">
             <strong>{o.tasteTitle}</strong>

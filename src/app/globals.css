@@ -1317,31 +1317,40 @@ button:focus-visible {
 }
 
 /*
- * Bildrutans storlek: stor nog att se maten ordentligt (liggande bilder blir ca 310–350 px
- * höga, stående högst 480 px). Ett fast värde, så att det fungerar likadant i alla webbläsare.
+ * Bildrutans bredd: 480 px (högst halva raden). Höjden blir minst 4:5 av bredden, alltså
+ * högst ca 384 px när texten är kort. Ett fast värde, så att det fungerar likadant i alla webbläsare.
  */
 .dish-grid {
-  --dish-size: 500px;
+  --dish-size: 480px;
 }
 
-/* Bilden visas hel, i sina egna proportioner, inom en fast ruta till vänster om texten. */
+/*
+ * Bilden fyller kortets hela höjd och går ända ut i kortets vänstra kant, som korten på
+ * Dina beställningar. Rutan är minst 4:5 av sin bredd hög, och växer med texten om den är längre.
+ */
 .dish-thumb {
-  width: var(--dish-size, 500px);
+  position: relative;
+  width: var(--dish-size, 480px);
   max-width: 50%; /* Texten får alltid minst halva raden. */
   flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
+  background: var(--surface-2);
+}
+
+.dish-thumb::before {
+  content: "";
+  display: block;
+  padding-top: 80%;
 }
 
 .dish-image {
-  display: block;
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: calc(var(--dish-size, 500px) - 20px);
-  border-radius: 12px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .dish-body {
@@ -1781,6 +1790,52 @@ html[data-text-size="stor"] .dish-body p {
   border-radius: 50%;
   background: #fdf1ec;
   font-size: 22px;
+}
+
+/* Vad tycker du om för mat? – accentfärg och en pulserande ram som drar blicken dit. */
+.done-ask {
+  position: relative;
+  border-color: var(--accent);
+  background: #fdf1ec;
+}
+
+.done-ask::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  bottom: -2px;
+  left: -2px;
+  border-radius: inherit;
+  border: 3px solid var(--accent);
+  pointer-events: none;
+  animation: ask-pulse 2.2s ease-out infinite;
+}
+
+.done-ask .done-taste-icon {
+  background: #fff;
+}
+
+.done-ask strong,
+.done-ask .done-taste-arrow {
+  color: #a8432f;
+}
+
+@keyframes ask-pulse {
+  0% { opacity: 0.8; transform: scale(1); }
+  70%, 100% { opacity: 0; transform: scale(1.02, 1.18); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .done-ask::after { animation: none; opacity: 0; }
+}
+
+.done-overview {
+  margin-top: 16px;
+}
+
+.done-overview .done-taste-icon {
+  background: var(--primary-soft);
 }
 
 .done-taste-text {
@@ -2468,8 +2523,6 @@ html[data-text-size="stor"] .dish-body p {
 /* Mobil: lägre rader och mindre bild. Beskrivningen syns (högst två rader). */
 @media (max-width: 560px) {
   .dish-grid { --dish-size: 104px; }
-  .dish-thumb { padding: 8px; }
-  .dish-image { max-height: calc(var(--dish-size) - 16px); border-radius: 10px; }
   .dish-body { padding: 10px 14px 10px 4px; }
   .dish-body h2 { font-size: 1em; }
 }
