@@ -7,7 +7,6 @@ import { languages } from "@/lib/i18n";
 import { consistencyLabels, dietLabels, type Patient } from "@/lib/data";
 import { demoClockActive, hhmm } from "@/lib/clock";
 import { useNow } from "./useNow";
-import { OccasionBar } from "./OccasionBar";
 import { InstallButton } from "./Install";
 import {
   chime,
@@ -151,7 +150,6 @@ export function Screen({ speakText, commands, voiceHint, children, footer }: Scr
         </div>
       </header>
 
-      {patient && <OccasionBar />}
 
 
       <main className="content">{children}</main>

@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { Screen, useAnnounce } from "@/components/Screen";
 import { useRequirePatient, useT } from "@/components/OrderProvider";
-import { dishBlockers, dishes, drinkSuits, drinks, extras } from "@/lib/data";
+import { dishBlockers, dishes, drinkSuits, drinks } from "@/lib/data";
 import { ingredientsFor } from "@/lib/ingredients";
 import { useBlockerText } from "@/components/useBlockerText";
 import type { VoiceCommand } from "@/lib/voice";
@@ -44,12 +44,6 @@ export default function DishPage() {
     );
   }
 
-  const toggleExtra = (extra: string) => {
-    const on = order.extras.includes(extra);
-    updateOrder({ extras: on ? order.extras.filter((e) => e !== extra) : [...order.extras, extra] });
-    announce(on ? k.removed(tm.extra(extra)) : k.added(tm.extra(extra)));
-  };
-
   // Drycken väljs här, bredvid maten – ingen egen sida för dryck.
   const suitableDrinks = drinks.filter((d) => drinkSuits(d, patient.diet));
   const chooseDrink = (id: string) => {
@@ -65,11 +59,7 @@ export default function DishPage() {
     router.push("/sammanfattning");
   };
 
-  // Önskemål som "såsen vid sidan" gäller bara lagad mat.
-  const hasExtras = order.occasion === "lunch" || order.occasion === "middag";
-
   const commands: VoiceCommand[] = [
-    ...(hasExtras ? extras : []).map((e) => ({ phrases: e.voiceWords, action: () => toggleExtra(e.name) })),
     ...suitableDrinks.map((d) => ({ phrases: d.voiceWords, action: () => chooseDrink(d.id) })),
     { phrases: ["nästa", "klar", "fortsätt", "gå vidare", "kolla"], action: next },
     { phrases: ["tillbaka", "annan mat", "byt*", "ångra"], action: () => router.push("/meny") },
@@ -93,7 +83,7 @@ export default function DishPage() {
         </>
       }
     >
-      {/* Rätten, innehållet och önskemål till vänster, drycken som en lista till höger. På mobil: rätten, drycken, önskemål, innehåll. */}
+      {/* Rätten och innehållet till vänster, drycken som en lista till höger. På mobil: rätten, drycken, innehåll. */}
       <div className="dish-layout">
         <div className="dish-hero">
           <img className="dish-hero-image" src={dish.image} alt={text.imageAlt} />
@@ -126,27 +116,6 @@ export default function DishPage() {
             ))}
           </div>
         </section>
-
-        {hasExtras && (
-          <section className="section dish-wishes">
-            <h2>{k.wishes} <span className="optional">{t.optional}</span></h2>
-            <div className="chips">
-              {extras.map(({ name }) => {
-                const on = order.extras.includes(name);
-                return (
-                  <button
-                    key={name}
-                    className={`chip ${on ? "selected" : ""}`}
-                    aria-pressed={on}
-                    onClick={() => toggleExtra(name)}
-                  >
-                    {on ? "✓ " : "+ "}{tm.extra(name)}
-                  </button>
-                );
-              })}
-            </div>
-          </section>
-        )}
 
         {ingredients && (
           <section className="section dish-ingredients">

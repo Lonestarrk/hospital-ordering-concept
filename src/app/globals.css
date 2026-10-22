@@ -302,52 +302,6 @@ button:focus-visible {
   background: var(--primary);
 }
 
-/* ---------- Måltidsraden under sidhuvudet ---------- */
-
-.occasion-bar {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  margin: 0 24px 16px;
-}
-
-.occasion-tab {
-  display: grid;
-  gap: 2px;
-  justify-items: center;
-  min-height: 64px;
-  padding: 8px 6px;
-  border-radius: 16px;
-  border: 2px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-  text-align: center;
-}
-
-.occasion-tab-name {
-  font-weight: 700;
-}
-
-.occasion-tab-status {
-  color: var(--text-muted);
-  font-size: 0.75em;
-  font-weight: 600;
-}
-
-.occasion-tab.is-ordered .occasion-tab-status {
-  color: var(--primary-strong);
-}
-
-.occasion-tab.is-urgent .occasion-tab-status {
-  color: var(--accent);
-}
-
-.occasion-tab.is-current {
-  border-color: var(--primary);
-  background: var(--primary-soft);
-}
-
 .my-orders-title {
   font-size: 1.3em;
   margin-bottom: 12px;
@@ -1446,14 +1400,12 @@ html[data-text-size="stor"] .dish-body p {
   grid-template-areas:
     "hero"
     "drinks"
-    "wishes"
     "ingredients";
   column-gap: 32px;
 }
 
 .dish-layout .dish-hero { grid-area: hero; }
 .dish-drinks { grid-area: drinks; }
-.dish-wishes { grid-area: wishes; }
 .dish-ingredients { grid-area: ingredients; }
 
 @media (min-width: 761px) {
@@ -1461,8 +1413,7 @@ html[data-text-size="stor"] .dish-body p {
     grid-template-columns: minmax(0, 1fr) 280px;
     grid-template-areas:
       "hero        drinks"
-      "ingredients drinks"
-      "wishes      drinks";
+      "ingredients drinks";
     align-items: start;
   }
   .dish-drinks {
@@ -2331,7 +2282,6 @@ html[data-text-size="stor"] .dish-body p {
   :root { --base: 17px; }
   html[data-text-size="stor"] { --base: 21px; }
   .topbar, .content, .footer { padding-inline: 16px; }
-  .occasion-bar { margin-inline: 16px; }
   .tool { padding: 0 12px; }
   .segmented { grid-template-columns: 1fr; }
   .segmented-4 { grid-template-columns: 1fr 1fr; }
@@ -2564,7 +2514,6 @@ html[data-text-size="stor"] .dish-body p {
 .dish,
 .thumb,
 .done-choice,
-.occasion-tab,
 .order-row button,
 .taste-vote,
 .lang-option,
@@ -2579,7 +2528,6 @@ html[data-text-size="stor"] .dish-body p {
 .drink:active,
 .thumb:active,
 .done-choice:active,
-.occasion-tab:active,
 .order-row button:active,
 .taste-vote:active,
 .lang-option:active,
@@ -2595,12 +2543,12 @@ html[data-text-size="stor"] .dish-body p {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .btn, .tool, .chip, .segment, .drink, .dish, .thumb, .done-choice, .occasion-tab,
+  .btn, .tool, .chip, .segment, .drink, .dish, .thumb, .done-choice,
   .order-row button, .taste-vote, .lang-option, .topbar-diet {
     transition: none;
   }
   .btn:active:not(:disabled), .tool:active, .chip:active, .segment:active, .drink:active,
-  .thumb:active, .done-choice:active, .occasion-tab:active, .order-row button:active,
+  .thumb:active, .done-choice:active, .order-row button:active,
   .taste-vote:active, .lang-option:active, .topbar-diet:active, .dish:active {
     transform: none;
   }
@@ -2674,17 +2622,6 @@ html[data-text-size="stor"] .dish-body p {
   .topbar .tool-menu { width: auto; padding: 0 10px; }
   .topbar .tool-menu > span + span { margin-inline-start: 4px; }
   .topbar.has-patient .topbar-actions > * + * { margin-inline-start: 6px; }
-
-  /* Måltidsraden: lägre knappar. */
-  .occasion-bar { gap: 6px; margin-bottom: 12px; }
-  .occasion-tab {
-    min-width: 0;
-    min-height: 48px;
-    padding: 6px 12px;
-    border-radius: 14px;
-  }
-  .occasion-tab-name { font-size: 0.9em; }
-  .occasion-tab-status { font-size: 0.7em; }
 
   /* Knappraden längst ner på en rad: tillbaka – nästa. */
   .footer {
