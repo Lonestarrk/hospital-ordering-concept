@@ -3,7 +3,8 @@
 import { useParams, useRouter } from "next/navigation";
 import { Screen, useAnnounce } from "@/components/Screen";
 import { useRequirePatient, useT } from "@/components/OrderProvider";
-import { dishBlockers, dishes, dishNutrition, drinkSuits, drinks, extras } from "@/lib/data";
+import { dishBlockers, dishes, drinkSuits, drinks, extras } from "@/lib/data";
+import { ingredientsFor } from "@/lib/ingredients";
 import { useBlockerText } from "@/components/useBlockerText";
 import type { VoiceCommand } from "@/lib/voice";
 
@@ -75,23 +76,8 @@ export default function DishPage() {
   ];
 
   const text = tm.dish(dish);
-  // Näringsvärde per portion, med decimaltecken efter språket.
-  const nutrition = dishNutrition[dish.id];
-  const n = k.nutrition;
-  const num = (value: number, decimals = 0) =>
-    value.toLocaleString(lang === "ar" ? "ar" : lang === "en" ? "en-GB" : "sv-SE", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
-  const nutritionRows: [string, string, boolean][] = nutrition
-    ? [
-        // Samma ordning som på en näringsdeklaration på förpackningar.
-        [n.energy, `${num(nutrition.kcal)} kcal`, false],
-        [n.fat, `${num(nutrition.fat)} g`, false],
-        [n.carbs, `${num(nutrition.carbs)} g`, false],
-        [n.sugar, `${num(nutrition.sugar)} g`, true],
-        [n.fiber, `${num(nutrition.fiber)} g`, false],
-        [n.protein, `${num(nutrition.protein)} g`, false],
-        [n.salt, `${num(nutrition.salt, 1)} g`, false],
-      ]
-    : [];
+  // Innehållsförteckning på valt språk, allergener i fetstil.
+  const ingredients = ingredientsFor(dish.id, lang);
 
   return (
     <Screen
@@ -107,7 +93,7 @@ export default function DishPage() {
         </>
       }
     >
-      {/* Rätten, näringsvärdet och önskemål till vänster, drycken som en lista till höger. På mobil: rätten, drycken, önskemål, näringsvärde. */}
+      {/* Rätten, innehållet och önskemål till vänster, drycken som en lista till höger. På mobil: rätten, drycken, önskemål, innehåll. */}
       <div className="dish-layout">
         <div className="dish-hero">
           <img className="dish-hero-image" src={dish.image} alt={text.imageAlt} />
@@ -162,18 +148,18 @@ export default function DishPage() {
           </section>
         )}
 
-        {nutrition && (
-          <section className="section dish-nutrition">
-            <h2>{k.nutrition.title}</h2>
-            <dl className="nutrition-list">
-              {nutritionRows.map(([label, value, sub]) => (
-                <div key={label} className={`nutrition-row ${sub ? "is-sub" : ""}`}>
-                  <dt>{label}</dt>
-                  <dd>{value}</dd>
-                </div>
+        {ingredients && (
+          <section className="section dish-ingredients">
+            <h2>{k.ingredients.title}</h2>
+            <p className="ingredients-list">
+              {ingredients.map((item, i) => (
+                <span key={item.name}>
+                  {item.allergen ? <strong>{item.name}</strong> : item.name}
+                  {i < ingredients.length - 1 ? ", " : "."}
+                </span>
               ))}
-            </dl>
-            <p className="muted nutrition-note">{k.nutrition.note}</p>
+            </p>
+            <p className="muted ingredients-note">{k.ingredients.note}</p>
           </section>
         )}
       </div>

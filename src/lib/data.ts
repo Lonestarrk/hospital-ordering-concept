@@ -79,32 +79,6 @@ export type Dish = {
   occasions: OccasionId[];
 };
 
-/** Näringsvärde per portion (lagom). Syntetiska, ungefärliga värden för demon. */
-export type Nutrition = { kcal: number; protein: number; fat: number; carbs: number; sugar: number; fiber: number; salt: number };
-
-export const dishNutrition: Record<string, Nutrition> = {
-  kalvspett: { kcal: 520, protein: 32, fat: 22, carbs: 46, sugar: 6, fiber: 5, salt: 1.6 },
-  lax: { kcal: 560, protein: 34, fat: 28, carbs: 40, sugar: 5, fiber: 5, salt: 1.2 },
-  soppa: { kcal: 340, protein: 11, fat: 10, carbs: 50, sugar: 9, fiber: 8, salt: 1.8 },
-  artsoppa: { kcal: 430, protein: 24, fat: 12, carbs: 52, sugar: 4, fiber: 14, salt: 2.0 },
-  kycklingcurry: { kcal: 590, protein: 33, fat: 18, carbs: 72, sugar: 8, fiber: 4, salt: 1.5 },
-  kalops: { kcal: 540, protein: 31, fat: 24, carbs: 44, sugar: 5, fiber: 5, salt: 1.7 },
-  sejfile: { kcal: 470, protein: 30, fat: 16, carbs: 48, sugar: 4, fiber: 5, salt: 1.3 },
-  pannbiff: { kcal: 610, protein: 29, fat: 32, carbs: 46, sugar: 7, fiber: 5, salt: 1.9 },
-  gulasch: { kcal: 420, protein: 26, fat: 16, carbs: 40, sugar: 7, fiber: 6, salt: 2.1 },
-  bonchili: { kcal: 450, protein: 18, fat: 10, carbs: 66, sugar: 10, fiber: 15, salt: 1.6 },
-  kycklinggryta: { kcal: 560, protein: 34, fat: 16, carbs: 66, sugar: 7, fiber: 4, salt: 1.4 },
-  spaghetti: { kcal: 620, protein: 30, fat: 20, carbs: 78, sugar: 9, fiber: 6, salt: 1.7 },
-  ugnskyckling: { kcal: 530, protein: 38, fat: 20, carbs: 44, sugar: 4, fiber: 5, salt: 1.2 },
-  pannkakor: { kcal: 560, protein: 18, fat: 20, carbs: 76, sugar: 22, fiber: 3, salt: 0.9 },
-  paneradfisk: { kcal: 580, protein: 28, fat: 26, carbs: 56, sugar: 4, fiber: 5, salt: 1.5 },
-  fiskgratang: { kcal: 510, protein: 30, fat: 22, carbs: 42, sugar: 5, fiber: 4, salt: 1.6 },
-  lasagne: { kcal: 640, protein: 32, fat: 30, carbs: 58, sugar: 9, fiber: 5, salt: 1.9 },
-  schnitzel: { kcal: 600, protein: 36, fat: 28, carbs: 48, sugar: 4, fiber: 4, salt: 1.5 },
-  timbal: { kcal: 380, protein: 24, fat: 18, carbs: 28, sugar: 5, fiber: 4, salt: 1.2 },
-  naringssoppa: { kcal: 420, protein: 20, fat: 18, carbs: 42, sugar: 8, fiber: 4, salt: 1.4 },
-};
-
 // ---------- Måltider ----------
 
 export type OccasionId = "lunch" | "middag";
