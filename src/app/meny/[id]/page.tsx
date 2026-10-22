@@ -1,11 +1,11 @@
 "use client";
 
+import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Screen, useAnnounce } from "@/components/Screen";
 import { useRequirePatient, useT } from "@/components/OrderProvider";
-import { dishBlockers, dishes, drinkSuits, drinks } from "@/lib/data";
+import { dishSuits, dishes, drinkSuits, drinks } from "@/lib/data";
 import { ingredientsFor } from "@/lib/ingredients";
-import { useBlockerText } from "@/components/useBlockerText";
 import type { VoiceCommand } from "@/lib/voice";
 
 export default function DishPage() {
@@ -15,34 +15,13 @@ export default function DishPage() {
   const announce = useAnnounce();
   const { t, tm } = useT();
   const k = t.dish;
-  const blockerText = useBlockerText();
   const dish = dishes.find((d) => d.id === id);
-  if (!patient || !dish) return null;
-
-  // Rätter som inte passar patientens kost går inte att beställa, inte ens via direktlänk.
-  const blockers = dishBlockers(dish, patient);
-  if (blockers.length > 0) {
-    const m = t.menu;
-    return (
-      <Screen
-        speakText={`${m.blockedTitle}. ${blockers.map(blockerText).join(". ")}. ${m.blockedLead}`}
-        footer={<button className="btn btn-primary btn-large" onClick={() => router.push("/meny")}>{m.backToMenu}</button>}
-      >
-        <div className="dish-hero">
-          <img className="dish-hero-image blocked-image" src={dish.image} alt={tm.dish(dish).imageAlt} />
-          <div>
-            <p className="eyebrow">🚫 {m.notOrderable}</p>
-            <h1>{tm.dish(dish).name}</h1>
-            <p className="lead">{m.blockedTitle}</p>
-            <ul className="blockers">
-              {blockers.map((b, i) => <li key={i}>{blockerText(b)}</li>)}
-            </ul>
-            <p className="muted">{m.blockedLead}</p>
-          </div>
-        </div>
-      </Screen>
-    );
-  }
+  // Rätter som patienten inte tål visas aldrig – inte heller via en direktlänk. Då går man tillbaka till menyn.
+  const allowed = !!patient && !!dish && dishSuits(dish, patient);
+  useEffect(() => {
+    if (patient && !allowed) router.replace("/meny");
+  }, [patient, allowed, router]);
+  if (!patient || !dish || !allowed) return null;
 
   // Drycken väljs här, bredvid maten – ingen egen sida för dryck.
   const suitableDrinks = drinks.filter((d) => drinkSuits(d, patient.diet));

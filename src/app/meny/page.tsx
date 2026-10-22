@@ -1,16 +1,14 @@
 "use client";
 
-import { Suspense, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Screen, useAnnounce } from "@/components/Screen";
 import { useRequirePatient, useT } from "@/components/OrderProvider";
-import { dishBlockers, dishCategories, dishSuits, dishes, foodCategories } from "@/lib/data";
+import { dishSuits, dishes } from "@/lib/data";
 import { slotFor } from "@/lib/clock";
-import { cuisines, menuDishCuisine, menuDishFavorite } from "@/lib/foodCatalog";
 import { Countdown, useSlotText } from "@/components/Countdown";
 import { useNow } from "@/components/useNow";
-import { useBlockerText } from "@/components/useBlockerText";
-import { speak, type VoiceCommand } from "@/lib/voice";
+import type { VoiceCommand } from "@/lib/voice";
 
 const ORDINALS = [
   ["första", "ettan", "nummer ett"],
@@ -20,21 +18,9 @@ const ORDINALS = [
 ];
 
 export default function MenuPage() {
-  return (
-    <Suspense>
-      <Menu />
-    </Suspense>
-  );
-}
-
-function Menu() {
   const router = useRouter();
-  const params = useSearchParams();
-  // Dolda rätter visas bara på begäran – läget står i adressen (?dolda=1).
-  const showHidden = params.has("dolda");
-  const blockerText = useBlockerText();
-  const { patient, order, updateOrder, meals, taste } = useRequirePatient();
-  const { t, tm, lang } = useT();
+  const { patient, order, updateOrder, meals } = useRequirePatient();
+  const { t, tm } = useT();
   const m = t.menu;
   const announce = useAnnounce();
   const reference = useNow();
@@ -50,40 +36,14 @@ function Menu() {
 
   // Senaste omdömet per rätt, så att menyn kommer ihåg vad Ingrid tycker om.
   const lastRating = (dishId: string) => meals.find((x) => x.dishId === dishId && x.rating)?.rating;
-  const likedCategory = (dishId: string) =>
-    foodCategories.find((c) => (dishCategories[dishId] ?? []).includes(c.id) && taste.likes.includes(c.id));
-  // Rätter som matchar Ingrids smak visas först, sådant hon inte gillar sist – inget döljs.
-  // Favoriträtter och kök hon gillar ("Min smak") lyfts också fram.
-  const isFavorite = (dishId: string) => !!menuDishFavorite[dishId] && taste.favorites.includes(menuDishFavorite[dishId]);
-  const likedCuisine = (dishId: string) => {
-    const id = menuDishCuisine[dishId];
-    const c = id && taste.cuisines.includes(id) ? cuisines.find((x) => x.id === id) : undefined;
-    return c && (lang === "sv" ? c.sv : lang === "en" ? c.en : c.ar);
-  };
-  const score = (dishId: string) =>
-    (dishCategories[dishId] ?? []).reduce(
-      (sum, c) => sum + (taste.likes.includes(c) ? 1 : 0) - (taste.dislikes.includes(c) ? 1 : 0),
-      0,
-    ) +
-    (lastRating(dishId) === "upp" ? 2 : lastRating(dishId) === "ner" ? -2 : 0) +
-    (isFavorite(dishId) ? 2 : 0) +
-    (likedCuisine(dishId) ? 1 : 0);
-
+  // Bara rätter som passar hennes kost, allergier och konsistens visas – de andra finns inte på menyn.
+  // Rätter hon gav tummen upp kommer först, de med tummen ner sist.
+  const score = (dishId: string) => (lastRating(dishId) === "upp" ? 1 : lastRating(dishId) === "ner" ? -1 : 0);
   const suitable = forOccasion.filter((d) => dishSuits(d, patient)).sort((a, b) => score(b.id) - score(a.id));
-  const hidden = forOccasion.filter((d) => !suitable.includes(d));
 
-  // Förslaget: den rätt som passar henne bäst – bara om vi kan förklara varför.
+  // Förslaget: en rätt hon gav tummen upp förra gången.
   const top = suitable[0];
-  const topReason =
-    top && score(top.id) > 0
-      ? isFavorite(top.id)
-        ? m.whyFavorite
-        : lastRating(top.id) === "upp"
-          ? m.whyLiked
-          : likedCategory(top.id)
-            ? m.whyCategory(tm.category(likedCategory(top.id)!.id, likedCategory(top.id)!.name).toLowerCase())
-            : likedCuisine(top.id) && m.whyCategory(likedCuisine(top.id)!.toLowerCase())
-      : undefined;
+  const topReason = top && lastRating(top.id) === "upp" ? m.whyLiked : undefined;
 
   const choose = (id: string) => {
     updateOrder({ dishId: id });
@@ -94,13 +54,6 @@ function Menu() {
   const commands: VoiceCommand[] = [
     ...suitable.map((d) => ({ phrases: d.voiceWords, action: () => choose(d.id) })),
     ...suitable.map((d, i) => ({ phrases: ORDINALS[i] ?? [], action: () => choose(d.id) })),
-    // Säger Ingrid en rätt som inte passar henne förklarar vi varför den inte finns.
-    ...hidden.map((d) => ({
-      phrases: d.voiceWords,
-      action: () => speak(`${d.name} passar tyvärr inte din kost idag. Du kan välja ${suitable.map((x) => x.name).join(", eller ")}.`),
-    })),
-    { phrases: ["visa dolda", "visa de andra", "visa alla"], action: () => router.replace("/meny?dolda=1") },
-    { phrases: ["dölj"], action: () => router.replace("/meny") },
     { phrases: ["tillbaka", "annan måltid"], action: () => router.push("/tillfalle") },
   ];
 
@@ -128,7 +81,6 @@ function Menu() {
       <div className="dish-grid">
         {suitable.map((dish) => {
           const text = tm.dish(dish);
-          const liked = likedCategory(dish.id);
           const suggested = dish === top && !!topReason;
           return (
             <button
@@ -145,13 +97,6 @@ function Menu() {
                   {text.label && <span className="dish-label">{text.label}</span>}
                   {lastRating(dish.id) === "upp" && <span className="dish-label dish-liked">{m.liked}</span>}
                   {lastRating(dish.id) === "ner" && <span className="dish-label dish-disliked">{m.disliked}</span>}
-                  {isFavorite(dish.id) && <span className="dish-label dish-taste">{m.favoriteBadge}</span>}
-                  {liked && (
-                    <span className="dish-label dish-taste">{m.tasteBadge(tm.category(liked.id, liked.name).toLowerCase())}</span>
-                  )}
-                  {!liked && likedCuisine(dish.id) && (
-                    <span className="dish-label dish-taste">{m.cuisineBadge(likedCuisine(dish.id)!)}</span>
-                  )}
                 </div>
                 <h2>{text.name}</h2>
                 <p>{text.description}</p>
@@ -161,48 +106,6 @@ function Menu() {
         })}
       </div>
 
-      {hidden.length > 0 && (
-        <section className="hidden-dishes" aria-labelledby="hidden-title">
-          <p className="muted center">{m.hidden(hidden.length)}</p>
-          <button
-            className="taste-link"
-            aria-expanded={showHidden}
-            onClick={() => router.replace(showHidden ? "/meny" : "/meny?dolda=1")}
-          >
-            {showHidden ? m.hideHidden : `👁 ${m.showHidden(hidden.length)}`}
-          </button>
-
-          {showHidden && (
-            <>
-              <h2 id="hidden-title" className="hidden-title">{m.hiddenTitle}</h2>
-              <p className="muted">{m.hiddenLead}</p>
-              <ul className="dish-grid blocked-grid">
-                {hidden.map((dish) => {
-                  const text = tm.dish(dish);
-                  return (
-                    // Inte en knapp: dolda rätter går inte att välja.
-                    <li key={dish.id} className="dish blocked" aria-disabled="true">
-                      <span className="dish-thumb"><img className="dish-image" src={dish.image} alt={text.imageAlt} loading="lazy" decoding="async" /></span>
-                      <div className="dish-body">
-                        <span className="dish-label dish-blocked">🚫 {m.notOrderable}</span>
-                        <h3>{text.name}</h3>
-                        <p>{text.description}</p>
-                        <ul className="blockers">
-                          {dishBlockers(dish, patient).map((b, i) => <li key={i}>{blockerText(b)}</li>)}
-                        </ul>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </>
-          )}
-        </section>
-      )}
-
-      <button className="taste-link" onClick={() => router.push("/min-smak?sen=meny")}>
-        {m.tasteLink}
-      </button>
     </Screen>
   );
 }

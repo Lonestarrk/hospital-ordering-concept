@@ -719,7 +719,6 @@ button:focus-visible {
   transform: translateX(-20px);
 }
 
-
 [dir="rtl"] .tools-menu-panel {
   right: auto;
   left: 0;
@@ -784,12 +783,6 @@ button:focus-visible {
 
 .footer > :only-child {
   margin-inline-end: auto;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .done-check {
-    animation: none;
-  }
 }
 
 /* ---------- Knappar ---------- */
@@ -1511,23 +1504,6 @@ html[data-text-size="stor"] .dish-body p {
   padding-top: 12px;
 }
 
-.done-check {
-  width: 112px;
-  height: 112px;
-  margin: 0 auto;
-  border-radius: 50%;
-  background: var(--primary);
-  color: #fff;
-  font-size: 60px;
-  display: grid;
-  place-items: center;
-  animation: pop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1);
-}
-
-.done-check-neutral {
-  background: var(--surface-2);
-}
-
 @keyframes pop {
   from { transform: scale(0.4); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
@@ -1604,93 +1580,6 @@ html[data-text-size="stor"] .dish-body p {
   .order-placed,
   .order-placed-check,
   .order-row.is-new { animation: none; }
-}
-
-/* Vad tycker du om för mat? – en egen rad med pil, som en länk vidare. */
-.done-taste {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  margin-top: 12px;
-  padding: 14px 18px;
-  border-radius: var(--radius);
-  border: 2px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-  text-align: start;
-}
-
-.done-taste-icon {
-  flex: none;
-  width: 48px;
-  height: 48px;
-  margin-inline-end: 16px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: #fdf1ec;
-  font-size: 22px;
-}
-
-/* Vad tycker du om för mat? – accentfärg och en pulserande ram som drar blicken dit. */
-.done-ask {
-  position: relative;
-  border-color: var(--accent);
-  background: #fdf1ec;
-}
-
-.done-ask::after {
-  content: "";
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  bottom: -2px;
-  left: -2px;
-  border-radius: inherit;
-  border: 3px solid var(--accent);
-  pointer-events: none;
-  animation: ask-pulse 2.2s ease-out infinite;
-}
-
-.done-ask .done-taste-icon {
-  background: #fff;
-}
-
-.done-ask strong,
-.done-ask .done-taste-arrow {
-  color: #a8432f;
-}
-
-@keyframes ask-pulse {
-  0% { opacity: 0.8; transform: scale(1); }
-  70%, 100% { opacity: 0; transform: scale(1.02, 1.18); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .done-ask::after { animation: none; opacity: 0; }
-}
-
-.done-taste-text {
-  flex: 1;
-  min-width: 0;
-  display: grid;
-}
-
-.done-taste-text span {
-  color: var(--text-muted);
-  font-size: 0.85em;
-}
-
-.done-taste-arrow {
-  margin-inline-start: 12px;
-  color: var(--text-muted);
-  font-size: 1.6em;
-  line-height: 1;
-}
-
-[dir="rtl"] .done-taste-arrow {
-  transform: scaleX(-1);
 }
 
 /* ---------- Omdöme ---------- */
@@ -1921,65 +1810,6 @@ html[data-text-size="stor"] .dish-body p {
   margin-inline-start: auto;
 }
 
-/* ---------- Min smak ---------- */
-
-.taste-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-}
-
-.taste-card {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 12px 12px 18px;
-  border-radius: var(--radius);
-  background: var(--surface);
-  border: 3px solid transparent;
-  box-shadow: var(--shadow);
-}
-
-.taste-card.is-gillar { border-color: var(--primary); }
-.taste-card.is-ogillar { border-color: var(--border); background: var(--surface-2); }
-
-.taste-emoji { font-size: 34px; }
-.taste-name { font-weight: 700; }
-
-.taste-votes { display: flex; gap: 6px; }
-
-.taste-vote {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  border: 2px solid var(--border);
-  background: var(--surface);
-  font-size: 26px;
-  filter: grayscale(1);
-  opacity: 0.6;
-}
-
-.taste-vote.selected { filter: none; opacity: 1; }
-.taste-vote.up.selected { border-color: var(--primary); background: var(--primary-soft); }
-.taste-vote.down.selected { border-color: var(--accent); background: #fbe9e5; }
-
-.dish-taste {
-  background: #fdf1ec;
-  color: #8a2f1d;
-}
-
-.taste-link {
-  display: block;
-  margin: 18px auto 0;
-  min-height: 56px;
-  padding: 0 24px;
-  border-radius: 999px;
-  border: 2px solid var(--border);
-  background: var(--surface);
-  font-weight: 700;
-}
-
 /* ---------- Språk ---------- */
 
 .lang-choice {
@@ -2010,56 +1840,6 @@ html[data-text-size="stor"] .dish-body p {
 }
 
 /* ---------- Dolda rätter ---------- */
-
-.hidden-dishes {
-  margin-top: 8px;
-}
-
-.hidden-title {
-  margin-top: 28px;
-}
-
-.blocked-grid {
-  list-style: none;
-  padding: 0;
-  margin: 14px 0 0;
-}
-
-.dish.blocked {
-  cursor: default;
-  box-shadow: none;
-  border: 2px dashed var(--border);
-  background: var(--surface-2);
-}
-
-.dish.blocked .dish-image {
-  filter: grayscale(0.85);
-  opacity: 0.7;
-}
-
-.dish.blocked h3 {
-  margin: 0;
-  font-size: 1.1em;
-  color: var(--text-muted);
-}
-
-.blocked-image {
-  filter: grayscale(0.85);
-  opacity: 0.7;
-}
-
-.dish-blocked {
-  background: #fff;
-  color: #8a2f1d;
-}
-
-.blockers {
-  margin: 4px 0 0;
-  padding-inline-start: 1.1em;
-  color: #8a2f1d;
-  font-weight: 600;
-  font-size: 0.85em;
-}
 
 /* ---------- Förslag och fortsätt ---------- */
 
@@ -2181,7 +1961,7 @@ html[data-text-size="stor"] .dish-body p {
     gap: 16px;
     align-items: start;
   }
-  .taste-grid { grid-template-columns: 1fr 1fr; }
+  
 }
 
 @media (max-width: 560px) {
@@ -2191,7 +1971,7 @@ html[data-text-size="stor"] .dish-body p {
   .tool { padding: 0 12px; }
   .segmented { grid-template-columns: 1fr; }
   .segmented-4 { grid-template-columns: 1fr 1fr; }
-  .taste-grid { grid-template-columns: 1fr; }
+  
   .thumb { min-height: 140px; }
   .segment { min-height: 0; }
   .footer { flex-wrap: wrap; }
@@ -2314,86 +2094,6 @@ html[data-text-size="stor"] .dish-body p {
   white-space: nowrap;
 }
 
-.combo {
-  position: relative;
-  margin-top: 12px;
-  max-width: 640px;
-}
-
-.combo-input {
-  width: 100%;
-  min-height: 64px;
-  padding: 0 20px;
-  border-radius: 16px;
-  border: 3px solid var(--primary);
-  background: var(--surface);
-  font: inherit;
-  font-size: 1.1em;
-  color: var(--text);
-}
-
-.combo-input:focus-visible {
-  outline: 4px solid var(--focus);
-  outline-offset: 2px;
-}
-
-.combo-list {
-  position: absolute;
-  z-index: 6;
-  left: 0;
-  right: 0;
-  top: calc(100% + 6px);
-  margin: 0;
-  padding: 6px;
-  list-style: none;
-  background: var(--surface);
-  border-radius: 16px;
-  box-shadow: var(--shadow), 0 12px 32px rgba(31, 42, 36, 0.18);
-  max-height: 360px;
-  overflow-y: auto;
-}
-
-.combo-option {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  min-height: 56px;
-  padding: 0 14px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.combo-option.active {
-  background: var(--primary-soft);
-}
-
-@media (hover: hover) {
-  .combo-option:hover {
-    background: var(--primary-soft);
-  }
-}
-
-.combo-option.custom {
-  color: var(--primary-strong);
-}
-
-.combo-hint {
-  color: var(--text-muted);
-  font-weight: 500;
-  font-size: 0.85em;
-}
-
-.combo-none {
-  margin-top: 8px;
-}
-
-.fav-chips {
-  list-style: none;
-  padding: 0;
-}
-
 .popular-label {
   margin-top: 16px;
 }
@@ -2420,7 +2120,6 @@ html[data-text-size="stor"] .dish-body p {
 .dish,
 .thumb,
 .order-row button,
-.taste-vote,
 .lang-option,
 .topbar-diet {
   transition: transform 0.1s ease-out, filter 0.1s ease-out;
@@ -2433,7 +2132,6 @@ html[data-text-size="stor"] .dish-body p {
 .drink:active,
 .thumb:active,
 .order-row button:active,
-.taste-vote:active,
 .lang-option:active,
 .topbar-diet:active {
   transform: scale(0.95);
@@ -2448,12 +2146,11 @@ html[data-text-size="stor"] .dish-body p {
 
 @media (prefers-reduced-motion: reduce) {
   .btn, .tool, .chip, .segment, .drink, .dish, .thumb,
-  .order-row button, .taste-vote, .lang-option, .topbar-diet {
+  .order-row button, .lang-option, .topbar-diet {
     transition: none;
   }
   .btn:active:not(:disabled), .tool:active, .chip:active, .segment:active, .drink:active,
-  .thumb:active, .order-row button:active,
-  .taste-vote:active, .lang-option:active, .topbar-diet:active, .dish:active {
+  .thumb:active, .order-row button:active, .lang-option:active, .topbar-diet:active, .dish:active {
     transform: none;
   }
 }

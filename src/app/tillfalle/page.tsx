@@ -16,8 +16,7 @@ import type { VoiceCommand } from "@/lib/voice";
  */
 export default function OccasionPage() {
   const router = useRouter();
-  const { patient, startOccasion, placedOrders, meals, cancelOrder, restoreOrder, hasTaste, addServedMeal, order: current } =
-    useRequirePatient();
+  const { patient, startOccasion, placedOrders, cancelOrder, restoreOrder } = useRequirePatient();
   const { t, tm } = useT();
   const announce = useAnnounce();
   const reference = useNow();
@@ -61,7 +60,6 @@ export default function OccasionPage() {
         time,
         past: time <= reference,
         dish: dishes.find((d) => d.id === order.dishId)!,
-        meal: meals.find((x) => x.id === order.mealId),
       };
     });
   const mealName = (order: Order) => t.occasions[order.occasion!];
@@ -108,14 +106,7 @@ export default function OccasionPage() {
     ? m.speak(upcoming.map((r) => `${t.occasions[r.order.occasion!]} ${at(r.time, reference)}, ${tm.dish(r.dish).name}.`).join(" "))
     : m.speakNone;
   const freshRow = fresh ? upcoming.find((r) => `${r.order.occasion}-${r.order.date}` === fresh) : undefined;
-  // Demo: hoppa fram till efter måltiden och ge omdöme på det hon just beställde.
-  const simulateServed = () => {
-    if (!current.placed || !current.dishId) return;
-    const id = `maltid-${Date.now()}`;
-    const label = occasions.find((x) => x.id === current.occasion)?.name ?? "Lunch";
-    addServedMeal({ id, dishId: current.dishId, label, reasons: [] });
-    router.push(`/omdome?id=${id}`);
-  };
+
   const ghostText = ghosts.length ? ` ${m.notOrderedSpeak(t.and(ghosts.map((g) => t.occasions[g.occasion.id].toLowerCase())))}` : "";
 
   return (
@@ -171,7 +162,7 @@ export default function OccasionPage() {
                   </li>
                 );
               }
-              const { order, slot, time, past, dish, meal } = entry;
+              const { order, slot, time, past, dish } = entry;
               const open = !past && isOpen(slot, reference);
               const canCancel = cancellable({ past, slot });
               const isNext = `${order.occasion}-${order.date}` === nextKey;
@@ -213,14 +204,6 @@ export default function OccasionPage() {
                       )}
                     </div>
                   )}
-                  {past && meal && !meal.rating && (
-                    <button className="btn btn-primary order-action" onClick={() => router.push(`/omdome?id=${meal.id}`)}>
-                      👍 👎 {m.rate}
-                    </button>
-                  )}
-                  {past && meal?.rating && (
-                    <span className="order-rated">{meal.rating === "upp" ? "👍" : "👎"} {m.rated}</span>
-                  )}
                   {/* Låstiden som en list längs kortets underkant, till höger om bilden. */}
                   {!past && !open && <p className="order-bar order-status">{m.locked}</p>}
                   {open && (() => {
@@ -239,24 +222,6 @@ export default function OccasionPage() {
       </section>
 
       <p className="lead occasion-hint">{o.lead}</p>
-
-      {/* Vad hon tycker om för mat – syns tills hon har svarat. */}
-      {!hasTaste && (
-        <button className="done-taste done-ask" onClick={() => router.push("/min-smak")}>
-          <span className="done-taste-icon" aria-hidden>❤️</span>
-          <span className="done-taste-text">
-            <strong>{t.done.tasteTitle}</strong>
-            <span>{t.done.tasteBody}</span>
-          </span>
-          <span className="done-taste-arrow" aria-hidden>›</span>
-        </button>
-      )}
-
-      {current.placed && current.dishId && (
-        <button className="demo-link" onClick={simulateServed}>
-          {t.done.demoServed}
-        </button>
-      )}
     </Screen>
   );
 }

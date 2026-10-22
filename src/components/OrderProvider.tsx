@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { dateKey, initDemoClock, now } from "@/lib/clock";
-import { emptyTaste, findPatient, occasions, orderHistory, servedHistory, type OccasionId, type Patient, type Portion, type ServedMeal, type TasteProfile } from "@/lib/data";
+import { findPatient, occasions, orderHistory, servedHistory, type OccasionId, type Patient, type Portion, type ServedMeal } from "@/lib/data";
 import { dictionaries, languages, terminology, type Lang } from "@/lib/i18n";
 
 export type Order = {
@@ -36,7 +36,6 @@ type State = {
   /** Serverade måltider per personnummer – sparas även när man loggar ut. */
   history: Record<string, ServedMeal[]>;
   /** Smakprofil per personnummer – sparas även när man loggar ut. */
-  tastes: Record<string, TasteProfile>;
   /** Påbörjade val per personnummer, så att man kan fortsätta där man var. */
   drafts: Record<string, Draft>;
   /** Lagda beställningar per personnummer. */
@@ -56,10 +55,6 @@ type OrderContextValue = State & {
   meals: ServedMeal[];
   addServedMeal: (meal: ServedMeal) => void;
   updateMeal: (id: string, patch: Partial<ServedMeal>) => void;
-  /** Patientens smakprofil (tom om hon inte har fyllt i den). */
-  taste: TasteProfile;
-  hasTaste: boolean;
-  setTaste: (taste: TasteProfile) => void;
   /** Ångra "Avbryt": logga in samma patient igen och fortsätt där hon var. */
   /**
    * Avbryt: loggar ut helt. Det påbörjade valet sparas inte och plattans inställningar
@@ -90,7 +85,6 @@ const initialState: State = {
   soundOn: false,
   lang: "sv",
   history: {},
-  tastes: {},
   drafts: {},
   orders: {},
 };
@@ -116,7 +110,6 @@ function keep(s: State): Partial<State> {
     soundOn: s.soundOn,
     lang: s.lang,
     history: s.history,
-    tastes: s.tastes,
     drafts: s.drafts,
     orders: s.orders,
   };
@@ -251,16 +244,11 @@ export function OrderProvider({ children }: { children: ReactNode }) {
         const meals = (s.history[id] ?? []).map((m) => (m.id === mealId ? { ...m, ...patch } : m));
         return { ...s, history: { ...s.history, [id]: meals } };
       }),
-    // Äldre sparade profiler saknar t.ex. cuisines – fyll på med tomma listor.
-    taste: { ...emptyTaste, ...(pnr ? state.tastes[pnr] : undefined) },
-    hasTaste: !!pnr && !!state.tastes[pnr],
-    setTaste: (taste) =>
-      setState((s) => (s.patient ? { ...s, tastes: { ...s.tastes, [s.patient.personnummer]: taste } } : s)),
     signOut: () =>
       setState((s) => {
         const drafts = { ...s.drafts };
         if (s.patient) delete drafts[s.patient.personnummer];
-        return { ...initialState, history: s.history, tastes: s.tastes, orders: s.orders, drafts };
+        return { ...initialState, history: s.history, orders: s.orders, drafts };
       }),
     startOccasion: (occasion, date) => setState((s) => ({ ...s, order: { ...emptyOrder, occasion, date } })),
     placeOrder: () =>
