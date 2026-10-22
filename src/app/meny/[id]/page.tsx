@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { Screen, useAnnounce } from "@/components/Screen";
 import { useRequirePatient, useT } from "@/components/OrderProvider";
-import { dishBlockers, dishes, extras, portions, type Portion } from "@/lib/data";
+import { dishBlockers, dishes, drinkSuits, drinks, extras } from "@/lib/data";
 import { useBlockerText } from "@/components/useBlockerText";
 import type { VoiceCommand } from "@/lib/voice";
 
@@ -49,15 +49,19 @@ export default function DishPage() {
     announce(on ? k.removed(tm.extra(extra)) : k.added(tm.extra(extra)));
   };
 
-  const choosePortion = (id: Portion) => {
-    updateOrder({ portion: id });
-    const p = portions.find((x) => x.id === id)!;
-    announce(k.portion(tm.portion(p.id, p).name));
+  // Drycken väljs här, bredvid maten – ingen egen sida för dryck.
+  const suitableDrinks = drinks.filter((d) => drinkSuits(d, patient.diet));
+  const chooseDrink = (id: string) => {
+    updateOrder({ drinkId: id });
+    const d = drinks.find((x) => x.id === id)!;
+    announce(k.drinkChosen(tm.drink(d.id, d.name)));
   };
+  const hasDrink = !!order.drinkId && suitableDrinks.some((d) => d.id === order.drinkId);
 
   const next = () => {
+    if (!hasDrink) return;
     announce();
-    router.push("/dryck");
+    router.push("/sammanfattning");
   };
 
   // Önskemål som "såsen vid sidan" gäller bara lagad mat.
@@ -65,10 +69,8 @@ export default function DishPage() {
 
   const commands: VoiceCommand[] = [
     ...(hasExtras ? extras : []).map((e) => ({ phrases: e.voiceWords, action: () => toggleExtra(e.name) })),
-    { phrases: ["liten", "lilla", "lite"], action: () => choosePortion("liten") },
-    { phrases: ["lagom", "normal*", "vanlig*", "mellan*"], action: () => choosePortion("lagom") },
-    { phrases: ["stor", "stora", "mycket", "hungrig"], action: () => choosePortion("stor") },
-    { phrases: ["nästa", "dryck*", "klar", "fortsätt", "gå vidare", "dricka"], action: next },
+    ...suitableDrinks.map((d) => ({ phrases: d.voiceWords, action: () => chooseDrink(d.id) })),
+    { phrases: ["nästa", "klar", "fortsätt", "gå vidare", "kolla"], action: next },
     { phrases: ["tillbaka", "annan mat", "byt*", "ångra"], action: () => router.push("/meny") },
   ];
 
@@ -79,12 +81,12 @@ export default function DishPage() {
       step={2}
       speakText={k.speak(text.name)}
       commands={commands}
-      voiceHint="”liten”, ”stor” eller ”nästa”"
+      voiceHint="”vatten”, ”kaffe” eller ”nästa”"
       footer={
         <>
           <button className="btn btn-ghost" onClick={() => router.push("/meny")}>{k.other}</button>
-          <button className="btn btn-primary btn-large" onClick={next}>
-            {k.next}
+          <button className="btn btn-primary btn-large" onClick={next} disabled={!hasDrink}>
+            {hasDrink ? t.continue : k.pickDrink}
           </button>
         </>
       }
@@ -105,23 +107,21 @@ export default function DishPage() {
 
       <div className="dish-choices">
       <section className="section">
-        <h2>{k.hungry}</h2>
-        <div className="segmented" role="radiogroup" aria-label={k.hungry}>
-          {portions.map((p) => (
+        <h2>{t.drink.title}</h2>
+        <div className="drink-choices" role="radiogroup" aria-label={t.drink.title}>
+          {suitableDrinks.map((d) => (
             <button
-              key={p.id}
+              key={d.id}
               role="radio"
-              aria-checked={order.portion === p.id}
-              className={`segment ${order.portion === p.id ? "selected" : ""}`}
-              onClick={() => choosePortion(p.id)}
+              aria-checked={order.drinkId === d.id}
+              className={`drink-choice ${order.drinkId === d.id ? "selected" : ""}`}
+              onClick={() => chooseDrink(d.id)}
             >
-              <span className={`portion-dot portion-${p.id}`} aria-hidden />
-              <strong>{tm.portion(p.id, p).name}</strong>
-              <span>{tm.portion(p.id, p).hint}</span>
+              <span className="drink-choice-emoji" aria-hidden>{d.emoji}</span>
+              <span>{tm.drink(d.id, d.name)}</span>
             </button>
           ))}
         </div>
-        <p className="muted">{k.more}</p>
       </section>
 
       {hasExtras && (

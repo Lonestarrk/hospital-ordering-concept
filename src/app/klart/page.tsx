@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Screen } from "@/components/Screen";
 import { useRequirePatient, useT } from "@/components/OrderProvider";
-import { dishes, drinks, occasions, portions } from "@/lib/data";
+import { dishes, drinks, occasions } from "@/lib/data";
 import { hhmm, isOpen, minutesLeft, slotFor } from "@/lib/clock";
 import { useSlotText } from "@/components/Countdown";
 import { useNow } from "@/components/useNow";
@@ -23,7 +23,6 @@ export default function DonePage() {
 
   const dish = dishes.find((d) => d.id === order.dishId);
   const drink = drinks.find((d) => d.id === order.drinkId);
-  const portion = portions.find((p) => p.id === order.portion);
 
   // Klar loggar ut helt, som Avbryt – plattan kan gå vidare till nästa patient.
   const done = () => {
@@ -54,12 +53,12 @@ export default function DonePage() {
     { phrases: ["klar", "tack", "färdig*", "logga ut", "hej då"], action: done },
   ];
 
-  const what = dish && portion ? t.summary.portionDish(tm.portion(portion.id, portion).name, tm.dish(dish).name) : o.yourFood;
+  const what = dish ? tm.dish(dish).name : o.yourFood;
   const whenText = slot ? when(slot, reference) : "";
   const mins = slot ? minutesLeft(slot, reference) : 0;
 
   return (
-    <Screen step={5} speakText={o.speak(patient.firstName, what, whenText)} commands={commands} voiceHint="”klar” eller ”beställ mer”">
+    <Screen step={4} speakText={o.speak(patient.firstName, what, whenText)} commands={commands} voiceHint="”klar” eller ”beställ mer”">
       {/* Tack och tid som en splash överst, som tonar ut efter 3 sekunder. Tiden står kvar i kvittot nedanför. */}
       <section className="done-splash" role="status">
         <div className="done-splash-check" aria-hidden>
