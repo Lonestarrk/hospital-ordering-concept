@@ -61,7 +61,11 @@ type OrderContextValue = State & {
   hasTaste: boolean;
   setTaste: (taste: TasteProfile) => void;
   /** Ångra "Avbryt": logga in samma patient igen och fortsätt där hon var. */
-  undoStop: (personnummer: string) => string | undefined;
+  /**
+   * Avbryt: loggar ut helt. Det påbörjade valet sparas inte och plattans inställningar
+   * (språk, ljud, textstorlek) återställs – nästa patient ska inte möta något av sessionen.
+   */
+  signOut: () => void;
   /** Börja en ny beställning för en måltid ett visst datum. */
   startOccasion: (occasion: OccasionId, date: string) => void;
   /** Skicka den aktuella beställningen (ersätter en tidigare för samma måltid och datum). */
@@ -241,10 +245,12 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     hasTaste: !!pnr && !!state.tastes[pnr],
     setTaste: (taste) =>
       setState((s) => (s.patient ? { ...s, tastes: { ...s.tastes, [s.patient.personnummer]: taste } } : s)),
-    undoStop: (personnummer) => {
-      const patient = findPatient(personnummer);
-      return patient ? value.login(patient) : undefined;
-    },
+    signOut: () =>
+      setState((s) => {
+        const drafts = { ...s.drafts };
+        if (s.patient) delete drafts[s.patient.personnummer];
+        return { ...initialState, history: s.history, tastes: s.tastes, orders: s.orders, drafts };
+      }),
     startOccasion: (occasion, date) => setState((s) => ({ ...s, order: { ...emptyOrder, occasion, date } })),
     placeOrder: () =>
       setState((s) => {

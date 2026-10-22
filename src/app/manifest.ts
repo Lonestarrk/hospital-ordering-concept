@@ -3,8 +3,8 @@ import type { MetadataRoute } from "next";
 /** Gör appen installerbar (PWA): helskärm från hemskärmen, utan adressfält. */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Måltider – beställ din mat",
-    short_name: "Måltider",
+    name: "Min måltid – beställ din mat",
+    short_name: "Min måltid",
     description: "Beställ sjukhusmat på surfplattan.",
     lang: "sv",
     start_url: "/",

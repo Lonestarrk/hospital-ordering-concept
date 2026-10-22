@@ -6,10 +6,10 @@ import { UpdateChecker } from "@/components/UpdateChecker";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Måltider – beställ din mat",
+  title: "Min måltid – beställ din mat",
   description: "Konceptprototyp: Ingrid beställer sjukhusmat på surfplatta.",
-  applicationName: "Måltider",
-  appleWebApp: { capable: true, title: "Måltider", statusBarStyle: "default" },
+  applicationName: "Min måltid",
+  appleWebApp: { capable: true, title: "Min måltid", statusBarStyle: "default" },
   icons: {
     icon: "/ikoner/ikon-192.png",
     apple: "/ikoner/apple-touch-icon.png",

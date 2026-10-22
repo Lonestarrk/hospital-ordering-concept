@@ -133,12 +133,14 @@ export default function OccasionPage() {
                         <strong>{t.occasions[occasion.id]}</strong> · {at(slot.servedAt, reference)}
                       </p>
                       <p className="order-dish order-ghost-text">{m.notOrdered}</p>
-                      <Countdown slot={slot} />
                     </div>
                     <div className="order-actions">
                       <button className="btn btn-ghost order-action order-ghost-action" onClick={() => choose(occasion.id)}>
                         {m.order}
                       </button>
+                    </div>
+                    <div className="order-bar">
+                      <Countdown slot={slot} />
                     </div>
                   </li>
                 );
@@ -149,22 +151,13 @@ export default function OccasionPage() {
               const isNext = `${order.occasion}-${order.date}` === nextKey;
               return (
                 <li key={`${order.occasion}-${order.date}`} className={`order-row ${past ? "is-past" : ""} ${isNext ? "is-next" : ""}`}>
-                  <img className="order-image" src={dish.image} alt="" />
+                  <span className="order-image"><img src={dish.image} alt="" /></span>
                   <div className="order-body">
                     <p className="order-when">
                       {isNext && <span className="badge badge-next">{m.next}</span>}
                       <strong>{t.occasions[order.occasion!]}</strong> · {past ? m.was(at(time, reference)) : m.arrives(at(time, reference))}
                     </p>
                     <p className="order-dish">{tm.dish(dish).name}</p>
-                    {!past && slot.deadline && !open && <p className="order-status">{m.locked}</p>}
-                    {open && (() => {
-                      const mins = minutesLeft(slot, reference);
-                      return (
-                        <p className={`order-lock ${mins <= 30 ? "urgent" : ""}`} role="timer" aria-live="off">
-                          {m.locksIn(Math.floor(mins / 60), mins % 60)}
-                        </p>
-                      );
-                    })()}
                   </div>
                   {(open || canCancel) && (
                     <div className="order-actions">
@@ -185,7 +178,7 @@ export default function OccasionPage() {
                       )}
                     </div>
                   )}
-                  {past && meal && !meal.rating && !meal.skipped && (
+                  {past && meal && !meal.rating && (
                     <button className="btn btn-primary order-action" onClick={() => router.push(`/omdome?id=${meal.id}`)}>
                       👍 👎 {m.rate}
                     </button>
@@ -193,6 +186,16 @@ export default function OccasionPage() {
                   {past && meal?.rating && (
                     <span className="order-rated">{meal.rating === "upp" ? "👍" : "👎"} {m.rated}</span>
                   )}
+                  {/* Låstiden som en list längs kortets underkant, till höger om bilden. */}
+                  {!past && slot.deadline && !open && <p className="order-bar order-status">{m.locked}</p>}
+                  {open && (() => {
+                    const mins = minutesLeft(slot, reference);
+                    return (
+                      <p className={`order-bar order-lock ${mins <= 30 ? "urgent" : ""}`} role="timer" aria-live="off">
+                        {m.locksIn(Math.floor(mins / 60), mins % 60)}
+                      </p>
+                    );
+                  })()}
                 </li>
               );
             })}

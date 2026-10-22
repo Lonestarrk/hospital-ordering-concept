@@ -99,12 +99,21 @@ function Feedback() {
           </button>
         }
       >
-        <div className="done">
-          <div className={`done-check ${shown.rating === "ner" ? "done-check-neutral" : ""}`} aria-hidden>
-            {shown.rating === "upp" ? "👍" : "👎"}
+        <div className="feedback-thanks">
+          {/* Tummen och tacket på en rad, så att allt får plats utan att man behöver scrolla. */}
+          <div className="feedback-thanks-head">
+            <span className="feedback-thanks-image">
+              <img src={dish.image} alt="" />
+              <span className={`feedback-thanks-thumb ${shown.rating === "ner" ? "is-down" : ""}`} aria-hidden>
+                {shown.rating === "upp" ? "👍" : "👎"}
+              </span>
+            </span>
+            <div>
+              <h1>{f.thanks(patient.firstName)}</h1>
+              <p className="lead">{f.kitchenGets(dishName)}</p>
+              {shown.rating === "upp" && <p className="muted">{f.nextTime}</p>}
+            </div>
           </div>
-          <h1>{f.thanks(patient.firstName)}</h1>
-          <p className="lead">{f.kitchenGets(dishName)}</p>
           {tellNurse && (
             <div className="card care feedback-staff">
               <div className="care-icon" aria-hidden>👩‍⚕️</div>
@@ -116,7 +125,6 @@ function Feedback() {
               </div>
             </div>
           )}
-          {shown.rating === "upp" && <p className="muted">{f.nextTime}</p>}
         </div>
       </Screen>
     );
@@ -137,8 +145,10 @@ function Feedback() {
       }
     >
       <div className="feedback-head">
-        <img className="feedback-image" src={dish.image} alt={tm.dish(dish).imageAlt} />
-        <div>
+        <span className="feedback-image">
+          <img src={dish.image} alt={tm.dish(dish).imageAlt} />
+        </span>
+        <div className="feedback-head-text">
           <p className="eyebrow">{tm.word(meal.label)}</p>
           <h1>{f.howWas}</h1>
           <p className="lead">{dishName}</p>
@@ -146,7 +156,7 @@ function Feedback() {
         </div>
       </div>
 
-      <div className="thumbs" role="radiogroup" aria-label={f.howWas}>
+      <div className={`thumbs ${rating ? "has-choice" : ""}`} role="radiogroup" aria-label={f.howWas}>
         <button
           role="radio"
           aria-checked={rating === "upp"}
@@ -168,7 +178,7 @@ function Feedback() {
       </div>
 
       {rating && (
-        <>
+        <div className="feedback-more">
           <section className="section">
             <h2>
               {rating === "upp" ? f.whatGood : f.whatBad} <span className="optional">{t.optional}</span>
@@ -202,7 +212,7 @@ function Feedback() {
               ))}
             </div>
           </section>
-        </>
+        </div>
       )}
     </Screen>
   );

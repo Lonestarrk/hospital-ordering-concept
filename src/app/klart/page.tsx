@@ -11,7 +11,7 @@ import type { VoiceCommand } from "@/lib/voice";
 
 export default function DonePage() {
   const router = useRouter();
-  const { patient, order, logout, addServedMeal, hasTaste, reopenOrder, clearOrder } = useRequirePatient();
+  const { patient, order, signOut, addServedMeal, hasTaste, reopenOrder, clearOrder } = useRequirePatient();
   const { t, tm } = useT();
   const reference = useNow();
   const { when } = useSlotText();
@@ -25,8 +25,9 @@ export default function DonePage() {
   const drink = drinks.find((d) => d.id === order.drinkId);
   const portion = portions.find((p) => p.id === order.portion);
 
+  // Klar loggar ut helt, som Avbryt – plattan kan gå vidare till nästa patient.
   const done = () => {
-    logout();
+    signOut();
     router.replace("/");
   };
   // Demo: hoppa fram till efter måltiden och ge omdöme på det Ingrid just beställde.
@@ -48,6 +49,7 @@ export default function DonePage() {
   const commands: VoiceCommand[] = [
     ...(canChange ? [{ phrases: ["ändra*", "ångra"], action: change }] : []),
     { phrases: ["mer", "något mer", "beställ mer", "en till"], action: more },
+    { phrases: ["beställningar", "översikt", "visa", "vad har jag beställt"], action: more },
     { phrases: ["smak*", "tycker om", "gillar", "önska*"], action: () => router.push("/min-smak") },
     { phrases: ["klar", "tack", "färdig*", "logga ut", "hej då"], action: done },
   ];
@@ -90,35 +92,55 @@ export default function DonePage() {
         </button>
       </div>
 
-      <div className="done-receipt">
-        {dish && <img className="done-receipt-image" src={dish.image} alt="" />}
-        <div className="done-receipt-text">
-          <p className="done-receipt-what">
-            {order.occasion ? `${t.occasions[order.occasion]} ${whenText}` : whenText}
-            {" · "}
-            {what}
-            {drink && ` · ${tm.drink(drink.id, drink.name)}`}
+      {/* Till översikten – se allt som är beställt, utan att logga ut. */}
+      <button className="done-taste done-overview" onClick={more}>
+        <span className="done-taste-icon" aria-hidden>📋</span>
+        <span className="done-taste-text">
+          <strong>{o.overview}</strong>
+          <span>{o.overviewBody}</span>
+        </span>
+        <span className="done-taste-arrow" aria-hidden>›</span>
+      </button>
+
+      {/* Beställningen som samma kort som på Dina beställningar: bilden i full höjd, låstiden längst ner. */}
+      <div className="order-row is-next done-order">
+        {dish && <span className="order-image"><img src={dish.image} alt="" /></span>}
+        <div className="order-body">
+          <p className="order-when">
+            {order.occasion && <strong>{t.occasions[order.occasion]}</strong>}
+            {order.occasion && " · "}
+            {t.myOrders.arrives(whenText)}
           </p>
-          {canChange && slot?.deadline ? (
-            <p className={`order-lock ${mins <= 30 ? "urgent" : ""}`} role="timer" aria-live="off">
-              {t.myOrders.locksIn(Math.floor(mins / 60), mins % 60)}
-            </p>
-          ) : (
-            slot?.deadline && <p className="order-status">{t.myOrders.locked}</p>
-          )}
+          <p className="order-dish">{what}</p>
+          {drink && <p className="order-drink">{tm.drink(drink.id, drink.name)}</p>}
         </div>
         {canChange && slot?.deadline && (
-          <button className="btn btn-ghost order-change" onClick={change}>
-            <span>{t.summary.change}</span>
-            <span className="order-change-until">{t.myOrders.changeUntil(hhmm(slot.deadline))}</span>
-          </button>
+          <div className="order-actions">
+            <button className="btn btn-ghost order-action order-change" onClick={change}>
+              <span>{t.summary.change}</span>
+              <span className="order-change-until">{t.myOrders.changeUntil(hhmm(slot.deadline))}</span>
+            </button>
+          </div>
         )}
-        {!hasTaste && (
-          <button className="btn btn-ghost done-taste" onClick={() => router.push("/min-smak")}>
-            {o.tasteTitle}
-          </button>
+        {canChange && slot?.deadline ? (
+          <p className={`order-bar order-lock ${mins <= 30 ? "urgent" : ""}`} role="timer" aria-live="off">
+            {t.myOrders.locksIn(Math.floor(mins / 60), mins % 60)}
+          </p>
+        ) : (
+          slot?.deadline && <p className="order-bar order-status">{t.myOrders.locked}</p>
         )}
       </div>
+
+      {!hasTaste && (
+        <button className="done-taste done-ask" onClick={() => router.push("/min-smak")}>
+          <span className="done-taste-icon" aria-hidden>❤️</span>
+          <span className="done-taste-text">
+            <strong>{o.tasteTitle}</strong>
+            <span>{o.tasteBody}</span>
+          </span>
+          <span className="done-taste-arrow" aria-hidden>›</span>
+        </button>
+      )}
 
       <button className="demo-link" onClick={simulateServed}>
         {o.demoServed}

@@ -19,8 +19,9 @@ export function OccasionBar() {
   const announce = useAnnounce();
   const reference = useNow();
   const o = t.occasionPage;
-  // Den måltid hon håller på att beställa markeras – men inte på första sidan, där hon inte har valt än.
-  const current = pathname === "/tillfalle" ? undefined : order.occasion;
+  // Den måltid hon håller på att beställa markeras – bara medan hon beställer (meny, dryck, kolla, klart).
+  const ordering = /^\/(meny|dryck|sammanfattning|klart)(\/|$)/.test(pathname);
+  const current = ordering ? order.occasion : undefined;
 
   const choose = (id: OccasionId) => {
     startOccasion(id, nextSlot(id, reference).date);

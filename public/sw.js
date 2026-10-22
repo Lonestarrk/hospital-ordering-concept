@@ -1,4 +1,4 @@
-// Service worker för Måltider. Sparar appens egna filer (sidor, skript, bilder) så att
+// Service worker för Min måltid. Sparar appens egna filer (sidor, skript, bilder) så att
 // den startar snabbt och tål ett kort avbrott i nätet. Patientuppgifter finns bara i
 // webbläsarens sessionStorage och går aldrig genom den här filen.
 const VERSION = "maltider-v1";

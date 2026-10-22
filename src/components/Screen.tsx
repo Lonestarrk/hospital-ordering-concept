@@ -11,10 +11,8 @@ import { OccasionBar } from "./OccasionBar";
 import { InstallButton } from "./Install";
 import {
   chime,
-  listenOnce,
   matchCommand,
   normalize,
-  localRecognitionSupported,
   speak,
   stopSpeaking,
   type VoiceCommand,
@@ -25,18 +23,13 @@ type ScreenProps = {
   speakText: string;
   /** Vilket steg (1–4) som ska markeras i stegindikatorn. Utelämna för att dölja den. */
   step?: number;
-  /** Röstkommandon för sidan (svenska). Utelämna för att dölja mikrofonknappen. */
+  /** Röstkommandon för sidan (svenska). Mikrofonen är borttagen; kommandona nås i demo via händelsen "ingrid-voice". */
   commands?: VoiceCommand[];
   /** Exempel på vad man kan säga, t.ex. "lax" eller "soppa". */
   voiceHint?: string;
   children: ReactNode;
   footer?: ReactNode;
 };
-
-type ListenState =
-  | { kind: "idle" }
-  | { kind: "listening" }
-  | { kind: "heard"; text: string; understood: boolean };
 
 /** Bekräftar ett val med en ljudsignal – och tal om text anges – när ljudläget är på. */
 export function useAnnounce() {
@@ -53,7 +46,7 @@ export function useAnnounce() {
 }
 
 export function Screen({ speakText, step, commands, voiceHint, children, footer }: ScreenProps) {
-  const { patient, textSize, toggleTextSize, soundOn, setSoundOn, lang, order, logout } = useOrder();
+  const { patient, textSize, toggleTextSize, soundOn, setSoundOn, order, signOut } = useOrder();
   const router = useRouter();
   const pathname = usePathname();
   const { t, tm, speechLang } = useT();
@@ -62,17 +55,9 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
   const [dietOpen, setDietOpen] = useState(false);
   // Avbryt finns efter inloggningen, men inte när beställningen redan är skickad.
   const canCancel = !!patient && !order.placed && pathname !== "/klart";
-  const [listen, setListen] = useState<ListenState>({ kind: "idle" });
-  const [micAvailable, setMicAvailable] = useState(false);
   const [demoClock, setDemoClock] = useState(false);
   const clock = useNow();
   useEffect(() => setDemoClock(demoClockActive()), []);
-  const abortRef = useRef<() => void>(() => {});
-
-  // Mikrofonen visas bara om taligenkänningen kan köras i enheten (inget ljud lämnar plattan).
-  useEffect(() => {
-    setMicAvailable(localRecognitionSupported());
-  }, []);
 
   // I ljudläge läses varje ny sida upp automatiskt.
   useEffect(() => {
@@ -81,16 +66,15 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Avbryt sker direkt (det går att ångra): valet sparas och inloggningen erbjuder "Ångra".
+  // Avbryt loggar ut helt – plattan kan gå vidare till nästa patient. Inloggningen visar en kort bekräftelse.
   const stop = () => {
-    if (patient) {
-      try {
-        sessionStorage.setItem(STOPPED_KEY, JSON.stringify({ personnummer: patient.personnummer, at: Date.now() }));
-      } catch {
-        // Utan lagring visas bara inloggningen – valet är ändå sparat till nästa inloggning.
-      }
+    try {
+      sessionStorage.setItem(STOPPED_KEY, String(Date.now()));
+    } catch {
+      // Utan lagring visas bara inloggningen.
     }
-    logout();
+    stopSpeaking();
+    signOut();
     router.replace("/");
   };
 
@@ -118,7 +102,6 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
     const all = [...(commands ?? []), ...globalCommands];
     const match = matchCommand(alternatives, all);
     const text = alternatives[0] ?? "";
-    setListen({ kind: "heard", text, understood: !!match });
     if (match) {
       match.action(normalize(text));
     } else {
@@ -135,32 +118,6 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
     window.addEventListener("ingrid-voice", onVoice);
     return () => window.removeEventListener("ingrid-voice", onVoice);
   }, []);
-
-  const startListening = async () => {
-    if (listen.kind === "listening") {
-      abortRef.current();
-      return;
-    }
-    stopSpeaking();
-    setSoundOn(true);
-    setListen({ kind: "listening" });
-    abortRef.current = await listenOnce({
-      onResult: handleHeard,
-      onError: (error) => {
-        if (error === "no-speech") speak("Jag hörde ingenting. Tryck på mikrofonen och försök igen.");
-        else if (error === "not-allowed") speak("Mikrofonen är avstängd. Tryck på skärmen i stället.");
-        else if (error === "installing") speak("Ett ögonblick, jag gör i ordning rösten.");
-        else if (error === "not-local") {
-          setMicAvailable(false);
-          speak("Röststyrning finns inte på den här plattan. Tryck på skärmen i stället.");
-        }
-      },
-      onEnd: () => setListen((l) => (l.kind === "listening" ? { kind: "idle" } : l)),
-    });
-  };
-
-  // Röstkommandona finns på svenska; på andra språk används tryck (och uppläsning).
-  const showMic = commands !== undefined && micAvailable && lang === "sv";
 
   return (
     <div className="screen">
@@ -181,27 +138,15 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
             <div className="topbar-title">{t.appName}</div>
           </div>
         )}
+        {/* I hörnet: inställningarna samlade i en meny, och Avbryt längst ut. */}
         <div className="topbar-actions">
+          <ToolsMenu onLanguage={() => setLangOpen(true)} onSound={toggleSound} hideInstall={pathname === "/"} />
           {canCancel && (
             <button className="tool tool-cancel" onClick={stop}>
-              {t.cancel}
+              <span aria-hidden>✕</span>
+              <span className="tool-label">{t.cancel.replace(/^✕\s*/, "")}</span>
             </button>
           )}
-          <button className="tool tool-lang" onClick={() => setLangOpen(true)} aria-label={t.chooseLanguage}>
-            <span aria-hidden>🌐</span> {languages.find((l) => l.id === lang)?.name}
-          </button>
-          <button className="tool" onClick={toggleSound} aria-pressed={soundOn}>
-            <span aria-hidden>{soundOn ? "🔊" : "🔈"}</span> {soundOn ? t.soundOn : t.readAloud}
-          </button>
-          <button
-            className="tool tool-text"
-            onClick={toggleTextSize}
-            aria-pressed={textSize === "stor"}
-          >
-            <span aria-hidden className="tool-aa">Aa</span>
-            {textSize === "stor" ? t.smallerText : t.biggerText}
-          </button>
-          <InstallButton hideWhileAsking={pathname === "/"} />
         </div>
       </header>
 
@@ -219,38 +164,23 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
           })}
         </ol>
       )}
+      {/* Mobil: stegen som en rad med text och en tunn stapel i stället för fem knappar. */}
+      {step !== undefined && (
+        <div className="progress-compact">
+          <span>{t.stepOf(step, t.steps.length)} · <strong>{t.steps[step - 1]}</strong></span>
+          <span className="progress-compact-bar" aria-hidden>
+            <span style={{ width: `${(step / t.steps.length) * 100}%` }} />
+          </span>
+        </div>
+      )}
 
       {patient && <OccasionBar />}
 
 
       <main className="content">{children}</main>
 
-      {(footer || showMic) && (
-        <footer className="footer">
-          {footer}
-          {showMic && (
-            <div className="voice">
-              {listen.kind !== "idle" && (
-                <div className={`voice-bubble ${listen.kind === "heard" && !listen.understood ? "voice-miss" : ""}`} role="status">
-                  {listen.kind === "listening" ? (
-                    <>Jag lyssnar… {voiceHint && <span>Säg till exempel <strong>{voiceHint}</strong></span>}</>
-                  ) : (
-                    <>Du sa: <strong>”{listen.text}”</strong>{!listen.understood && <span> – försök igen</span>}</>
-                  )}
-                </div>
-              )}
-              <button
-                className={`mic ${listen.kind === "listening" ? "mic-on" : ""}`}
-                onClick={startListening}
-                aria-label={listen.kind === "listening" ? "Sluta lyssna" : "Prata – säg vad du vill"}
-              >
-                <span aria-hidden>🎤</span>
-                <span className="mic-label">{listen.kind === "listening" ? "Lyssnar…" : "Prata"}</span>
-              </button>
-            </div>
-          )}
-        </footer>
-      )}
+      {/* Mikrofonen ("Prata") är borttagen – den var i vägen och taligenkänningen saknas på många plattor. */}
+      {footer && <footer className="footer">{footer}</footer>}
 
       {langOpen && <LanguageDialog onClose={() => setLangOpen(false)} />}
       {dietOpen && patient && <DietDialog onClose={() => setDietOpen(false)} />}
@@ -284,9 +214,79 @@ export function LanguageChoice({ onChosen }: { onChosen?: () => void }) {
   );
 }
 
-/** Sätts när patienten avbryter, så att inloggningen kan erbjuda "Ångra" en kort stund. */
+/** Sätts när patienten avbryter, så att inloggningen kan bekräfta att hon är utloggad. */
 export const STOPPED_KEY = "ingrid-stopped";
-export const UNDO_STOP_MS = 2 * 60 * 1000;
+export const STOPPED_NOTICE_MS = 2 * 60 * 1000;
+
+/**
+ * Språk, uppläsning, textstorlek och installera – samlade bakom en knapp i hörnet, så att de
+ * inte tar plats hela tiden. Knappen visar ikonerna för det som finns i menyn.
+ */
+function ToolsMenu({ onLanguage, onSound, hideInstall }: { onLanguage: () => void; onSound: () => void; hideInstall: boolean }) {
+  const { textSize, toggleTextSize, soundOn, lang } = useOrder();
+  const { t } = useT();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Stängs vid tryck utanför menyn och med Esc.
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
+      const target = e.target as Element;
+      if (!ref.current?.contains(target) && !target.closest?.(".overlay")) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return (
+    <div className="tools-menu" ref={ref}>
+      <button
+        className={`tool tool-menu ${open ? "is-open" : ""}`}
+        onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        aria-controls="tools-menu-panel"
+        aria-label={t.settings}
+      >
+        <span aria-hidden>🌐</span>
+        <span aria-hidden>{soundOn ? "🔊" : "🔈"}</span>
+        <span aria-hidden className="tool-aa">Aa</span>
+        <span aria-hidden className="tool-menu-caret">▾</span>
+      </button>
+      {open && (
+        <div className="tools-menu-panel" id="tools-menu-panel">
+          <button
+            className="menu-item"
+            onClick={() => {
+              setOpen(false);
+              onLanguage();
+            }}
+          >
+            <span aria-hidden className="menu-icon">🌐</span>
+            <span>{t.chooseLanguage}</span>
+            <span className="menu-value">{languages.find((l) => l.id === lang)?.name}</span>
+          </button>
+          <button className="menu-item" onClick={onSound} aria-pressed={soundOn}>
+            <span aria-hidden className="menu-icon">{soundOn ? "🔊" : "🔈"}</span>
+            <span>{t.readAloud}</span>
+            <span className={`menu-switch ${soundOn ? "on" : ""}`} aria-hidden />
+          </button>
+          <button className="menu-item" onClick={toggleTextSize} aria-pressed={textSize === "stor"}>
+            <span aria-hidden className="menu-icon tool-aa">Aa</span>
+            <span>{t.biggerText}</span>
+            <span className={`menu-switch ${textSize === "stor" ? "on" : ""}`} aria-hidden />
+          </button>
+          {!hideInstall && <InstallButton menuItem />}
+        </div>
+      )}
+    </div>
+  );
+}
 
 /** Det som styr vilken mat hon ser – registrerat av personalen. */
 export function useDietTexts(patient: Patient) {
