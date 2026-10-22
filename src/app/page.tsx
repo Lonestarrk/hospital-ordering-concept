@@ -223,7 +223,6 @@ export default function LoginPage() {
               </button>
             )
           )}
-          {!nfc && <p className="muted band-external">{l.external}</p>}
 
           <div className="demo-links">
             <button className="demo-link" onClick={demo} disabled={phase.kind === "reading" || phase.kind === "hello"}>
