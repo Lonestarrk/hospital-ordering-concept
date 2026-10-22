@@ -1,16 +1,23 @@
-// Spelar in produktvideon (ca 60 s) från den riktiga prototypen med svenska textremsor.
-// Kör: npm run build && npx next start -p 3129, sedan
-//   PW=$(npm root -g)/playwright node scripts/spela-in-video.cjs video-ut
-// och konvertera: ffmpeg -i video-ut/*.webm -c:v libx264 -pix_fmt yuv420p -profile:v main -level 3.2 -crf 27 -movflags +faststart -an docs/lansering/produktvideo.mp4
-// (kopiera sedan till public/video/produktvideo.mp4 och gör en WebM-reserv:
-//  ffmpeg -i public/video/produktvideo.mp4 -c:v libvpx-vp9 -b:v 0 -crf 40 -an public/video/produktvideo.webm – filmen spelas från startsidan).
+// Spelar in produktvideon från den riktiga prototypen, med svenska textremsor och berättarröst.
+//
+// 1. Berättarrösten (en WAV per scen + tider.json):
+//      python3 scripts/skapa-berattarrost.py <sv_SE-nst-medium.onnx> video-ut/rost
+// 2. Starta appen: npm run build && npx next start -p 3129
+// 3. Spela in – varje scen varar minst så länge som sin replik:
+//      PW=$(npm root -g)/playwright node scripts/spela-in-video.cjs video-ut
+//    Skriver video-ut/*.webm och video-ut/tidslinje.json (scenernas ordning).
+// 4. Lägg på rösten och gör MP4 + WebM: node scripts/mixa-video.cjs video-ut
 const { chromium } = require(process.env.PW);
 const BASE = 'http://localhost:3129';
 (async () => {
   const out = process.argv[2];
+  const fs = require('fs');
+  const path = require('path');
+  const voice = JSON.parse(fs.readFileSync(path.join(out, 'rost', 'tider.json'), 'utf8'));
   const b = await chromium.launch();
   const ctx = await b.newContext({ viewport: { width: 1280, height: 800 }, recordVideo: { dir: out, size: { width: 1280, height: 800 } } });
   const p = await ctx.newPage();
+  const t0 = Date.now();
   await p.addInitScript(() => { window.speechSynthesis.speak = () => {}; window.speechSynthesis.cancel = () => {}; });
   const wait = (ms) => p.waitForTimeout(ms);
   const overlay = async () => p.evaluate(() => {
@@ -34,48 +41,92 @@ const BASE = 'http://localhost:3129';
     await wait(250); await loc.click();
   };
 
-  await p.goto(BASE + '/?klocka=09:15'); await p.waitForLoadState('networkidle'); await overlay();
-  // 0–5 s: titel
+  // En scen: repliken börjar när scenen börjar, och scenen varar minst så länge repliken tar.
+  // Varje scen får en egen färg i en liten ruta i hörnet. mixa-video.cjs letar upp när färgen
+  // byts i videon, så att rösten hamnar exakt rätt även om inspelningens klocka driver.
+  const timeline = {};
+  let sceneIndex = 0;
+  const marker = async (i) => p.evaluate((n) => {
+    let m = document.getElementById('vid-marker');
+    if (!m) { m = document.createElement('div'); m.id = 'vid-marker'; m.style.cssText = 'position:fixed;left:0;top:0;width:16px;height:16px;z-index:200'; document.body.appendChild(m); }
+    m.style.background = `rgb(${40 + 18 * n}, 42, 36)`;
+  }, i);
+  const scene = async (name, fn) => {
+    const start = Date.now();
+    timeline[name] = (start - t0) / 1000;
+    sceneIndex += 1;
+    await marker(sceneIndex);
+    await fn();
+    const rest = voice[name] * 1000 + 450 - (Date.now() - start);
+    if (rest > 0) await wait(rest);
+  };
+
+  await p.goto(BASE + '/?klocka=09:15'); await p.waitForLoadState('networkidle'); await overlay(); await marker(0);
   await card('<div><h1>🍽️ Min måltid</h1><p>Ingrid, 78, väljer sin mat själv – från sängen.</p><p>En prototyp för surfplatta</p></div>');
-  await wait(4500); await uncard();
-  // 5–11 s: inloggning med armbandet
-  await cap('Ingrid håller sitt armband mot plattan – inget att skriva, inget BankID.');
-  await wait(1800); await tap(p.locator('.demo-link').first());
-  await p.waitForURL('**/tillfalle'); await wait(300);
-  // 11–19 s: hennes beställningar och kosten i sidhuvudet
-  await cap('Direkt ser hon sina beställningar – nästa överst, det som har passerat i grått. Kosten står alltid överst.');
-  await wait(5500); await tap(p.locator('.order-row .btn-primary'));
-  // 19–25 s: omdöme om gårdagens middag
-  await p.waitForURL('**/omdome**'); await cap('Hur smakade gårdagens middag? Ett tryck – köket får veta.');
-  await wait(1200); await tap(p.locator('.thumb-up')); await wait(800); await tap(p.locator('.segment', { hasText: 'Allt' })); await wait(900);
-  await tap(p.locator('.footer .btn-primary')); await wait(900); await tap(p.locator('.footer .btn-primary'));
-  // 25–31 s: välj måltid
-  await p.waitForURL('**/tillfalle'); await cap('Lunch eller middag. Nedräkningen visar hur länge hon kan beställa.');
-  await wait(4500); await tap(p.locator('.occasion-tab', { hasText: 'Lunch' }));
-  // 31–39 s: menyn
-  await p.waitForURL('**/meny'); await p.waitForLoadState('networkidle');
-  await cap('Stora bilder på maten. Hon ser bara rätter som passar hennes kost.');
-  await wait(4200); await p.mouse.wheel(0, 300); await wait(1600); await p.mouse.wheel(0, -300); await wait(800);
-  await tap(p.locator('.dish', { hasText: 'Ugnsbakad lax' }));
-  // 39–47 s: rätten – dryck, önskemål och näringsvärde på samma sida
-  await p.waitForURL('**/meny/lax'); await p.waitForLoadState('networkidle');
-  await cap('Något att dricka till – och skuren i små bitar. Näringsvärdet syns direkt.');
-  await wait(1600); await tap(p.locator('.drink-choice', { hasText: 'Kaffe' })); await wait(900);
-  await tap(p.locator('.chip', { hasText: 'Skuren i små bitar' })); await wait(1600);
-  await tap(p.locator('.footer .btn-primary'));
-  // 47–51 s: allt syns innan hon beställer
-  await p.waitForURL('**/sammanfattning'); await cap('Allt syns innan hon beställer.');
-  await wait(2400); await tap(p.locator('.footer .btn-primary'));
-  // 50–53 s: klart
-  await p.waitForURL('**/klart'); await cap('Klart! Maten kommer till rummet kl 12:00. Hon kan beställa mer, se sina beställningar – eller logga ut.');
-  await wait(3200);
-  // 53–56 s: för alla
-  await cap('Svenska · English · العربية – uppläsning och större text i menyn i hörnet.');
-  await tap(p.locator('.tool-menu')); await wait(500);
-  await tap(p.locator('.menu-item').first()); await wait(600);
-  await tap(p.locator('.dialog .lang-option').nth(2)); await wait(1600);
-  // 56–60 s: slutkort
-  await card('<div><h1>Min måltid</h1><p>Mat hon vill äta – vald av henne själv.</p><p>Systemet föreslår, människan bestämmer.</p></div>');
-  await wait(4000);
+  await wait(600);
+
+  await scene('titel', async () => {});
+  await uncard();
+
+  await scene('inloggning', async () => {
+    await cap('Ingrid håller sitt armband mot plattan – inget att skriva, inget lösenord.');
+    await wait(2600); await tap(p.locator('.demo-link').first());
+    await p.waitForURL('**/tillfalle');
+  });
+
+  await scene('bestallningar', async () => {
+    await cap('Hennes beställningar – nästa överst, det som har passerat i grått. Kosten står alltid överst.');
+  });
+
+  await scene('omdome', async () => {
+    await tap(p.locator('.order-row .btn-primary'));
+    await p.waitForURL('**/omdome**'); await cap('Hur smakade gårdagens middag? Ett tryck – köket får veta.');
+    await wait(900); await tap(p.locator('.thumb-up')); await wait(700); await tap(p.locator('.segment', { hasText: 'Allt' })); await wait(700);
+    await tap(p.locator('.footer .btn-primary'));
+  });
+
+  await scene('maltider', async () => {
+    await tap(p.locator('.footer .btn-primary'));
+    await p.waitForURL('**/tillfalle'); await cap('Lunch eller middag. Nedräkningen visar hur länge hon kan beställa.');
+  });
+
+  await scene('meny', async () => {
+    await tap(p.locator('.occasion-tab', { hasText: 'Lunch' }));
+    await p.waitForURL('**/meny'); await p.waitForLoadState('networkidle');
+    await cap('Stora bilder på maten. Hon ser bara rätter som passar hennes kost.');
+    await wait(1800); await p.mouse.wheel(0, 300); await wait(1600); await p.mouse.wheel(0, -300);
+  });
+
+  await scene('ratten', async () => {
+    await tap(p.locator('.dish', { hasText: 'Ugnsbakad lax' }));
+    await p.waitForURL('**/meny/lax'); await p.waitForLoadState('networkidle');
+    await cap('Kaffe till, och skuren i små bitar. Allergenerna står i fetstil i innehållsförteckningen.');
+    await wait(1500); await tap(p.locator('.drink-choice', { hasText: 'Kaffe' })); await wait(1000);
+    await tap(p.locator('.chip', { hasText: 'Skuren i små bitar' }));
+  });
+
+  await scene('kolla', async () => {
+    await tap(p.locator('.footer .btn-primary'));
+    await p.waitForURL('**/sammanfattning'); await cap('Allt syns innan hon beställer.');
+  });
+
+  await scene('klart', async () => {
+    await tap(p.locator('.footer .btn-primary'));
+    await p.waitForURL('**/klart'); await cap('Klart! Maten kommer kl 12:00. Hon kan beställa mer, se sina beställningar – eller logga ut.');
+  });
+
+  await scene('sprak', async () => {
+    await cap('Svenska · English · العربية – uppläsning och större text i menyn i hörnet.');
+    await tap(p.locator('.tool-menu')); await wait(600);
+    await tap(p.locator('.menu-item').first()); await wait(700);
+    await tap(p.locator('.dialog .lang-option').nth(2));
+  });
+
+  await scene('slut', async () => {
+    await card('<div><h1>Min måltid</h1><p>Mat hon vill äta – vald av henne själv.</p><p>Systemet föreslår, människan bestämmer.</p></div>');
+  });
+  await wait(800);
+
+  fs.writeFileSync(path.join(out, 'tidslinje.json'), JSON.stringify(Object.keys(timeline), null, 2));
   await ctx.close(); await b.close();
 })();
