@@ -119,7 +119,7 @@ export const dishes: Dish[] = [
   {
     id: "lax",
     name: "Ugnsbakad lax",
-    description: "Med kokt potatis, dillsås och smörkokta morötter.",
+    description: "Med kokt potatis, dillsås och kokta morötter.",
     image: "/mat/lax.jpg",
     imageAlt: "Stekt laxfilé med citronklyfta",
     voiceWords: ["lax*"],

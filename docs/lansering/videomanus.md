@@ -1,29 +1,30 @@
-# Produktvideo – manus (ca 2 min)
+# Produktvideo – manus (ca 80 s)
 
-`produktvideo.mp4` är inspelad direkt från prototypen, med svenska textremsor och berättarröst.
+`produktvideo.mp4` är inspelad direkt från prototypen – **appen på engelska, med engelsk
+berättarröst och engelska textremsor**, för visning för personer som inte talar svenska.
 Den spelas också upp från startsidan i appen ("Se filmen om Min måltid").
 
-Berättarrösten är syntetisk, i stil med en naturdokumentär (Piper, svensk röst `sv_SE-nst-medium`, körs lokalt, med lugnare tempo och lite djupare ton), och under den ligger en mycket svag ljudmatta. Replikerna står i
-`berattarrost.json`; varje scen i videon varar så länge som sin replik. Vill ni ha en mänsklig röst
-kan replikerna läsas in och läggas i samma mapp som WAV-filer med samma namn.
+Berättarrösten är syntetisk och skapas lokalt med Kokoro (öppen modell, röst `bm_george` –
+en lugn brittisk mansröst i stil med en naturdokumentär). Den efterliknar ingen verklig person.
+Replikerna står i `berattarrost.json`; varje scen varar så länge som sin replik. Vill ni ha en
+mänsklig röst kan replikerna läsas in och läggas som WAV-filer med samma namn.
 
 | Bild | Berättarröst |
 |---|---|
-| Titelkort: *Min måltid – Ingrid, 78, väljer sin mat själv* | Här, på avdelning tolv, möter vi Ingrid. Sjuttioåtta år gammal, och på väg tillbaka efter en operation. Och som för de flesta av oss, är det maten som lyser upp dagen. |
-| Armbandet mot plattan | Hon lyfter handleden mot plattan. Armbandet hon fick vid inskrivningen räcker. Inga lösenord. Inga krångliga steg. |
-| Dina beställningar: lunch och middag obeställda, gårdagens middag i grått, kosten överst | Och genast visar sig hennes dag. Lunch och middag väntar fortfarande på hennes beslut. Gårdagens middag ligger kvar, lite blekare. Och överst, alltid synlig, hennes kost. Den kan bara personalen ändra. |
-| Tummen upp på gårdagens middag | Men först, en fråga om gårdagen. Smakade middagen? Ett enda tryck, och köket får veta. |
-| Tillbaka på översikten – 44 minuter kvar för lunch | Nu närmar sig lunchen. Klockan tickar. Fyrtiofyra minuter återstår innan köket stänger beställningen. |
-| Menyn med stora bilder | Framför henne breder menyn ut sig. Bara rätter som passar hennes kost får plats här. |
-| Ugnsbakad lax med kaffe, innehållsförteckning med allergener i fetstil | Hon väljer laxen. Till den, en kopp kaffe. Innehållsförteckningen visar allergenerna i fetstil, så att ingenting kommer som en överraskning. |
-| "Stämmer det här?" | Ett sista ögonkast. Stämmer allt? |
-| Tillbaka på Dina beställningar: "Beställt!" och det nya kortet glider in | Det gör det. Beställningen glider på plats bland de andra, och klockan tolv kommer maten till hennes rum. |
-| Byte till arabiska via menyn i hörnet | Och om nästa patient hellre läser arabiska, räcker det med två tryck. |
-| Slutkort | Min måltid. Mat hon vill äta, vald av henne själv. |
+| Titelkort: *My Meal – Ingrid, 78, chooses her own food* | Here, on Ward Twelve, we meet Ingrid. Seventy-eight years old, and recovering from surgery. And, like most of us, she finds that a good meal can brighten the whole day. |
+| Armbandet mot plattan | She raises her wrist to the tablet. The hospital wristband she was given on arrival is all she needs. No passwords. No fuss. |
+| Your orders: lunch och middag obeställda, gårdagens middag i grått, kosten överst | At once, her day comes into view. Lunch and dinner are still waiting for her decision, and the clock is ticking: forty-four minutes left to order lunch. At the very top, always in sight, her diet. Only the staff can change it. |
+| Menyn med stora bilder – bara rätter hon tål | Before her, the menu unfolds. Only dishes that suit her diet are allowed here. Nothing she cannot eat. |
+| Oven-baked salmon med kaffe, ingredienser med allergener i fetstil | She settles on the salmon. With it, a cup of coffee. The list of ingredients shows every allergen in bold, so nothing comes as a surprise. |
+| "Is this right?" | One last look. Is everything right? |
+| Tillbaka på Your orders: "Ordered!" och det nya kortet glider in | It is. The order slides into place among the others, and at noon, lunch will arrive at her bedside. |
+| Byte till arabiska via menyn i hörnet | And should the next patient prefer Arabic, it takes just two taps. |
+| Slutkort | My Meal. Food she wants to eat, chosen by herself. |
 
 ## Spela in videon igen
 
-1. `python3 scripts/skapa-berattarrost.py <sv_SE-nst-medium.onnx> video-ut/rost`
-2. `npm run build && npx next start -p 3129`
-3. `PW=$(npm root -g)/playwright node scripts/spela-in-video.cjs video-ut`
-4. `node scripts/mixa-video.cjs video-ut` – skriver `docs/lansering/produktvideo.mp4` och `public/video/`.
+1. `pip install kokoro-onnx soundfile` och hämta modellfilerna (se `scripts/skapa-berattarrost.py`)
+2. `python3 scripts/skapa-berattarrost.py <modellmapp> video-ut/rost`
+3. `npm run build && npx next start -p 3129`
+4. `PW=$(npm root -g)/playwright node scripts/spela-in-video.cjs video-ut`
+5. `node scripts/mixa-video.cjs video-ut` – skriver `docs/lansering/produktvideo.mp4` och `public/video/`.

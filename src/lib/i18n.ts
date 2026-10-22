@@ -85,7 +85,7 @@ const sv = {
     demo: "Demo: håll Ingrids armband mot plattan",
     video: "▶ Se filmen om Min måltid",
     videoTitle: "Så fungerar Min måltid",
-    videoHint: "Två minuter, med berättarröst och svensk text. Inga riktiga patientuppgifter.",
+    videoHint: "Drygt en minut, med engelsk berättarröst och text. Inga riktiga patientuppgifter.",
     videoFullscreen: "Helskärm",
     videoClose: "Stäng",
     errors: {
@@ -293,7 +293,7 @@ const en: Dict = {
     demo: "Demo: hold Ingrid's wristband against the tablet",
     video: "▶ Watch the film about My meal",
     videoTitle: "How My meal works",
-    videoHint: "Two minutes, with Swedish narration and subtitles. No real patient data.",
+    videoHint: "Just over a minute, with English narration and subtitles. No real patient data.",
     videoFullscreen: "Full screen",
     videoClose: "Close",
     errors: {
@@ -497,7 +497,7 @@ const ar: Dict = {
     demo: "عرض تجريبي: ضعي سوار إنغريد على الجهاز",
     video: "▶ شاهدي الفيلم عن «وجبتي»",
     videoTitle: "كيف يعمل «وجبتي»",
-    videoHint: "دقيقتان، بتعليق صوتي ونص باللغة السويدية. لا توجد بيانات مرضى حقيقية.",
+    videoHint: "أكثر من دقيقة بقليل، بتعليق صوتي ونص باللغة الإنجليزية. لا توجد بيانات مرضى حقيقية.",
     videoFullscreen: "ملء الشاشة",
     videoClose: "إغلاق",
     errors: {
@@ -648,7 +648,7 @@ const terms: Record<Exclude<Lang, "sv">, {
   en: {
     dishes: {
       kalvspett: { name: "Veal skewer with mashed potatoes", description: "Tender pieces of veal with vegetables, mashed potatoes and gravy.", imageAlt: "Veal skewer with courgette and pepper on mashed potatoes with gravy", label: "Dish of the day" },
-      lax: { name: "Oven-baked salmon", description: "With boiled potatoes, dill sauce and buttered carrots.", imageAlt: "Pan-fried salmon fillet with a lemon wedge" },
+      lax: { name: "Oven-baked salmon", description: "With boiled potatoes, dill sauce and boiled carrots.", imageAlt: "Pan-fried salmon fillet with a lemon wedge" },
       kycklinggryta: { name: "Chicken stew with rice", description: "Mild stew with peppers and vegetables.", imageAlt: "Chicken with rice and vegetables on a plate" },
       soppa: { name: "Vegetable soup", description: "Warming soup with bread and toppings. Good if your appetite is small.", imageAlt: "Vegetable soup in a red bowl with bread", label: "Something light" },
       pannkakor: { name: "Pancakes with jam", description: "With jam and whipped cream.", imageAlt: "Pancakes with strawberries and whipped cream" },
@@ -681,7 +681,7 @@ const terms: Record<Exclude<Lang, "sv">, {
   ar: {
     dishes: {
       kalvspett: { name: "أسياخ لحم العجل مع البطاطس المهروسة", description: "قطع طرية من لحم العجل مع الخضار والبطاطس المهروسة والصلصة البنية.", imageAlt: "أسياخ لحم عجل مع الكوسا والفلفل على بطاطس مهروسة وصلصة", label: "طبق اليوم" },
-      lax: { name: "سلمون مخبوز في الفرن", description: "مع بطاطس مسلوقة وصلصة الشبت وجزر بالزبدة.", imageAlt: "شريحة سلمون مع شريحة ليمون" },
+      lax: { name: "سلمون مخبوز في الفرن", description: "مع بطاطس مسلوقة وصلصة الشبت وجزر مسلوق.", imageAlt: "شريحة سلمون مع شريحة ليمون" },
       kycklinggryta: { name: "يخنة دجاج مع الأرز", description: "يخنة خفيفة مع الفلفل والخضار.", imageAlt: "دجاج مع أرز وخضار في طبق" },
       soppa: { name: "شوربة خضار", description: "شوربة دافئة مع الخبز. مناسبة إذا كانت شهيتك قليلة.", imageAlt: "شوربة خضار في وعاء أحمر مع الخبز", label: "شيء خفيف" },
       pannkakor: { name: "فطائر مع المربى", description: "مع المربى والقشدة المخفوقة.", imageAlt: "فطائر مع الفراولة والقشدة" },

@@ -1,7 +1,8 @@
-// Spelar in produktvideon från den riktiga prototypen, med svenska textremsor och berättarröst.
+// Spelar in produktvideon från den riktiga prototypen – appen på engelska, med engelska
+// textremsor och engelsk berättarröst, för visning för personer som inte talar svenska.
 //
 // 1. Berättarrösten (en WAV per scen + tider.json):
-//      python3 scripts/skapa-berattarrost.py <sv_SE-nst-medium.onnx> video-ut/rost
+//      python3 scripts/skapa-berattarrost.py <mapp med Kokoro-modellen> video-ut/rost
 // 2. Starta appen: npm run build && npx next start -p 3129
 // 3. Spela in – varje scen varar minst så länge som sin replik:
 //      PW=$(npm root -g)/playwright node scripts/spela-in-video.cjs video-ut
@@ -17,6 +18,10 @@ const BASE = 'http://localhost:3129';
   const b = await chromium.launch();
   const ctx = await b.newContext({ viewport: { width: 1280, height: 800 }, recordVideo: { dir: out, size: { width: 1280, height: 800 } } });
   const p = await ctx.newPage();
+  // Appen visas på engelska från början (språket sparas i sessionStorage).
+  await p.addInitScript(() => {
+    if (!sessionStorage.getItem('ingrid-order')) sessionStorage.setItem('ingrid-order', JSON.stringify({ lang: 'en' }));
+  });
   const t0 = Date.now();
   await p.addInitScript(() => { window.speechSynthesis.speak = () => {}; window.speechSynthesis.cancel = () => {}; });
   const wait = (ms) => p.waitForTimeout(ms);
@@ -62,67 +67,55 @@ const BASE = 'http://localhost:3129';
   };
 
   await p.goto(BASE + '/?klocka=09:15'); await p.waitForLoadState('networkidle'); await overlay(); await marker(0);
-  await card('<div><h1>🍽️ Min måltid</h1><p>Ingrid, 78, väljer sin mat själv – från sängen.</p><p>En prototyp för surfplatta</p></div>');
+  await card('<div><h1>🍽️ My Meal</h1><p>Ingrid, 78, chooses her own food – from her hospital bed.</p><p>A tablet prototype</p></div>');
   await wait(600);
 
   await scene('titel', async () => {});
   await uncard();
 
   await scene('inloggning', async () => {
-    await cap('Ingrid håller sitt armband mot plattan – inget att skriva, inget lösenord.');
+    await cap('Ingrid holds her wristband to the tablet – nothing to type, no password.');
     await wait(4000); await tap(p.locator('.demo-link').first());
     await p.waitForURL('**/tillfalle');
   });
 
   await scene('bestallningar', async () => {
-    await cap('Lunch och middag väntar på hennes beslut. Kosten står alltid överst – bara personalen kan ändra den.');
-  });
-
-  await scene('omdome', async () => {
-    await tap(p.locator('.order-row .btn-primary'));
-    await p.waitForURL('**/omdome**'); await cap('Hur smakade gårdagens middag? Ett tryck – köket får veta.');
-    await wait(900); await tap(p.locator('.thumb-up')); await wait(700); await tap(p.locator('.segment', { hasText: 'Allt' })); await wait(700);
-    await tap(p.locator('.footer .btn-primary'));
-  });
-
-  await scene('maltider', async () => {
-    await tap(p.locator('.footer .btn-primary'));
-    await p.waitForURL('**/tillfalle'); await cap('44 minuter kvar att beställa lunch.');
+    await cap('Lunch and dinner are waiting for her decision. Her diet is always at the top – only staff can change it.');
   });
 
   await scene('meny', async () => {
     await tap(p.locator('.order-row.is-ghost', { hasText: 'Lunch' }).locator('.btn'));
     await p.waitForURL('**/meny'); await p.waitForLoadState('networkidle');
-    await cap('Stora bilder på maten. Hon ser bara rätter som passar hennes kost.');
-    await wait(1800); await p.mouse.wheel(0, 300); await wait(1600); await p.mouse.wheel(0, -300);
+    await cap('Large pictures of the food – only dishes that suit her diet.');
+    await wait(2200); await p.mouse.wheel(0, 300); await wait(1600); await p.mouse.wheel(0, -300);
   });
 
   await scene('ratten', async () => {
-    await tap(p.locator('.dish', { hasText: 'Ugnsbakad lax' }));
+    await tap(p.locator('.dish', { hasText: 'Oven-baked salmon' }));
     await p.waitForURL('**/meny/lax'); await p.waitForLoadState('networkidle');
-    await cap('Laxen, med en kopp kaffe. Allergenerna står i fetstil i innehållsförteckningen.');
-    await wait(2500); await tap(p.locator('.drink-choice', { hasText: 'Kaffe' }));
+    await cap('Salmon with a cup of coffee. Allergens are shown in bold in the ingredients.');
+    await wait(2500); await tap(p.locator('.drink-choice', { hasText: 'Coffee' }));
   });
 
   await scene('kolla', async () => {
     await tap(p.locator('.footer .btn-primary'));
-    await p.waitForURL('**/sammanfattning'); await cap('Allt syns innan hon beställer.');
+    await p.waitForURL('**/sammanfattning'); await cap('Everything is shown once more before she orders.');
   });
 
   await scene('klart', async () => {
     await tap(p.locator('.footer .btn-primary'));
-    await p.waitForURL('**/tillfalle**'); await cap('Beställt! Den nya beställningen glider in bland de andra. Maten kommer kl 12:00.');
+    await p.waitForURL('**/tillfalle**'); await cap('Ordered! The new order slides into place. Lunch arrives at 12:00.');
   });
 
   await scene('sprak', async () => {
-    await cap('Svenska · English · العربية – två tryck i menyn i hörnet.');
+    await cap('Svenska · English · العربية – two taps in the menu in the corner.');
     await tap(p.locator('.tool-menu')); await wait(600);
     await tap(p.locator('.menu-item').first()); await wait(700);
     await tap(p.locator('.dialog .lang-option').nth(2));
   });
 
   await scene('slut', async () => {
-    await card('<div><h1>Min måltid</h1><p>Mat hon vill äta – vald av henne själv.</p><p>Systemet föreslår, människan bestämmer.</p></div>');
+    await card('<div><h1>My Meal</h1><p>Food she wants to eat – chosen by herself.</p><p>The system suggests, people decide.</p></div>');
   });
   await wait(800);
 
