@@ -1,13 +1,13 @@
 {
-  "titel": "Det här är Ingrid. Hon är sjuttioåtta år och återhämtar sig efter en operation. Maten är något hon ser fram emot.",
-  "inloggning": "Hon loggar in med sitt armband från sjukhuset. Inget att skriva, ingen telefon och inget lösenord.",
-  "bestallningar": "Direkt ser hon vad hon har beställt. Nästa måltid står överst, och det som har passerat är grått. Hennes kost står alltid högst upp, och bara personalen kan ändra den.",
-  "omdome": "Hur smakade gårdagens middag? Ett tryck, och köket får veta.",
-  "maltider": "Hon väljer lunch eller middag. Nedräkningen visar hur länge hon kan beställa.",
-  "meny": "Hon bläddrar bland stora bilder i lugn och ro, och ser bara mat som passar hennes kost.",
-  "ratten": "Till laxen tar hon kaffe, och ber att maten skärs i små bitar. Innehållsförteckningen visar allergenerna i fetstil.",
-  "kolla": "Innan hon beställer ser hon allt en gång till.",
-  "klart": "Klart. Maten kommer till rummet klockan tolv. Nu kan hon beställa mer, se sina beställningar eller logga ut.",
-  "sprak": "Appen finns på svenska, engelska och arabiska, med uppläsning och större text.",
+  "titel": "Här, på avdelning tolv, möter vi Ingrid. Sjuttioåtta år gammal, och på väg tillbaka efter en operation. Och som för de flesta av oss, är det maten som lyser upp dagen.",
+  "inloggning": "Hon lyfter handleden mot plattan. Armbandet hon fick vid inskrivningen räcker. Inga lösenord. Inga krångliga steg.",
+  "bestallningar": "Och genast visar sig hennes dag. Lunch och middag väntar fortfarande på hennes beslut. Gårdagens middag ligger kvar, lite blekare. Och överst, alltid synlig, hennes kost. Den kan bara personalen ändra.",
+  "omdome": "Men först, en fråga om gårdagen. Smakade middagen? Ett enda tryck, och köket får veta.",
+  "maltider": "Nu närmar sig lunchen. Klockan tickar. Fyrtiofyra minuter återstår innan köket stänger beställningen.",
+  "meny": "Framför henne breder menyn ut sig. Bara rätter som passar hennes kost får plats här.",
+  "ratten": "Hon väljer laxen. Till den, en kopp kaffe. Innehållsförteckningen visar allergenerna i fetstil, så att ingenting kommer som en överraskning.",
+  "kolla": "Ett sista ögonkast. Stämmer allt?",
+  "klart": "Det gör det. Beställningen glider på plats bland de andra, och klockan tolv kommer maten till hennes rum.",
+  "sprak": "Och om nästa patient hellre läser arabiska, räcker det med två tryck.",
   "slut": "Min måltid. Mat hon vill äta, vald av henne själv."
 }

@@ -41,10 +41,19 @@ scenes.forEach(([scene, start], i) => {
   delays.push(`[${i + 1}:a]adelay=${ms}|${ms},aresample=48000[a${i}]`);
 });
 // Markörrutan i hörnet beskärs bort (16 px), och bilden skalas tillbaka till 1280 × 800.
-const mix = `[0:v]crop=1264:790:16:10,scale=1280:800,setsar=1[video];${delays.join(';')};${scenes.map((_, i) => `[a${i}]`).join('')}amix=inputs=${scenes.length}:normalize=0,loudnorm=I=-16:TP=-1.5:LRA=11[voice]`;
+// Under rösten ligger en mycket svag, lugn ljudmatta (ett mjukt ackord som andas), som i en dokumentär.
+const length = Number(execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', path.join(dir, webm)]).toString());
+const tone = (hz) => `sine=f=${hz}:sample_rate=48000:d=${length}`;
+const padInputs = [110, 164.81, 220, 277.18].map((hz) => ['-f', 'lavfi', '-i', tone(hz)]).flat();
+const first = scenes.length + 1;
+const pad = `${[0, 1, 2, 3].map((k) => `[${first + k}:a]`).join('')}amix=inputs=4:normalize=0,tremolo=f=0.15:d=0.4,lowpass=f=900,` +
+  `volume=0.012,afade=t=in:d=3,afade=t=out:st=${Math.max(0, length - 4)}:d=4[pad]`;
+const mix = `[0:v]crop=1264:790:16:10,scale=1280:800,setsar=1[video];${delays.join(';')};` +
+  `${scenes.map((_, i) => `[a${i}]`).join('')}amix=inputs=${scenes.length}:normalize=0,loudnorm=I=-16:TP=-1.5:LRA=11[speech];` +
+  `${pad};[speech][pad]amix=inputs=2:normalize=0:duration=longest[voice]`;
 
 const ffmpeg = (args) => execFileSync('ffmpeg', ['-y', '-loglevel', 'error', ...args], { stdio: 'inherit' });
-ffmpeg([...inputs, '-filter_complex', mix, '-map', '[video]', '-map', '[voice]', '-c:v', 'libx264', '-profile:v', 'main', '-level', '3.2',
+ffmpeg([...inputs, ...padInputs, '-filter_complex', mix, '-map', '[video]', '-map', '[voice]', '-c:v', 'libx264', '-profile:v', 'main', '-level', '3.2',
   '-pix_fmt', 'yuv420p', '-crf', '27', '-c:a', 'aac', '-b:a', '96k', '-movflags', '+faststart', 'docs/lansering/produktvideo.mp4']);
 fs.copyFileSync('docs/lansering/produktvideo.mp4', 'public/video/produktvideo.mp4');
 ffmpeg(['-i', 'public/video/produktvideo.mp4', '-c:v', 'libvpx-vp9', '-b:v', '0', '-crf', '40', '-row-mt', '1', '-c:a', 'libopus', '-b:a', '64k', 'public/video/produktvideo.webm']);

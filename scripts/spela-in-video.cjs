@@ -70,12 +70,12 @@ const BASE = 'http://localhost:3129';
 
   await scene('inloggning', async () => {
     await cap('Ingrid håller sitt armband mot plattan – inget att skriva, inget lösenord.');
-    await wait(2600); await tap(p.locator('.demo-link').first());
+    await wait(4000); await tap(p.locator('.demo-link').first());
     await p.waitForURL('**/tillfalle');
   });
 
   await scene('bestallningar', async () => {
-    await cap('Hennes beställningar – nästa överst, det som har passerat i grått. Kosten står alltid överst.');
+    await cap('Lunch och middag väntar på hennes beslut. Kosten står alltid överst – bara personalen kan ändra den.');
   });
 
   await scene('omdome', async () => {
@@ -87,11 +87,11 @@ const BASE = 'http://localhost:3129';
 
   await scene('maltider', async () => {
     await tap(p.locator('.footer .btn-primary'));
-    await p.waitForURL('**/tillfalle'); await cap('Lunch eller middag. Nedräkningen visar hur länge hon kan beställa.');
+    await p.waitForURL('**/tillfalle'); await cap('44 minuter kvar att beställa lunch.');
   });
 
   await scene('meny', async () => {
-    await tap(p.locator('.occasion-tab', { hasText: 'Lunch' }));
+    await tap(p.locator('.order-row.is-ghost', { hasText: 'Lunch' }).locator('.btn'));
     await p.waitForURL('**/meny'); await p.waitForLoadState('networkidle');
     await cap('Stora bilder på maten. Hon ser bara rätter som passar hennes kost.');
     await wait(1800); await p.mouse.wheel(0, 300); await wait(1600); await p.mouse.wheel(0, -300);
@@ -100,9 +100,8 @@ const BASE = 'http://localhost:3129';
   await scene('ratten', async () => {
     await tap(p.locator('.dish', { hasText: 'Ugnsbakad lax' }));
     await p.waitForURL('**/meny/lax'); await p.waitForLoadState('networkidle');
-    await cap('Kaffe till, och skuren i små bitar. Allergenerna står i fetstil i innehållsförteckningen.');
-    await wait(1500); await tap(p.locator('.drink-choice', { hasText: 'Kaffe' })); await wait(1000);
-    await tap(p.locator('.chip', { hasText: 'Skuren i små bitar' }));
+    await cap('Laxen, med en kopp kaffe. Allergenerna står i fetstil i innehållsförteckningen.');
+    await wait(2500); await tap(p.locator('.drink-choice', { hasText: 'Kaffe' }));
   });
 
   await scene('kolla', async () => {
@@ -112,11 +111,11 @@ const BASE = 'http://localhost:3129';
 
   await scene('klart', async () => {
     await tap(p.locator('.footer .btn-primary'));
-    await p.waitForURL('**/klart'); await cap('Klart! Maten kommer kl 12:00. Hon kan beställa mer, se sina beställningar – eller logga ut.');
+    await p.waitForURL('**/tillfalle**'); await cap('Beställt! Den nya beställningen glider in bland de andra. Maten kommer kl 12:00.');
   });
 
   await scene('sprak', async () => {
-    await cap('Svenska · English · العربية – uppläsning och större text i menyn i hörnet.');
+    await cap('Svenska · English · العربية – två tryck i menyn i hörnet.');
     await tap(p.locator('.tool-menu')); await wait(600);
     await tap(p.locator('.menu-item').first()); await wait(700);
     await tap(p.locator('.dialog .lang-option').nth(2));

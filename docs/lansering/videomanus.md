@@ -1,24 +1,24 @@
-# Produktvideo – manus (ca 90 s)
+# Produktvideo – manus (ca 2 min)
 
 `produktvideo.mp4` är inspelad direkt från prototypen, med svenska textremsor och berättarröst.
 Den spelas också upp från startsidan i appen ("Se filmen om Min måltid").
 
-Berättarrösten är syntetisk (Piper, svensk röst `sv_SE-nst-medium`, körs lokalt). Replikerna står i
+Berättarrösten är syntetisk, i stil med en naturdokumentär (Piper, svensk röst `sv_SE-nst-medium`, körs lokalt, med lugnare tempo och lite djupare ton), och under den ligger en mycket svag ljudmatta. Replikerna står i
 `berattarrost.json`; varje scen i videon varar så länge som sin replik. Vill ni ha en mänsklig röst
 kan replikerna läsas in och läggas i samma mapp som WAV-filer med samma namn.
 
 | Bild | Berättarröst |
 |---|---|
-| Titelkort: *Min måltid – Ingrid, 78, väljer sin mat själv* | Det här är Ingrid. Hon är sjuttioåtta år och återhämtar sig efter en operation. Maten är något hon ser fram emot. |
-| Armbandet mot plattan | Hon loggar in med sitt armband från sjukhuset. Inget att skriva, ingen telefon och inget lösenord. |
-| Hennes beställningar, med kosten överst | Direkt ser hon vad hon har beställt. Nästa måltid står överst, och det som har passerat är grått. Hennes kost står alltid högst upp, och bara personalen kan ändra den. |
-| Tummen upp på gårdagens middag | Hur smakade gårdagens middag? Ett tryck, och köket får veta. |
-| Lunch och middag med nedräkning | Hon väljer lunch eller middag. Nedräkningen visar hur länge hon kan beställa. |
-| Menyn med stora bilder | Hon bläddrar bland stora bilder i lugn och ro, och ser bara mat som passar hennes kost. |
-| Ugnsbakad lax: kaffe, skuren i bitar, innehållsförteckning med allergener i fetstil | Till laxen tar hon kaffe, och ber att maten skärs i små bitar. Innehållsförteckningen visar allergenerna i fetstil. |
-| "Stämmer det här?" | Innan hon beställer ser hon allt en gång till. |
-| Klart-sidan | Klart. Maten kommer till rummet klockan tolv. Nu kan hon beställa mer, se sina beställningar eller logga ut. |
-| Byte till arabiska via menyn i hörnet | Appen finns på svenska, engelska och arabiska, med uppläsning och större text. |
+| Titelkort: *Min måltid – Ingrid, 78, väljer sin mat själv* | Här, på avdelning tolv, möter vi Ingrid. Sjuttioåtta år gammal, och på väg tillbaka efter en operation. Och som för de flesta av oss, är det maten som lyser upp dagen. |
+| Armbandet mot plattan | Hon lyfter handleden mot plattan. Armbandet hon fick vid inskrivningen räcker. Inga lösenord. Inga krångliga steg. |
+| Dina beställningar: lunch och middag obeställda, gårdagens middag i grått, kosten överst | Och genast visar sig hennes dag. Lunch och middag väntar fortfarande på hennes beslut. Gårdagens middag ligger kvar, lite blekare. Och överst, alltid synlig, hennes kost. Den kan bara personalen ändra. |
+| Tummen upp på gårdagens middag | Men först, en fråga om gårdagen. Smakade middagen? Ett enda tryck, och köket får veta. |
+| Tillbaka på översikten – 44 minuter kvar för lunch | Nu närmar sig lunchen. Klockan tickar. Fyrtiofyra minuter återstår innan köket stänger beställningen. |
+| Menyn med stora bilder | Framför henne breder menyn ut sig. Bara rätter som passar hennes kost får plats här. |
+| Ugnsbakad lax med kaffe, innehållsförteckning med allergener i fetstil | Hon väljer laxen. Till den, en kopp kaffe. Innehållsförteckningen visar allergenerna i fetstil, så att ingenting kommer som en överraskning. |
+| "Stämmer det här?" | Ett sista ögonkast. Stämmer allt? |
+| Tillbaka på Dina beställningar: "Beställt!" och det nya kortet glider in | Det gör det. Beställningen glider på plats bland de andra, och klockan tolv kommer maten till hennes rum. |
+| Byte till arabiska via menyn i hörnet | Och om nästa patient hellre läser arabiska, räcker det med två tryck. |
 | Slutkort | Min måltid. Mat hon vill äta, vald av henne själv. |
 
 ## Spela in videon igen

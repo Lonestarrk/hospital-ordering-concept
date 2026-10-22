@@ -85,7 +85,7 @@ const sv = {
     demo: "Demo: håll Ingrids armband mot plattan",
     video: "▶ Se filmen om Min måltid",
     videoTitle: "Så fungerar Min måltid",
-    videoHint: "Halvannan minut, med berättarröst och svensk text. Inga riktiga patientuppgifter.",
+    videoHint: "Två minuter, med berättarröst och svensk text. Inga riktiga patientuppgifter.",
     videoFullscreen: "Helskärm",
     videoClose: "Stäng",
     errors: {
@@ -349,7 +349,7 @@ const en: Dict = {
     demo: "Demo: hold Ingrid's wristband against the tablet",
     video: "▶ Watch the film about My meal",
     videoTitle: "How My meal works",
-    videoHint: "A minute and a half, with Swedish narration and subtitles. No real patient data.",
+    videoHint: "Two minutes, with Swedish narration and subtitles. No real patient data.",
     videoFullscreen: "Full screen",
     videoClose: "Close",
     errors: {
@@ -609,7 +609,7 @@ const ar: Dict = {
     demo: "عرض تجريبي: ضعي سوار إنغريد على الجهاز",
     video: "▶ شاهدي الفيلم عن «وجبتي»",
     videoTitle: "كيف يعمل «وجبتي»",
-    videoHint: "دقيقة ونصف، بتعليق صوتي ونص باللغة السويدية. لا توجد بيانات مرضى حقيقية.",
+    videoHint: "دقيقتان، بتعليق صوتي ونص باللغة السويدية. لا توجد بيانات مرضى حقيقية.",
     videoFullscreen: "ملء الشاشة",
     videoClose: "إغلاق",
     errors: {
