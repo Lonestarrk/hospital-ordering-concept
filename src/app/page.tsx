@@ -8,6 +8,7 @@ import { useOrder, useT } from "@/components/OrderProvider";
 import {
   cameraSupported,
   personnummerFromTag,
+  readBarcodeFile,
   readBarcodeImage,
   scanBarcode,
   scanWristband,
@@ -37,6 +38,7 @@ export default function LoginPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const demoImageRef = useRef<HTMLImageElement>(null);
   const stopCamera = useRef<() => void>(() => {});
+  const photoRef = useRef<HTMLInputElement>(null);
   // Bekräftelse direkt efter Avbryt. Ingen "Ångra" – plattan kan redan vara hos nästa patient.
   const [stopped, setStopped] = useState(false);
   // Efter "Hej Ingrid!" tonas inloggningen ut innan nästa sida visas.
@@ -141,6 +143,16 @@ export default function LoginPage() {
       onError,
     });
   };
+  // Utan direkt kamerabild (äldre iPad): plattans vanliga kamera tar ett foto av streckkoden.
+  const onPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setPhase({ kind: "reading" });
+    const text = await readBarcodeFile(file);
+    if (!text) return onError("unreadable");
+    handleTagRef.current(text);
+  };
   const closeCamera = () => {
     stopCamera.current();
     setPhase({ kind: "waiting" });
@@ -157,7 +169,7 @@ export default function LoginPage() {
   };
 
   const retry = (error: WristbandError | "notFound") =>
-    error === "camera" ? openCamera() : nfc ? startReader() : setPhase({ kind: "waiting" });
+    error === "camera" ? photoRef.current?.click() : nfc ? startReader() : setPhase({ kind: "waiting" });
 
   return (
     <Screen speakText={l.speak}>
@@ -219,15 +231,21 @@ export default function LoginPage() {
               <p className="muted">{l.startHint}</p>
             </div>
           )}
-          {camera && phase.kind !== "hello" && phase.kind !== "reading" && (
+          {phase.kind !== "hello" && phase.kind !== "reading" && (
             phase.kind === "camera" ? (
               <button className="btn btn-ghost" onClick={closeCamera}>{l.cameraClose}</button>
-            ) : (
+            ) : camera ? (
               <button className="btn btn-ghost band-camera-open" onClick={openCamera}>
                 <span aria-hidden>📷</span> {l.camera}
               </button>
+            ) : (
+              <button className="btn btn-ghost band-camera-open" onClick={() => photoRef.current?.click()}>
+                <span aria-hidden>📷</span> {l.photo}
+              </button>
             )
           )}
+          {/* Fotot tas med plattans vanliga kamera och tolkas i plattan. */}
+          <input ref={photoRef} type="file" accept="image/*" capture="user" hidden onChange={onPhoto} />
 
           <div className="demo-links">
             <button className="demo-link" onClick={demo} disabled={phase.kind === "reading" || phase.kind === "hello"}>

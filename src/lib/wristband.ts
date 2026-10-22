@@ -58,7 +58,7 @@ export async function scanWristband(handlers: {
 /** Streckkoder som förekommer på patientarmband. */
 const BARCODE_FORMATS = ["code_128", "qr_code", "data_matrix", "pdf417", "code_39"] as const;
 
-type Detector = { detect: (source: HTMLVideoElement | HTMLImageElement) => Promise<{ rawValue: string }[]> };
+type Detector = { detect: (source: HTMLVideoElement | HTMLImageElement | HTMLCanvasElement) => Promise<{ rawValue: string }[]> };
 
 /** Webbläsarens egen streckkodsläsare om den finns, annars ZXing (WebAssembly från appen själv). */
 async function createDetector(): Promise<Detector> {
@@ -130,4 +130,33 @@ export async function readBarcodeImage(image: HTMLImageElement): Promise<string 
   const detector = await createDetector();
   const [code] = await detector.detect(image).catch(() => []);
   return code?.rawValue;
+}
+
+/**
+ * Läser streckkoden i ett foto. Används när webbläsaren inte kan visa kamerans bild direkt
+ * (äldre iPad och Chrome på iOS före 14.3): då tar plattans vanliga kamera ett foto i stället.
+ * Fotot skalas ner först, så att det går snabbt även på en gammal platta. Bilden lämnar aldrig plattan.
+ */
+export async function readBarcodeFile(file: File): Promise<string | undefined> {
+  const url = URL.createObjectURL(file);
+  try {
+    const image = new Image();
+    image.src = url;
+    await new Promise((resolve, reject) => {
+      image.onload = resolve;
+      image.onerror = reject;
+    });
+    const scale = Math.min(1, 1600 / Math.max(image.naturalWidth, image.naturalHeight));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(image.naturalWidth * scale);
+    canvas.height = Math.round(image.naturalHeight * scale);
+    canvas.getContext("2d")?.drawImage(image, 0, 0, canvas.width, canvas.height);
+    const detector = await createDetector();
+    const [code] = await detector.detect(canvas).catch(() => []);
+    return code?.rawValue;
+  } catch {
+    return undefined;
+  } finally {
+    URL.revokeObjectURL(url);
+  }
 }
