@@ -80,12 +80,6 @@ const sv = {
   login: {
     speak:
       "Hej och välkommen! Här beställer du din mat. Håll ditt armband från sjukhuset mot plattan, där det står Armband. Du kan också visa streckkoden på armbandet för kameran. Plattan läser det och vet då vem du är.",
-    eyebrow: "Hej och välkommen!",
-    title: "Här beställer du din mat",
-    lead: "Håll ditt armband mot plattan så vet vi vem du är – och vilken mat som passar dig.",
-    reassure: ["Det tar ungefär två minuter", "Du kan inte göra fel – allt går att ändra"],
-    reassureHelp: ["Behöver du hjälp? Använd ", "larmknappen", " vid sängen"],
-    reassureTools: "Vill du ha texten uppläst eller större? Knapparna finns uppe i hörnet.",
     bandLabel: "Logga in med armbandet",
     bandTitle: "Håll armbandet mot plattan",
     bandHint: "Armbandet du fick på sjukhuset. Håll det stilla mot markeringen en sekund.",
@@ -370,12 +364,6 @@ const en: Dict = {
   login: {
     speak:
       "Hello and welcome! This is where you order your food. Hold your hospital wristband against the tablet, where it says Wristband. You can also show the barcode on the wristband to the camera. The tablet reads it and knows who you are.",
-    eyebrow: "Hello and welcome!",
-    title: "Order your meals here",
-    lead: "Hold your wristband against the tablet so we know who you are – and which food suits you.",
-    reassure: ["It takes about two minutes", "You can't get it wrong – everything can be changed"],
-    reassureHelp: ["Need help? Use the ", "call button", " by your bed"],
-    reassureTools: "Want the text read aloud or larger? The buttons are in the top corner.",
     bandLabel: "Log in with your wristband",
     bandTitle: "Hold your wristband against the tablet",
     bandHint: "The wristband you got at the hospital. Hold it still against the mark for a second.",
@@ -656,12 +644,6 @@ const ar: Dict = {
   login: {
     speak:
       "مرحباً بكِ! هنا تطلبين طعامك. ضعي سوار المستشفى على الجهاز، حيث مكتوب السوار. يمكنك أيضاً عرض الباركود على السوار أمام الكاميرا. يقرأه الجهاز ويعرف من أنتِ.",
-    eyebrow: "مرحباً بكِ!",
-    title: "اطلبي وجباتك من هنا",
-    lead: "ضعي سوارك على الجهاز لنعرف من أنتِ – وأي طعام يناسبك.",
-    reassure: ["يستغرق الأمر دقيقتين تقريباً", "لا يمكنكِ أن تخطئي – يمكن تغيير كل شيء"],
-    reassureHelp: ["تحتاجين مساعدة؟ استخدمي ", "زر النداء", " بجانب السرير"],
-    reassureTools: "هل تريدين سماع النص أو تكبيره؟ الأزرار في أعلى الشاشة.",
     bandLabel: "سجّلي الدخول بالسوار",
     bandTitle: "ضعي السوار على الجهاز",
     bandHint: "السوار الذي حصلتِ عليه في المستشفى. ثبّتيه على العلامة لثانية.",

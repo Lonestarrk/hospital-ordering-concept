@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LanguageChoice, Screen, STOPPED_KEY, STOPPED_NOTICE_MS, useAnnounce } from "@/components/Screen";
+import { Screen, STOPPED_KEY, STOPPED_NOTICE_MS, useAnnounce } from "@/components/Screen";
 import { InstallBanner } from "@/components/Install";
 import { useOrder, useT } from "@/components/OrderProvider";
 import {
@@ -157,23 +157,13 @@ export default function LoginPage() {
   return (
     <Screen speakText={l.speak}>
       <div className="login">
-        <section className="login-intro">
-          <InstallBanner />
-          <LanguageChoice />
-          {stopped && (
-            <div className="notice" role="status">
-              <p>✓ {t.stopped.done}</p>
-            </div>
-          )}
-          <p className="eyebrow">{l.eyebrow}</p>
-          <h1>{l.title}</h1>
-          <p className="lead">{l.lead}</p>
-          <ul className="reassure">
-            {l.reassure.map((r) => <li key={r}>{r}</li>)}
-            <li>{l.reassureTools}</li>
-            <li><span>{l.reassureHelp[0]}<strong>{l.reassureHelp[1]}</strong>{l.reassureHelp[2]}</span></li>
-          </ul>
-        </section>
+        {/* Bara inloggningen: språk, uppläsning och textstorlek finns i menyn uppe i hörnet. */}
+        <InstallBanner />
+        {stopped && (
+          <div className="notice" role="status">
+            <p>✓ {t.stopped.done}</p>
+          </div>
+        )}
 
         <section className={`login-band is-${phase.kind}`} aria-label={l.bandLabel}>
           {phase.kind === "camera" ? (
@@ -195,17 +185,17 @@ export default function LoginPage() {
           )}
           <div className="band-text" role="status" aria-live="polite">
             {phase.kind === "hello" ? (
-              <h2>{l.hello(phase.name)}</h2>
+              <h1>{l.hello(phase.name)}</h1>
             ) : phase.kind === "reading" ? (
-              <h2>{l.reading}</h2>
+              <h1>{l.reading}</h1>
             ) : phase.kind === "camera" ? (
               <>
-                <h2>{l.cameraTitle}</h2>
+                <h1>{l.cameraTitle}</h1>
                 <p>{l.cameraHint}</p>
               </>
             ) : (
               <>
-                <h2>{l.bandTitle}</h2>
+                <h1>{l.bandTitle}</h1>
                 <p>{l.bandHint}</p>
               </>
             )}

@@ -971,12 +971,10 @@ button:focus-visible {
 
 /* ---------- Inloggning ---------- */
 
+/* Inloggningen: bara armbandsrutan, i mitten av sidan. */
 .login {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  align-items: center;
-  min-height: 100%;
+  max-width: 640px;
+  margin: 0 auto;
   padding-top: 24px;
 }
 
@@ -1148,7 +1146,7 @@ button:focus-visible {
   gap: 8px;
 }
 
-.band-text h2 {
+.band-text h1 {
   font-size: 1.4em;
 }
 
@@ -2206,7 +2204,6 @@ html[data-text-size="stor"] .dish-body p {
 /* ---------- Mindre skärmar ---------- */
 
 @media (max-width: 860px) {
-  .login,
   .dish-grid {
     grid-template-columns: 1fr;
   }
@@ -2215,9 +2212,6 @@ html[data-text-size="stor"] .dish-body p {
     grid-template-columns: 112px minmax(0, 1fr);
     gap: 16px;
     align-items: start;
-  }
-  .login {
-    gap: 24px;
   }
   .taste-grid { grid-template-columns: 1fr 1fr; }
   .progress-step {
@@ -2678,16 +2672,8 @@ html[data-text-size="stor"] .dish-body p {
   .segment-compact { padding: 8px 2px; font-size: 0.85em; }
   .segment-compact .plate { width: 34px; height: 34px; }
 
-  /* Inloggning: installationsfrågan och välkomsttexten först, sedan armbandet,
-     därefter språkval och övrig information. */
-  .login { gap: 0; padding-top: 8px; }
-  .login-intro { display: contents; }
-  .login .install-banner { order: 1; margin-bottom: 16px; }
-  .login .notice { order: 2; }
-  .login-intro .eyebrow { order: 3; }
-  .login-intro h1 { order: 4; }
-  .login-intro .lead { order: 5; margin-bottom: 16px; }
-  .login-band { order: 6; margin-bottom: 24px; }
-  .login .lang-choice { order: 7; }
-  .login .reassure { order: 8; margin-top: 0; }
+  /* Inloggning: installationsfrågan överst, sedan armbandet. */
+  .login { padding-top: 8px; }
+  .login .install-banner { margin-bottom: 16px; }
+  .login-band { margin-bottom: 24px; }
 }
