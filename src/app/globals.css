@@ -820,81 +820,7 @@ button:focus-visible {
   margin-inline-end: auto;
 }
 
-/* ---------- Röst ---------- */
-
-.voice {
-  position: absolute;
-  left: 50%;
-  bottom: calc(16px + env(safe-area-inset-bottom));
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.mic {
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  border: none;
-  background: var(--surface);
-  box-shadow: var(--shadow), 0 0 0 3px var(--primary) inset;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  color: var(--primary-strong);
-  font-weight: 700;
-}
-
-.mic > span:first-child {
-  font-size: 34px;
-  line-height: 1;
-}
-
-.mic-label {
-  font-size: 0.7em;
-}
-
-.mic-on {
-  background: var(--primary);
-  color: #fff;
-  animation: pulse 1.2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(47, 107, 79, 0.45); }
-  50% { box-shadow: 0 0 0 16px rgba(47, 107, 79, 0); }
-}
-
-.voice-bubble {
-  position: absolute;
-  bottom: calc(100% + 10px);
-  width: max-content;
-  max-width: min(520px, 80vw);
-  padding: 12px 18px;
-  border-radius: 16px;
-  background: var(--text);
-  color: #fff;
-  font-size: 0.9em;
-  text-align: center;
-  box-shadow: var(--shadow);
-}
-
-.voice-bubble span {
-  display: block;
-  opacity: 0.85;
-  font-size: 0.9em;
-}
-
-.voice-miss {
-  background: #8a2f1d;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .mic-on,
   .done-check {
     animation: none;
   }
@@ -2315,8 +2241,6 @@ html[data-text-size="stor"] .dish-body p {
   .thumb { min-height: 140px; }
   .segment { min-height: 0; }
   .footer { flex-wrap: wrap; }
-  .voice { position: static; transform: none; order: -1; width: 100%; }
-  .voice-bubble { position: static; }
   .footer .btn { flex: 1; }
 }
 
@@ -2693,7 +2617,7 @@ html[data-text-size="stor"] .dish-body p {
   .occasion-tab-name { font-size: 0.9em; }
   .occasion-tab-status { font-size: 0.7em; }
 
-  /* Knappraden längst ner på en rad: tillbaka – mikrofon – nästa. */
+  /* Knappraden längst ner på en rad: tillbaka – nästa. */
   .footer {
     flex-wrap: nowrap;
     align-items: center;
@@ -2710,23 +2634,6 @@ html[data-text-size="stor"] .dish-body p {
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .footer .btn-primary { order: 2; }
-  .voice {
-    position: static;
-    transform: none;
-    order: 1;
-    width: auto;
-    flex: none;
-  }
-  .mic { width: 56px; height: 56px; }
-  .mic-label { display: none; }
-  .voice-bubble {
-    position: absolute;
-    left: 50%;
-    bottom: calc(100% + 8px);
-    transform: translateX(-50%);
-    max-width: calc(100vw - 32px);
-  }
   .demo-clock { bottom: calc(84px + env(safe-area-inset-bottom)); }
 
   /* Portion: tre smala kolumner i stället för tre stora rutor på höjden. */
@@ -2735,22 +2642,23 @@ html[data-text-size="stor"] .dish-body p {
   .segment span:last-child { font-size: 0.75em; }
 
   /* Obeställda måltider: liten knapp under texten i stället för en knapp över hela bredden. */
-  /* Beställningskorten: bilden till vänster, knapparna under texten, listen längst ner. */
+  /* Beställningskorten: bilden till vänster bredvid text och knappar, listen över hela
+     bredden längst ner – så att bilden inte blir hög och smal. */
   .order-row {
-    grid-template-columns: 84px minmax(0, 1fr);
+    grid-template-columns: 104px minmax(0, 1fr);
     grid-template-areas:
       "img body"
       "img actions"
-      "img bar";
+      "bar bar";
   }
   .order-body { padding: 12px 12px 8px; }
   .order-actions,
   .order-row > .order-action,
   .order-row > .order-rated { margin: 0 12px 12px; justify-self: start; }
-  .order-actions .order-action { min-height: 48px; padding: 0 14px; }
-
-  /* Ensam mikrofon (sidor utan knappar) står i mitten. */
-  .footer > .voice:only-child { margin-inline: auto; }
+  .order-actions .order-action { min-height: 48px; padding: 0 12px; font-size: 0.9em; }
+  /* Ändra och Avbeställ bredvid varandra, med marginal i stället för gap (äldre Safari). */
+  .order-actions { flex-wrap: nowrap; gap: 0; }
+  .order-actions > * + * { margin-inline-start: 8px; }
 
   /* Omdöme: liten bild bredvid rubriken i stället för en stor bild överst. */
   .feedback-head { grid-template-columns: 96px minmax(0, 1fr); }

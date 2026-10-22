@@ -11,10 +11,8 @@ import { OccasionBar } from "./OccasionBar";
 import { InstallButton } from "./Install";
 import {
   chime,
-  listenOnce,
   matchCommand,
   normalize,
-  localRecognitionSupported,
   speak,
   stopSpeaking,
   type VoiceCommand,
@@ -25,18 +23,13 @@ type ScreenProps = {
   speakText: string;
   /** Vilket steg (1–4) som ska markeras i stegindikatorn. Utelämna för att dölja den. */
   step?: number;
-  /** Röstkommandon för sidan (svenska). Utelämna för att dölja mikrofonknappen. */
+  /** Röstkommandon för sidan (svenska). Mikrofonen är borttagen; kommandona nås i demo via händelsen "ingrid-voice". */
   commands?: VoiceCommand[];
   /** Exempel på vad man kan säga, t.ex. "lax" eller "soppa". */
   voiceHint?: string;
   children: ReactNode;
   footer?: ReactNode;
 };
-
-type ListenState =
-  | { kind: "idle" }
-  | { kind: "listening" }
-  | { kind: "heard"; text: string; understood: boolean };
 
 /** Bekräftar ett val med en ljudsignal – och tal om text anges – när ljudläget är på. */
 export function useAnnounce() {
@@ -53,7 +46,7 @@ export function useAnnounce() {
 }
 
 export function Screen({ speakText, step, commands, voiceHint, children, footer }: ScreenProps) {
-  const { patient, textSize, toggleTextSize, soundOn, setSoundOn, lang, order, signOut } = useOrder();
+  const { patient, textSize, toggleTextSize, soundOn, setSoundOn, order, signOut } = useOrder();
   const router = useRouter();
   const pathname = usePathname();
   const { t, tm, speechLang } = useT();
@@ -62,17 +55,9 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
   const [dietOpen, setDietOpen] = useState(false);
   // Avbryt finns efter inloggningen, men inte när beställningen redan är skickad.
   const canCancel = !!patient && !order.placed && pathname !== "/klart";
-  const [listen, setListen] = useState<ListenState>({ kind: "idle" });
-  const [micAvailable, setMicAvailable] = useState(false);
   const [demoClock, setDemoClock] = useState(false);
   const clock = useNow();
   useEffect(() => setDemoClock(demoClockActive()), []);
-  const abortRef = useRef<() => void>(() => {});
-
-  // Mikrofonen visas bara om taligenkänningen kan köras i enheten (inget ljud lämnar plattan).
-  useEffect(() => {
-    setMicAvailable(localRecognitionSupported());
-  }, []);
 
   // I ljudläge läses varje ny sida upp automatiskt.
   useEffect(() => {
@@ -117,7 +102,6 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
     const all = [...(commands ?? []), ...globalCommands];
     const match = matchCommand(alternatives, all);
     const text = alternatives[0] ?? "";
-    setListen({ kind: "heard", text, understood: !!match });
     if (match) {
       match.action(normalize(text));
     } else {
@@ -134,32 +118,6 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
     window.addEventListener("ingrid-voice", onVoice);
     return () => window.removeEventListener("ingrid-voice", onVoice);
   }, []);
-
-  const startListening = async () => {
-    if (listen.kind === "listening") {
-      abortRef.current();
-      return;
-    }
-    stopSpeaking();
-    setSoundOn(true);
-    setListen({ kind: "listening" });
-    abortRef.current = await listenOnce({
-      onResult: handleHeard,
-      onError: (error) => {
-        if (error === "no-speech") speak("Jag hörde ingenting. Tryck på mikrofonen och försök igen.");
-        else if (error === "not-allowed") speak("Mikrofonen är avstängd. Tryck på skärmen i stället.");
-        else if (error === "installing") speak("Ett ögonblick, jag gör i ordning rösten.");
-        else if (error === "not-local") {
-          setMicAvailable(false);
-          speak("Röststyrning finns inte på den här plattan. Tryck på skärmen i stället.");
-        }
-      },
-      onEnd: () => setListen((l) => (l.kind === "listening" ? { kind: "idle" } : l)),
-    });
-  };
-
-  // Röstkommandona finns på svenska; på andra språk används tryck (och uppläsning).
-  const showMic = commands !== undefined && micAvailable && lang === "sv";
 
   return (
     <div className="screen">
@@ -221,32 +179,8 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
 
       <main className="content">{children}</main>
 
-      {(footer || showMic) && (
-        <footer className="footer">
-          {footer}
-          {showMic && (
-            <div className="voice">
-              {listen.kind !== "idle" && (
-                <div className={`voice-bubble ${listen.kind === "heard" && !listen.understood ? "voice-miss" : ""}`} role="status">
-                  {listen.kind === "listening" ? (
-                    <>Jag lyssnar… {voiceHint && <span>Säg till exempel <strong>{voiceHint}</strong></span>}</>
-                  ) : (
-                    <>Du sa: <strong>”{listen.text}”</strong>{!listen.understood && <span> – försök igen</span>}</>
-                  )}
-                </div>
-              )}
-              <button
-                className={`mic ${listen.kind === "listening" ? "mic-on" : ""}`}
-                onClick={startListening}
-                aria-label={listen.kind === "listening" ? "Sluta lyssna" : "Prata – säg vad du vill"}
-              >
-                <span aria-hidden>🎤</span>
-                <span className="mic-label">{listen.kind === "listening" ? "Lyssnar…" : "Prata"}</span>
-              </button>
-            </div>
-          )}
-        </footer>
-      )}
+      {/* Mikrofonen ("Prata") är borttagen – den var i vägen och taligenkänningen saknas på många plattor. */}
+      {footer && <footer className="footer">{footer}</footer>}
 
       {langOpen && <LanguageDialog onClose={() => setLangOpen(false)} />}
       {dietOpen && patient && <DietDialog onClose={() => setDietOpen(false)} />}
