@@ -95,7 +95,6 @@ export default function DishPage() {
 
   return (
     <Screen
-      step={2}
       speakText={k.speak(text.name)}
       commands={commands}
       voiceHint="”vatten”, ”kaffe” eller ”nästa”"

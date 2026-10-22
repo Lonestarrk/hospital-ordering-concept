@@ -826,58 +826,6 @@ button:focus-visible {
   }
 }
 
-/* ---------- Stegindikator ---------- */
-
-/* Rutnät i stället för flex-gap, som saknas i äldre Safari på iPad. */
-.progress {
-  list-style: none;
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(0, 1fr);
-  gap: 8px;
-  margin: 0;
-  padding: 0 24px 10px;
-}
-
-.progress-step {
-  display: flex;
-  align-items: center;
-  padding: 10px 14px;
-  border-radius: 14px;
-  background: var(--surface-2);
-  color: var(--text-muted);
-  font-weight: 600;
-  font-size: 0.85em;
-}
-
-.progress-step.is-current {
-  background: var(--primary);
-  color: #fff;
-}
-
-.progress-step.is-done {
-  background: var(--primary-soft);
-  color: var(--primary-strong);
-}
-
-.progress-dot {
-  width: 1.6em;
-  height: 1.6em;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: rgba(255, 255, 255, 0.7);
-  color: var(--text);
-  font-size: 0.9em;
-  flex-shrink: 0;
-  margin-inline-end: 10px;
-}
-
-.progress-step.is-current .progress-dot {
-  background: #fff;
-  color: var(--primary);
-}
-
 /* ---------- Knappar ---------- */
 
 .btn {
@@ -2311,19 +2259,13 @@ html[data-text-size="stor"] .dish-body p {
     align-items: start;
   }
   .taste-grid { grid-template-columns: 1fr 1fr; }
-  .progress-step {
-    justify-content: center;
-    padding: 8px;
-    font-size: 0.75em;
-  }
 }
 
 @media (max-width: 560px) {
   :root { --base: 17px; }
   html[data-text-size="stor"] { --base: 21px; }
-  .topbar, .content, .footer, .progress { padding-inline: 16px; }
+  .topbar, .content, .footer { padding-inline: 16px; }
   .occasion-bar { margin-inline: 16px; }
-  .progress { overflow-x: auto; }
   .tool { padding: 0 12px; }
   .segmented { grid-template-columns: 1fr; }
   .segmented-4 { grid-template-columns: 1fr 1fr; }
@@ -2541,11 +2483,6 @@ html[data-text-size="stor"] .dish-body p {
   .dish-body h2 { font-size: 1em; }
 }
 
-/* Stegen som en rad med text – visas bara på mobil (nedan). */
-.progress-compact {
-  display: none;
-}
-
 /* ---------- Reaktion vid tryck ---------- */
 
 /*
@@ -2671,30 +2608,6 @@ html[data-text-size="stor"] .dish-body p {
   .topbar .tool-menu { width: auto; padding: 0 10px; }
   .topbar .tool-menu > span + span { margin-inline-start: 4px; }
   .topbar.has-patient .topbar-actions > * + * { margin-inline-start: 6px; }
-
-  /* Stegen: "Steg 2 av 5 · Mat" och en tunn stapel. */
-  .progress { display: none; }
-  .progress-compact {
-    display: grid;
-    gap: 4px;
-    padding: 0 16px 10px;
-    font-size: 0.8em;
-    color: var(--text-muted);
-  }
-  .progress-compact strong { color: var(--primary-strong); }
-  .progress-compact-bar {
-    display: block;
-    height: 4px;
-    border-radius: 2px;
-    background: var(--surface-2);
-    overflow: hidden;
-  }
-  .progress-compact-bar span {
-    display: block;
-    height: 100%;
-    border-radius: 2px;
-    background: var(--primary);
-  }
 
   /* Måltidsraden: lägre knappar. */
   .occasion-bar { gap: 6px; margin-bottom: 12px; }

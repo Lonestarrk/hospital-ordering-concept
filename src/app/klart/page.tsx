@@ -58,7 +58,7 @@ export default function DonePage() {
   const mins = slot ? minutesLeft(slot, reference) : 0;
 
   return (
-    <Screen step={4} speakText={o.speak(patient.firstName, what, whenText)} commands={commands} voiceHint="”klar” eller ”beställ mer”">
+    <Screen speakText={o.speak(patient.firstName, what, whenText)} commands={commands} voiceHint="”klar” eller ”beställ mer”">
       {/* Tack och tid som en splash överst, som tonar ut efter 3 sekunder. Tiden står kvar i kvittot nedanför. */}
       <section className="done-splash" role="status">
         <div className="done-splash-check" aria-hidden>

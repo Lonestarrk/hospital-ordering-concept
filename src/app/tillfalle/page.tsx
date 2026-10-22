@@ -99,7 +99,6 @@ export default function OccasionPage() {
 
   return (
     <Screen
-      step={1}
       speakText={`${ordersText}${ghostText} ${o.speak(patient.firstName, items)}`}
       commands={commands}
       voiceHint="”lunch”, ”middag” eller ”avbeställ lunch”"

@@ -21,8 +21,6 @@ import {
 type ScreenProps = {
   /** Texten som läses upp i ljudläge och när man trycker på "Ljud". */
   speakText: string;
-  /** Vilket steg (1–4) som ska markeras i stegindikatorn. Utelämna för att dölja den. */
-  step?: number;
   /** Röstkommandon för sidan (svenska). Mikrofonen är borttagen; kommandona nås i demo via händelsen "ingrid-voice". */
   commands?: VoiceCommand[];
   /** Exempel på vad man kan säga, t.ex. "lax" eller "soppa". */
@@ -45,7 +43,7 @@ export function useAnnounce() {
   );
 }
 
-export function Screen({ speakText, step, commands, voiceHint, children, footer }: ScreenProps) {
+export function Screen({ speakText, commands, voiceHint, children, footer }: ScreenProps) {
   const { patient, textSize, toggleTextSize, soundOn, setSoundOn, order, signOut } = useOrder();
   const router = useRouter();
   const pathname = usePathname();
@@ -149,30 +147,6 @@ export function Screen({ speakText, step, commands, voiceHint, children, footer 
           )}
         </div>
       </header>
-
-      {step !== undefined && (
-        <ol className="progress" aria-label={t.stepsLabel}>
-          {t.steps.map((label, i) => {
-            const n = i + 1;
-            const state = n < step ? "done" : n === step ? "current" : "todo";
-            return (
-              <li key={label} className={`progress-step is-${state}`} aria-current={state === "current" ? "step" : undefined}>
-                <span className="progress-dot">{state === "done" ? "✓" : n}</span>
-                {label}
-              </li>
-            );
-          })}
-        </ol>
-      )}
-      {/* Mobil: stegen som en rad med text och en tunn stapel i stället för fem knappar. */}
-      {step !== undefined && (
-        <div className="progress-compact">
-          <span>{t.stepOf(step, t.steps.length)} · <strong>{t.steps[step - 1]}</strong></span>
-          <span className="progress-compact-bar" aria-hidden>
-            <span style={{ width: `${(step / t.steps.length) * 100}%` }} />
-          </span>
-        </div>
-      )}
 
       {patient && <OccasionBar />}
 

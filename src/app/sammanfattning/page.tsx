@@ -24,7 +24,7 @@ export default function SummaryPage() {
 
   if (!dish || !drink || !order.occasion || !order.date) {
     return (
-      <Screen step={3} speakText={u.missing}>
+      <Screen speakText={u.missing}>
         <div className="page-head">
           <h1>{u.missing}</h1>
           <button className="btn btn-primary" onClick={() => router.push("/tillfalle")}>{u.chooseFood}</button>
@@ -64,7 +64,6 @@ export default function SummaryPage() {
 
   return (
     <Screen
-      step={3}
       speakText={
         open
           ? u.speak({ order: t.and([dishName, ...extras, ...(noDrink ? [] : [drinkName])]), when: when(slot, reference) })

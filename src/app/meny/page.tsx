@@ -111,7 +111,6 @@ function Menu() {
 
   return (
     <Screen
-      step={2}
       speakText={`${topReason ? `${m.suggestion}: ${tm.dish(top).name}. ${m.suggestionWhy(topReason)}. ` : ""}${m.speak(mealName.toLowerCase(), items)}`}
       commands={commands}
       voiceHint={suitable.slice(0, 2).map((d) => `”${d.voiceWords[0].replace("*", "")}”`).join(" eller ")}
