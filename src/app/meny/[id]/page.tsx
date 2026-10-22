@@ -3,14 +3,14 @@
 import { useParams, useRouter } from "next/navigation";
 import { Screen, useAnnounce } from "@/components/Screen";
 import { useRequirePatient, useT } from "@/components/OrderProvider";
-import { dishBlockers, dishes, drinkSuits, drinks, extras } from "@/lib/data";
+import { dishBlockers, dishes, dishNutrition, drinkSuits, drinks, extras } from "@/lib/data";
 import { useBlockerText } from "@/components/useBlockerText";
 import type { VoiceCommand } from "@/lib/voice";
 
 export default function DishPage() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
-  const { patient, order, updateOrder } = useRequirePatient();
+  const { patient, order, updateOrder, lang } = useRequirePatient();
   const announce = useAnnounce();
   const { t, tm } = useT();
   const k = t.dish;
@@ -75,6 +75,23 @@ export default function DishPage() {
   ];
 
   const text = tm.dish(dish);
+  // Näringsvärde per portion, med decimaltecken efter språket.
+  const nutrition = dishNutrition[dish.id];
+  const n = k.nutrition;
+  const num = (value: number, decimals = 0) =>
+    value.toLocaleString(lang === "ar" ? "ar" : lang === "en" ? "en-GB" : "sv-SE", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  const nutritionRows: [string, string, boolean][] = nutrition
+    ? [
+        // Samma ordning som på en näringsdeklaration på förpackningar.
+        [n.energy, `${num(nutrition.kcal)} kcal`, false],
+        [n.fat, `${num(nutrition.fat)} g`, false],
+        [n.carbs, `${num(nutrition.carbs)} g`, false],
+        [n.sugar, `${num(nutrition.sugar)} g`, true],
+        [n.fiber, `${num(nutrition.fiber)} g`, false],
+        [n.protein, `${num(nutrition.protein)} g`, false],
+        [n.salt, `${num(nutrition.salt, 1)} g`, false],
+      ]
+    : [];
 
   return (
     <Screen
@@ -91,59 +108,75 @@ export default function DishPage() {
         </>
       }
     >
-      <div className="dish-hero">
-        <img className="dish-hero-image" src={dish.image} alt={text.imageAlt} />
-        <div>
-          <p className="eyebrow">{k.youChose}</p>
-          <h1>{text.name}</h1>
-          <p className="lead">{text.description}</p>
-          <p className="allergens">
-            {dish.allergens.length > 0
-              ? <>{k.contains} <strong>{t.list(dish.allergens.map(tm.allergen))}</strong></>
-              : k.noAllergens}
-          </p>
+      {/* Rätten, näringsvärdet och önskemål till vänster, drycken som en lista till höger. På mobil: rätten, drycken, önskemål, näringsvärde. */}
+      <div className="dish-layout">
+        <div className="dish-hero">
+          <img className="dish-hero-image" src={dish.image} alt={text.imageAlt} />
+          <div>
+            <p className="eyebrow">{k.youChose}</p>
+            <h1>{text.name}</h1>
+            <p className="lead">{text.description}</p>
+            <p className="allergens">
+              {dish.allergens.length > 0
+                ? <>{k.contains} <strong>{t.list(dish.allergens.map(tm.allergen))}</strong></>
+                : k.noAllergens}
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div className="dish-choices">
-      <section className="section">
-        <h2>{t.drink.title}</h2>
-        <div className="drink-choices" role="radiogroup" aria-label={t.drink.title}>
-          {suitableDrinks.map((d) => (
-            <button
-              key={d.id}
-              role="radio"
-              aria-checked={order.drinkId === d.id}
-              className={`drink-choice ${order.drinkId === d.id ? "selected" : ""}`}
-              onClick={() => chooseDrink(d.id)}
-            >
-              <span className="drink-choice-emoji" aria-hidden>{d.emoji}</span>
-              <span>{tm.drink(d.id, d.name)}</span>
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {hasExtras && (
-      <section className="section">
-        <h2>{k.wishes} <span className="optional">{t.optional}</span></h2>
-        <div className="chips">
-          {extras.map(({ name }) => {
-            const on = order.extras.includes(name);
-            return (
+        <section className="section dish-drinks">
+          <h2>{t.drink.title}</h2>
+          <div className="drink-list" role="radiogroup" aria-label={t.drink.title}>
+            {suitableDrinks.map((d) => (
               <button
-                key={name}
-                className={`chip ${on ? "selected" : ""}`}
-                aria-pressed={on}
-                onClick={() => toggleExtra(name)}
+                key={d.id}
+                role="radio"
+                aria-checked={order.drinkId === d.id}
+                className={`drink-choice ${order.drinkId === d.id ? "selected" : ""}`}
+                onClick={() => chooseDrink(d.id)}
               >
-                {on ? "✓ " : "+ "}{tm.extra(name)}
+                <span className="drink-choice-emoji" aria-hidden>{d.emoji}</span>
+                <span>{tm.drink(d.id, d.name)}</span>
               </button>
-            );
-          })}
-        </div>
-      </section>
-      )}
+            ))}
+          </div>
+        </section>
+
+        {hasExtras && (
+          <section className="section dish-wishes">
+            <h2>{k.wishes} <span className="optional">{t.optional}</span></h2>
+            <div className="chips">
+              {extras.map(({ name }) => {
+                const on = order.extras.includes(name);
+                return (
+                  <button
+                    key={name}
+                    className={`chip ${on ? "selected" : ""}`}
+                    aria-pressed={on}
+                    onClick={() => toggleExtra(name)}
+                  >
+                    {on ? "✓ " : "+ "}{tm.extra(name)}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {nutrition && (
+          <section className="section dish-nutrition">
+            <h2>{k.nutrition.title}</h2>
+            <dl className="nutrition-list">
+              {nutritionRows.map(([label, value, sub]) => (
+                <div key={label} className={`nutrition-row ${sub ? "is-sub" : ""}`}>
+                  <dt>{label}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="muted nutrition-note">{k.nutrition.note}</p>
+          </section>
+        )}
       </div>
     </Screen>
   );

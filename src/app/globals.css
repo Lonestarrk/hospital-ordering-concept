@@ -1376,16 +1376,6 @@ html[data-text-size="stor"] .dish-body p {
   margin-bottom: 24px;
 }
 
-/* Bred liggande skärm: portion och önskemål bredvid varandra, så att båda syns utan att scrolla. */
-@media (min-width: 1000px) {
-  .dish-choices {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 32px;
-    align-items: start;
-  }
-}
-
 .section h2 {
   margin-bottom: 12px;
 }
@@ -1469,11 +1459,90 @@ html[data-text-size="stor"] .dish-body p {
   font-size: 56px;
 }
 
-/* Dryck – väljs på rättens sida, bredvid önskemålen. */
-.drink-choices {
+/*
+ * Rättens sida: rätten, näringsvärde och önskemål till vänster, drycken som en lista till höger.
+ * På smala skärmar i ordningen rätten, drycken, önskemål, näringsvärde.
+ */
+.dish-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "hero"
+    "drinks"
+    "wishes"
+    "nutrition";
+  column-gap: 32px;
+}
+
+.dish-layout .dish-hero { grid-area: hero; }
+.dish-drinks { grid-area: drinks; }
+.dish-wishes { grid-area: wishes; }
+.dish-nutrition { grid-area: nutrition; }
+
+@media (min-width: 761px) {
+  .dish-layout {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    grid-template-areas:
+      "hero      drinks"
+      "nutrition drinks"
+      "wishes    drinks";
+    align-items: start;
+  }
+  .dish-drinks {
+    grid-row: 1 / span 3;
+  }
+}
+
+/* Drycken som en lista under varandra. */
+.drink-list {
+  display: grid;
+  gap: 8px;
+}
+
+/* Näringsdeklaration: rader med namn och värde, i två spalter på bredare skärm. */
+.nutrition-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: 32px;
+  margin: 0;
+  font-size: 0.85em;
+}
+
+@media (min-width: 761px) {
+  /* Spalt för spalt, så att "varav sockerarter" står direkt under kolhydraterna. */
+  .nutrition-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(4, auto);
+    grid-auto-flow: column;
+  }
+}
+
+.nutrition-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.nutrition-row dt {
+  font-weight: 600;
+}
+
+.nutrition-row dd {
+  margin: 0;
+  margin-inline-start: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.nutrition-row.is-sub dt {
+  padding-inline-start: 14px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.nutrition-note {
+  margin-top: 8px;
+  font-size: 0.8em;
 }
 
 .drink-choice {
